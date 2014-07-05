@@ -15,6 +15,7 @@ angular.module('mainCtrl', [])
 		// GET ALL COMMENTS ====================================================
 		Keyword.get()
 			.success(function(data) {
+                console.log(data);
 				$scope.keywords = data;
 				$scope.loading = false;
 			});

@@ -9,14 +9,13 @@ class KeywordController extends \BaseController {
 	 */
 	public function index()
 	{
-//        return Response::json( Route::current()->parameters() );
+        //return Response::json(Route::input());
         return Response::json(Keyword::get());
 	}
 
-	public function show($id)
+	public function listKeywords($start, $count)
 	{
-//        return Response::json( Keyword::skip($startList)::take($countList)::get() );
-            return Response::json(array('success' => true)); 
+        return Response::json( Keyword::skip($start)->take($count)->get() ); 
 	}
 
 	/**
@@ -24,7 +23,7 @@ class KeywordController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function create()
 	{
         Keyword::create(array(
             'keyword' => Input::get('keyword'),
@@ -34,7 +33,6 @@ class KeywordController extends \BaseController {
         return Response::json(array('success' => true)); 
 
 	}
-
 
 	/**
 	 * Remove the specified resource from storage.
