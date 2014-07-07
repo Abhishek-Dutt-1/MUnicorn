@@ -17,14 +17,8 @@ Route::get('/', function()
 	return View::make('index');     // will return app/views/index.php
 });
 
-// API routes
-// path must begin with 'api/'
-//Route::group(array('prefix' => 'api'), function() {
-    // path must then have 'keywords/'
-//    Route::controller( 'api', 'KeywordController' );
-//});
 
-// API routes
+// API routes for Keywords
 Route::group(array('prefix' => 'api/keywords'), function()
 {
     // fetch all keywords
@@ -37,6 +31,35 @@ Route::group(array('prefix' => 'api/keywords'), function()
     Route::delete( '/{id}', 'KeywordController@destroy' );
 
 });
+
+// API routes for Stopwords
+Route::group(array('prefix' => 'api/stopwords'), function()
+{
+    // fetch all stopword
+    Route::get( '/', 'StopwordController@index' );
+    //fetch a subset of stopword
+    Route::get( '/{start}/{count}', 'StopwordController@listStopwords' );
+    // create a new stopword
+    Route::post( '/', 'StopwordController@create' );
+    // delete a new stopword
+    Route::delete( '/{id}', 'StopwordController@destroy' );
+
+});
+
+// API routes for Negativekeywords
+Route::group(array('prefix' => 'api/negativekeywords'), function()
+{
+    // fetch all Negativekeywords
+    Route::get( '/', 'NegativekeywordController@index' );
+    //fetch a subset of Negativekeywords
+    Route::get( '/{start}/{count}', 'NegativekeywordController@listNegativekeywords' );
+    // create a new Negativekeyword
+    Route::post( '/', 'NegativekeywordController@create' );
+    // delete a new Negativekeyword
+    Route::delete( '/{id}', 'NegativekeywordController@destroy' );
+
+});
+
 
 // Catch all route
 App::missing(function($exception)

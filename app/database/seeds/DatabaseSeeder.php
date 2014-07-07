@@ -12,7 +12,14 @@ class DatabaseSeeder extends Seeder {
 		Eloquent::unguard();
 
         $this->call('KeywordTableSeeder');
-        $this->command->info('KeywordTableSeeder seeded');
+        $this->command->info('Keyword seeded');
+
+        $this->call('StopwordTableSeeder');
+        $this->command->info('Stopword seeded');
+
+        $this->call('NegativekeywordTableSeeder');
+        $this->command->info('NegativeKeyword seeded');
+
 		// $this->call('UserTableSeeder');
 	}
 

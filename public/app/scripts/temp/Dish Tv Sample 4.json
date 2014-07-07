@@ -1,0 +1,54 @@
+[
+  {
+    "Sno":0,
+    "Ad group":"Online Dish",
+    "Keyword":"dish tv online",
+    "Currency":"INR",
+    "Avg. Monthly Searches (exact match only)":10,
+    "Competition":0.89,
+    "Suggested bid":12.86,
+    "Impr. share":"0",
+    "In account?":"N",
+    "In plan?":"N",
+    "Extracted From":""
+  },
+  {
+    "Sno":1,
+    "Ad group":"Online Dish",
+    "Keyword":"dish tv online recharge",
+    "Currency":"INR",
+    "Avg. Monthly Searches (exact match only)":320,
+    "Competition":0.23,
+    "Suggested bid":6.8,
+    "Impr. share":"0",
+    "In account?":"N",
+    "In plan?":"N",
+    "Extracted From":""
+  },
+  {
+    "Sno":798,
+    "Ad group":"Keywords like: Dish Tv",
+    "Keyword":"tv online live free",
+    "Currency":"INR",
+    "Avg. Monthly Searches (exact match only)":10,
+    "Competition":0.23,
+    "Suggested bid":3.73,
+    "Impr. share":"0",
+    "In account?":"N",
+    "In plan?":"N",
+    "Extracted From":""
+  },
+  {
+    "Sno":799,
+    "Ad group":"Keywords like: Dish Tv",
+    "Keyword":"on recharge",
+    "Currency":"INR",
+    "Avg. Monthly Searches (exact match only)":10,
+    "Competition":0.64,
+    "Suggested bid":null,
+    "Impr. share":"0",
+    "In account?":"N",
+    "In plan?":"N",
+    "Extracted From":""
+  }
+]

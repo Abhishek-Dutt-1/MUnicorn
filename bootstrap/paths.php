@@ -27,6 +27,7 @@ return array(
 	*/
 
 	'public' => __DIR__.'/../public',
+//	'public' => __DIR__.'/../public/app',       // added app folder fue to yoeman workflow
 
 	/*
 	|--------------------------------------------------------------------------

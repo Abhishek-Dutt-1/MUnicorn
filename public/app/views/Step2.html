@@ -1,0 +1,90 @@
+<div>
+	<div class="row" style="padding-top: 20px;">
+        <div class="row">
+            <div class="col-md-12">
+                <button type="button" ng-click="markMatches()" class="btn btn-info">Match Negative Keywords</button>
+				<button type="button" ng-click="markOrderIndepDuplicates()" class="btn btn-info">Match Order Independent Duplicate Keywords</button>
+                <button type="button" ng-click="deleteMatches()" class="btn btn-info">Delete Matched</button>
+                <button type="button" ng-click="resetMatches()" class="btn btn-default">Reset</button>
+            </div>
+        </div>
+        <div class="row" style="padding-top: 10px;">
+            <div class="col-md-12">
+                Total Keywords: {{actualData.length}}<br/>
+                Matched Keywords: {{currentKeywordsMatched}}
+            </div>
+        </div>
+		<div class="col-md-8">
+            <div class="row">
+                <div class="col-md-10">
+                <!-- Current Page Number: {{currentPageNum}} -->
+                    <div>
+                        <ul class="pager">
+                            <li ng-class="{disabled: currentPageNum == 0}">
+                            <a href ng-click="changePage(-1)" >« Prev</a>
+                            </li>
+                            <li ng-class="{disabled: actualData.length <= (currentPageNum+1)*numShowKeywords }">
+                            <a href ng-click="changePage(1)">Next »</a>
+                            </li>
+                        </ul>
+                    </div>
+                <!-- Actual Data Length: {{actualData.length}} -->
+                </div>
+                <div class="col-md-2">
+                    <input ng-change="updateKeywordTable()" ng-model="numShowKeywords" type="text" class="form-control pager">
+                </div>
+            </div> <!-- end row -->
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-condensed table-hover">
+                        <thead>
+                            <tr>
+                                <th class="name">Keyword&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
+                                <th class="name">Volume&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
+                                <th class="description">Delete&nbsp;<a ng-click="sort_by('description')"><i class="icon-sort"></i></a></th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <td colspan="3">
+                                <div>
+                                    <ul class="pager">
+                                        <li ng-class="{disabled: currentPageNum == 0}">
+                                        <a href ng-click="changePage(-1)" >« Prev</a>
+                                        </li>
+                                        <li ng-class="{disabled: actualData.length <= (currentPageNum+1)*numShowKeywords }">
+                                        <a href ng-click="changePage(1)">Next »</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tfoot>
+                        <tbody>
+                        <tr ng-repeat="item in dummyData" ng-class="{danger: item.negativeKeywordMatch}">
+                            <td>{{item.Keyword}}</td>
+                            <td>{{item['Avg. Monthly Searches (exact match only)']}}</td>
+                            <td><input type="checkbox" ng-click="negativeKeyowrdCheckBoxToggle(item.Keyword)" ng-checked="item.negativeKeywordMatch" ></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>  <!-- end row -->
+		</div> <!-- end col-md-8 -->
+		<div class="col-md-4">
+            <strong>Negative Words ({{negativeKeywordList.length}})</strong>
+            <div class="input-group">
+                <input ng-model="newNegativeKeyword" type="text" class="form-control">
+                <span class="input-group-btn">
+                    <button ng-click="addNewNegativeKeyword(newNegativeKeyword)" class="btn btn-default" type="button">Add</button>
+                </span>
+            </div>
+			<div class="list-group">
+                <a class="list-group-item" ng-repeat="negativeKeyword in negativeKeywordList track by $index">{{negativeKeyword}}<span ng-click="deleteNegativeKeyword(negativeKeyword)" class="close" type="button" aria-hidden="true">&times;</span></a>
+			</div>
+			<div id="word-cloud">
+				<span ng-repeat = "item in countArraySorted" >
+					<span style="font-size: {{item.count*150}}px;">{{item.Keyword}}</span>
+				</span>
+			</div>				
+        </div> <!-- end col-md-4 -->
+	</div>
+</div>

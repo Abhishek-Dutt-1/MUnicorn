@@ -1,0 +1,1 @@
+adGroup,keyword,currency,avMonthlySearches,competition,suggestedBid,impressionShare,inAccount,inPlan,extractedFrom
