@@ -1,8 +1,8 @@
 'use strict';
 
 keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', 'DataShareService', function ($scope, $http, $sce, DataShareService) {
-    $scope.numShowKeywords = 50;
-    $scope.currentPageNum = 0;
+    $scope.numShowKeywords = 10;
+    $scope.currentPageNum = 0;      // 0 == first page
     $scope.currentKeywordsMatched = 0;
 	
 	/*
@@ -18,13 +18,29 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', '
     // Updates pager(at the bottom of the table) on initial load and on change of numShowKeywords
     $scope.changePage = function(next) {
         if(next >= 0) {
+            $scope.currentPageNum++;
+//            DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords , $scope.numShowKeywords, function(data) { $scope.dummyData = data; } );
+        } else {
+            $scope.currentPageNum = ($scope.currentPageNum === 0) ? 0 : $scope.currentPageNum - 1;
+//           DataShareService.fetchKeywords( $scope.currentPageNum, $scope.numShowKeywords, function(data) { $scope.dummyData = data; } );
+        }
+        $scope.updateKeywordTable();
+    };
+
+    $scope.updateKeywordTable = function() {
+        DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords, $scope.numShowKeywords, function(data) { $scope.dummyData = data; } );
+    };
+/*   
+    $scope.changePage = function(next) {
+        if(next >= 0) {
             $scope.currentPageNum = ($scope.actualData.length > ($scope.currentPageNum+1)*$scope.numShowKeywords) ? $scope.currentPageNum + 1 : $scope.currentPageNum;
         } else {
             $scope.currentPageNum = ($scope.currentPageNum === 0)? 0 : $scope.currentPageNum - 1;
         }
         $scope.updateKeywordTable();
     };
-
+*/
+/*
     // Updates keywordstable on initial load and on change of numShowKeywords
     $scope.updateKeywordTable = function() {
         // Calculate Keywords to show
@@ -41,6 +57,7 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', '
         var endIndex = Number( (Number(startIndex) + Number($scope.numShowKeywords) < Number($scope.actualData.length)) ? Number(startIndex) + Number($scope.numShowKeywords) : $scope.actualData.length );
         $scope.dummyData = $scope.actualData.slice(startIndex, endIndex);
     };
+*/
     //////////////////////////// End Keywords Table and Pager /////////////////////////
     
     // Mark matches between keywords and Stop Word List
@@ -104,6 +121,10 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', '
     // Delete stop word matches within the keyword, no element is deleted, only
     // keword is altered
     $scope.deleteMatches = function() {
+        DataShareService.deleteMatchingStopWordsFromKeywords( function(res) {} );
+    };
+/*
+    $scope.deleteMatches = function() {
         $scope.actualData.forEach( function(element, index) {
             if(element.stopWordMatch == true) {
                 element.keyword = element.KeywordStopWordHighlighted.replace(new RegExp('<mark>(.*?)</mark>', 'ig'), "");
@@ -115,7 +136,7 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', '
         $scope.updateKeywordTable();
         countMatchedKeywords();
     };
-
+*/
     // Handle manula stopWordMatch check box toggle 
            
     $scope.stopWordCheckBoxToggle = function(keyword) {
@@ -148,13 +169,48 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', '
 	});
 */
     // Delete a Stop Word from the displayed list
+    $scope.deleteStopWord = function(id) {
+        //$scope.stopWordList.splice( $scope.stopWordList.indexOf(stopWord), 1 );
+		//DataShareService.updateStopWordList($scope.stopWordList);
+        DataShareService.destroyStopWord(id, function(res) {});
+        $scope.updateStopwordTable();
+    };
+
+/*
     $scope.deleteStopWord = function(stopWord) {
         $scope.stopWordList.splice( $scope.stopWordList.indexOf(stopWord), 1 );
 		DataShareService.updateStopWordList($scope.stopWordList);
     };
+*/
 
     // Add formarly stop word button pressed
     // Add a new user input Stop Word to the displayed list
+    $scope.addNewStopWord = function(newStopWord) {
+        if(typeof newStopWord !== 'undefined') {
+            // Replace multiple consicutive space with one space
+            newStopWord = newStopWord.replace(/(\s)+/g, '$1');
+            // Dont add only blank space input
+            if(newStopWord !== '') {
+                DataShareService.saveNewStopword(newStopWord, function(res) {
+                    $scope.newStopWord = "";
+                    $scope.updateStopwordTable();
+                });
+            }
+        }
+    };
+
+    $scope.updateStopwordTable = function() {
+
+        DataShareService.fetchStopWordList( function(data) {
+            // Create JS array splitting at new line
+            //console.log(data);
+            //data = data.split('\r\n');
+//            $scope.addStopWordList(data);
+            $scope.stopWordList = data;
+        });
+
+    };
+/*
     $scope.addNewStopWord = function(newStopWord) {
         if(typeof newStopWord !== 'undefined') {
             // Replace , with space
@@ -170,11 +226,12 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', '
             }
         }
     };
-
+*/
+/*
     // Add string array to StopeWordsList
     $scope.addStopWordList = function(data) {
         // Merge new array with any existing data
-
+        
         if(typeof $scope.stopWordList !== 'undefined') {
             data = data.concat($scope.stopWordList);
         }
@@ -191,10 +248,14 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', '
         });
         data.sort();
         $scope.stopWordList = data;
-		DataShareService.updateStopWordList($scope.stopWordList);		
+//		DataShareService.updateStopWordList($scope.stopWordList);		
     };
+*/
     /////////////////////// End Handle Stop Words Interface ///////////////////
     
+    // INIT
+    $scope.updateKeywordTable();
+/*
 	DataShareService.fetchActualData( function(data) {
 		data.forEach( function(elem, index) {
 			elem.KeywordStopWordHighlighted = elem.keyword;
@@ -202,17 +263,17 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', '
 		});
 		$scope.actualData = data;
 		$scope.dummyData = $scope.actualData;
-		$scope.updateKeywordTable();
-        //console.log($scope.actualData);
+//		$scope.updateKeywordTable();
 	});
-	
+*/
+    $scope.updateStopwordTable();
+/*	
 	DataShareService.fetchStopWordList( function(data) {
 		// Create JS array splitting at new line
 		//console.log(data);
 		//data = data.split('\r\n');
         $scope.addStopWordList(data);
 	});
-	
-
+*/	
 	
 }]);

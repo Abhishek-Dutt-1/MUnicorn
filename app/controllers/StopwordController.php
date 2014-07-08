@@ -25,12 +25,19 @@ class StopwordController extends \BaseController {
 	 */
 	public function create()
 	{
+        /*
         Stopword::create(array(
             'stopword' => Input::get('stopword')
         ));
-
         return Response::json(array('success' => true)); 
-
+         */
+        foreach( explode(",", Input::get("stopword")) as $stopWord )
+        {
+            Stopword::create(array(
+                'stopword' => trim($stopWord)
+            ));
+        }
+        return Response::json(array('success' => true)); 
 	}
 
 	/**

@@ -90,7 +90,7 @@
                 </span>
             </div>
 			<div class="list-group">
-                <a class="list-group-item" ng-repeat="stopWord in stopWordList track by $index">{{stopWord}}<span ng-click="deleteStopWord(stopWord)" class="close" type="button" aria-hidden="true">&times;</span></a>
+                <a class="list-group-item" ng-repeat="stopWord in stopWordList | orderBy:'stopword':false">{{stopWord.stopword}}<span ng-click="deleteStopWord(stopWord.id)" class="close" type="button" aria-hidden="true">&times;</span></a>
 			</div>
         </div> <!-- end col-md-4 -->
 	</div>

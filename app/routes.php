@@ -60,6 +60,13 @@ Route::group(array('prefix' => 'api/negativekeywords'), function()
 
 });
 
+// API routes for database operations
+Route::group(array('prefix' => 'api/ops'), function()
+{
+    // delete stopwords from keywords
+    Route::get( '/deletestopwordsfromkeywords', 'OperationsController@deleteStopWords'); //deleteStopWords' );
+
+});
 
 // Catch all route
 App::missing(function($exception)

@@ -60,8 +60,8 @@
                         </tfoot>
                         <tbody>
                         <tr ng-repeat="item in dummyData" ng-class="{danger: item.negativeKeywordMatch}">
-                            <td>{{item.Keyword}}</td>
-                            <td>{{item['Avg. Monthly Searches (exact match only)']}}</td>
+                            <td>{{item.keyword}}</td>
+                            <td>{{item.avMonthlySearches}}</td>
                             <td><input type="checkbox" ng-click="negativeKeyowrdCheckBoxToggle(item.Keyword)" ng-checked="item.negativeKeywordMatch" ></td>
                         </tr>
                         </tbody>
@@ -78,7 +78,7 @@
                 </span>
             </div>
 			<div class="list-group">
-                <a class="list-group-item" ng-repeat="negativeKeyword in negativeKeywordList track by $index">{{negativeKeyword}}<span ng-click="deleteNegativeKeyword(negativeKeyword)" class="close" type="button" aria-hidden="true">&times;</span></a>
+                <a class="list-group-item" ng-repeat="negativeKeyword in negativeKeywordList | orderBy:'negativekeyword':false">{{negativeKeyword.negativekeyword}}<span ng-click="deleteNegativeKeyword(negativeKeyword.id)" class="close" type="button" aria-hidden="true">&times;</span></a>
 			</div>
 			<div id="word-cloud">
 				<span ng-repeat = "item in countArraySorted" >

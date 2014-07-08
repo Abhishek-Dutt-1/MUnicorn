@@ -26,11 +26,10 @@ class NegativekeywordController extends \BaseController {
 	public function create()
 	{
         Negativekeyword::create(array(
-            'Negativekeyword' => Input::get('Negativekeyword'),
+            'negativekeyword' => Input::get('Negativekeyword'),
         ));
 
         return Response::json(array('success' => true)); 
-
 	}
 
 	/**

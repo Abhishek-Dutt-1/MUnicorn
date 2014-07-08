@@ -21,6 +21,22 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
     // Updates pager(at the bottom of the table) on initial load and on change of numShowKeywords
     $scope.changePage = function(next) {
         if(next >= 0) {
+            $scope.currentPageNum++;
+//            DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords , $scope.numShowKeywords, function(data) { $scope.dummyData = data; } );
+        } else {
+            $scope.currentPageNum = ($scope.currentPageNum === 0) ? 0 : $scope.currentPageNum - 1;
+//           DataShareService.fetchKeywords( $scope.currentPageNum, $scope.numShowKeywords, function(data) { $scope.dummyData = data; } );
+        }
+        $scope.updateKeywordTable();
+    };
+
+    $scope.updateKeywordTable = function() {
+        DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords, $scope.numShowKeywords, function(data) { $scope.dummyData = data; } );
+    };
+
+/*
+    $scope.changePage = function(next) {
+        if(next >= 0) {
             $scope.currentPageNum = ($scope.actualData.length > ($scope.currentPageNum+1)*$scope.numShowKeywords) ? $scope.currentPageNum + 1 : $scope.currentPageNum;
         } else {
             $scope.currentPageNum = ($scope.currentPageNum === 0)? 0 : $scope.currentPageNum - 1;
@@ -44,6 +60,7 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
         var endIndex = Number( (Number(startIndex) + Number($scope.numShowKeywords) < Number($scope.actualData.length)) ? Number(startIndex) + Number($scope.numShowKeywords) : $scope.actualData.length );
         $scope.dummyData = $scope.actualData.slice(startIndex, endIndex);
     };
+*/
     //////////////////////////// End Keywords Table and Pager /////////////////////////
     
     // Mark matches between keywords and Negative Keyword List
@@ -300,6 +317,8 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
     //////////////////////////// End Handle Stop Words Interface ///////////////////
 	
 	// Init
+    $scope.updateKeywordTable();
+/*
 	DataShareService.fetchActualData( function(data) {
 		$scope.actualData = data;
 		$scope.dummyData = $scope.actualData;
@@ -307,5 +326,6 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
 		$scope.keywordCount();
 		$scope.updateKeywordTableSortedArray();
 	});
+*/
 	
 }]);

@@ -47,5 +47,12 @@ class KeywordController extends \BaseController {
         return Response::json(array('success' => true));
 	}
 
+    // delete stop words
+    public function deleteStopWords()
+    {
+        $keyword = DB::table('keywords')->where('keyword', '=', 'dish tv online')->get();
+
+        return Response::json($keyword);
+    }
 
 }

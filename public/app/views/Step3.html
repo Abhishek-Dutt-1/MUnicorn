@@ -62,11 +62,11 @@
                         </tfoot>
                         <tbody>
                         <tr ng-repeat="item in dummyData" ng-class="{danger: item.negativeKeywordMatch123}">
-                            <td>{{item.Keyword}}</td>
+                            <td>{{item.keyword}}</td>
                             <td>{{item.userInputSegment}} <!-- <input type="checkbox" class="1form-control" ng-click="negativeKeyowrdCheckBoxToggle(item.Keyword)" ng-checked="item.negativeKeywordMatch" >
                                 -->
                             </td>
-							<td>{{item['Avg. Monthly Searches (exact match only)']}}</td>
+							<td>{{item.avMonthlySearches}}</td>
                         </tr>
                         </tbody>
                     </table>
