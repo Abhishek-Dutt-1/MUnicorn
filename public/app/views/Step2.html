@@ -2,7 +2,7 @@
 	<div class="row" style="padding-top: 20px;">
         <div class="row">
             <div class="col-md-12">
-                <button type="button" ng-click="markMatches()" class="btn btn-info">Match Negative Keywords</button>
+                <button type="button" ng-click="markButton()" class="btn btn-info">Match Negative Keywords</button>
 				<button type="button" ng-click="markOrderIndepDuplicates()" class="btn btn-info">Match Order Independent Duplicate Keywords</button>
                 <button type="button" ng-click="deleteMatches()" class="btn btn-info">Delete Matched</button>
                 <button type="button" ng-click="resetMatches()" class="btn btn-default">Reset</button>
@@ -62,7 +62,7 @@
                         <tr ng-repeat="item in dummyData" ng-class="{danger: item.negativeKeywordMatch}">
                             <td>{{item.keyword}}</td>
                             <td>{{item.avMonthlySearches}}</td>
-                            <td><input type="checkbox" ng-click="negativeKeyowrdCheckBoxToggle(item.Keyword)" ng-checked="item.negativeKeywordMatch" ></td>
+                            <td><input type="checkbox" ng-click="negativeKeyowrdCheckBoxToggle(item.id)" ng-checked="item.negativeKeywordMatch" ></td>
                         </tr>
                         </tbody>
                     </table>

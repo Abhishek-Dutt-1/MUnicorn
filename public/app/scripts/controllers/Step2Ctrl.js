@@ -1,12 +1,14 @@
 'use strict';
 
-keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', '$http', 'DataShareService', function ($scope, $http, DataShareService) {
+keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', 'DataShareService', function ($scope, DataShareService) {
     $scope.numShowKeywords = 50;
-    $scope.currentPageNum = 0;
+    $scope.currentPageNum = 0;      //0 == first page
     $scope.currentKeywordsMatched = 0;
 	$scope.countArray = []
     $scope.countArraySorted = [];
-	
+    $scope.doNotDelete = [];
+    $scope.matchButtonPressed = false;
+    $scope.matchDuplicateButtonPressed = false;
 	/*
 	// Fetch Keywords, expects JSON
 	$http.get('scripts/Dish Tv Sample.json').success(function(data) {
@@ -29,7 +31,10 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', '$http', 'DataShar
     };
 
     $scope.updateKeywordTable = function() {
-        DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords, $scope.numShowKeywords, function(data) { $scope.dummyData = data; } );
+        DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords, $scope.numShowKeywords, function(data) {
+            $scope.dummyData = data;
+            if($scope.matchButtonPressed) $scope.markMatches();
+        } );
     };
 
 /*
@@ -61,32 +66,42 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', '$http', 'DataShar
     };
 */
     //////////////////////////// End Keywords Table and Pager /////////////////////////
-    
+     $scope.markButton = function() {
+        $scope.matchButtonPressed = true;
+        $scope.markMatches();
+    };
+   
     // Mark matches between keywords and Negative Keyword List
     $scope.markMatches = function() {
        //actualData vs StopWordList Matching Code Here 
-        $scope.actualData = $scope.actualData.map( function(currentValue, index, array) {   // Map returns a new array leaving orginal array untouched
+       $scope.dummyData.forEach( function(currentValue, index, array) {   // Map returns a new array leaving orginal array untouched
 
             if(typeof $scope.negativeKeywordList !== 'undefined') {       // Mark all false if stopWordsList does not exists
+
                 if($scope.negativeKeywordList.length > 0) {               // Exist and has at least one element
-                    if($scope.negativeKeywordList.some( function(negativeKeyword, index, array) {    //  .some returns true for matches at least one match
-                        //stopWord.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');        // Clean stopWord of special characters
-                        //stopWord = "\\b\\"+ stopWord + "\\b";                          // create a regexp
-                        return new RegExp('\\b' + negativeKeyword + '\\b', 'i').test(currentValue.Keyword);    // returns true of false
-                    }) === true) {
-                        currentValue.negativeKeywordMatch = true;                      // atleast one match found in the stop word list for current keyword
-                        return currentValue;
-                    } else {
-                         //currentValue.negativeKeywordMatch = false;                    // no match found
-                         return currentValue;
+
+                    if($scope.doNotDelete.indexOf(currentValue.id) === -1) {
+
+                        if($scope.negativeKeywordList.some( function(negativeKeyword, index, array) {    //  .some returns true for matches at least one match
+                            //stopWord.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');        // Clean stopWord of special characters
+                            //stopWord = "\\b\\"+ stopWord + "\\b";                          // create a regexp
+                            return new RegExp('\\b' + negativeKeyword.negativekeyword + '\\b', 'i').test(currentValue.keyword);    // returns true of false
+                        }) === true) {
+                            currentValue.negativeKeywordMatch = true;                      // atleast one match found in the stop word list for current keyword
+                            console.log(currentValue.keyword);
+                            //return currentValue;
+                        } else {
+                             //currentValue.negativeKeywordMatch = false;                    // no match found
+                             //return currentValue;
+                        }
                     }
                 } else {
                     //currentValue.negativeKeywordMatch = false;                         // No element in stopWordsList
-                    return currentValue;
+                    //return currentValue;
                 }
             } else {
                 //currentValue.negativeKeywordMatch = false;                             // stopWOrdsList not defined
-                return currentValue;
+                //return currentValue;
             }
         });
         countMatchedKeywords();
@@ -94,15 +109,39 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', '$http', 'DataShar
 
     // Reset button pressed
     $scope.resetMatches = function() {
+        $scope.dummyData.forEach( function(element, index) {
+            element.negativeKeywordMatch = false; 
+        });
+        $scope.doNotDelete = [];
+        $scope.matchButtonPressed = false;
+        $scope.matchDuplicateButtonPressed = false;
+        countMatchedKeywords();
+    };
+/*
+    $scope.resetMatches = function() {
         $scope.actualData.forEach( function(element, index) {
             element.negativeKeywordMatch = false; 
         });
+        $scope.doNotDelete = [];
+        $scope.matchButtonPressed = false;
         countMatchedKeywords();
     };
-
+*/
     // Delete matches
     $scope.deleteMatches = function() {
-        DataShareService.deleteMatchingNegativewordsFromKeywords( function(res) {} );
+
+        if($scope.matchButtonPressed) {
+            DataShareService.deleteMatchingNegativewordsFromKeywords( $scope.doNotDelete.toString(), function(res) { console.log(res); } );
+            $scope.matchButtonPressed = false;
+        }
+
+        if($scope.matchDuplicateButtonPressed) {
+            DataShareService.deleteDuplicatesFromKeywords( $scope.doNotDelete.toString(), function(res) { console.log(res); } );
+            $scope.matchDuplicateButtonPressed = false;
+        }
+
+        countMatchedKeywords();
+        $scope.updateKeywordTable();
     };
 /*
     $scope.deleteMatches = function() {
@@ -116,7 +155,28 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', '$http', 'DataShar
     };
 */
     // Handle manula stopWordMatch check box toggle 
-           
+    $scope.negativeKeyowrdCheckBoxToggle = function(id) {
+        $scope.dummyData.forEach( function(element, index){
+            if(element.id === id) {
+                if(element.negativeKeywordMatch === true) {
+                    element.negativeKeywordMatch = !true; 
+                    if( $scope.doNotDelete.indexOf(id) === -1 ) $scope.doNotDelete.push(id);
+                    //DataShareService.toggleDeleteFlag( id, element.stopWordMatch, function(res) {} );
+                }
+                else
+                {
+                    element.negativeKeywordMatch = true; 
+                    if( $scope.doNotDelete.indexOf(id) !== -1 ) $scope.doNotDelete.splice( $scope.doNotDelete.indexOf(id), 1 );
+                }
+                //element.negativeKeywordMatch = !element.negativeKeywordMatch; 
+                //console.log(element);
+            }
+        });
+        if($scope.matchButtonPressed) $scope.markMatches();
+        console.log($scope.doNotDelete);
+        countMatchedKeywords();
+    };
+/*
     $scope.negativeKeyowrdCheckBoxToggle = function(keyword) {
         $scope.actualData.forEach( function(element, index){
             if(element.Keyword === keyword) {
@@ -126,15 +186,16 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', '$http', 'DataShar
         });
         countMatchedKeywords();
     };
-
+*/
     // Maintain a count of keywords currently matched (local function);
     var countMatchedKeywords = function() {
-        $scope.currentKeywordsMatched = 0; 
+/*        $scope.currentKeywordsMatched = 0; 
         $scope.actualData.forEach( function(element, index) {
             if(element.negativeKeywordMatch === true) {
                 $scope.currentKeywordsMatched = $scope.currentKeywordsMatched + 1;
             }
         });
+*/
     };
 
     //////////////////////////// Handle Negative Keyword (Stop Words) Interface ///////////////////
@@ -194,6 +255,7 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', '$http', 'DataShar
     };
 */
     $scope.updateNegativeKeywordTable = function() {
+
         DataShareService.fetchNegativeKeywordList( function(data) {
             // Create JS array splitting at new line
             //console.log(data);
@@ -229,12 +291,13 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', '$http', 'DataShar
     
     //  Remove duplicates
     $scope.markOrderIndepDuplicates = function() {
-        $scope.actualData.forEach( function(element, index) {
-            var temp = element.Keyword.split(' ').sort().join(' ');
-            $scope.actualData.forEach (function (elem, ind) {
+        $scope.matchDuplicateButtonPressed = true;
+        $scope.dummyData.forEach( function(element, index) {
+            var temp = element.keyword.split(' ').sort().join(' ');
+            $scope.dummyData.forEach (function (elem, ind) {
                 if (index < ind) {
 //                    if( element.Keyword.split(' ').sort().join(' ') == elem.Keyword.split(' ').sort().join(' ') )  {
-                        if( temp == elem.Keyword.split(' ').sort().join(' ') )  {
+                        if( temp == elem.keyword.split(' ').sort().join(' ') )  {
                         elem.negativeKeywordMatch = true;
 //                        console.log(elem.Keyword);
                     }

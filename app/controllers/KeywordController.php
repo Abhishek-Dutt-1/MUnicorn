@@ -46,13 +46,19 @@ class KeywordController extends \BaseController {
 
         return Response::json(array('success' => true));
 	}
-
-    // delete stop words
-    public function deleteStopWords()
+/*
+    // sync delete checkbox state with db
+    public function toggleDeleteFlag()
     {
-        $keyword = DB::table('keywords')->where('keyword', '=', 'dish tv online')->get();
+        $keyword = Keyword::find( Input::get('id') );
+		if(Input::get('state') == 'true') {
+			$keyword->deleteflag =  1;
+		} else {
+			$keyword->deleteflag =  0;
+		}
+        $keyword->save();
 
-        return Response::json($keyword);
+        return Response::json( array(Input::get('state'), $keyword) );
     }
-
+*/
 }

@@ -7,7 +7,10 @@
 				<button type="button" ng-click="markOrderIndepDuplicates()" class="btn btn-default">Mark Order Independent Duplicate Keywords</button>
                 <button type="button" ng-click="deleteMatches()" class="btn btn-default">Delete Marked</button>
                 -->
-            <button type="button" ng-click="resetMatches()" class="btn btn-default">Reset</button>
+                <div class="pull-right">
+                    <button type="button" ng-click="saveInputSegments()" class="btn" ng-class=" userSegmentsSaved ? 'btn-success' : 'btn-danger' " >Save</button>
+                    <button type="button" ng-click="resetMatches()" class="btn btn-default">Reset</button>
+                </div>
         </div>
         </div>
         <div class="row" style="padding-top: 10px;">
@@ -81,18 +84,18 @@
                 <!-- Current Page Number: {{currentPageNum}} -->
                     <div>
                         <ul class="pager">
-                            <li ng-class="{disabled: currentPageNumSortedArray == 0}">
-                            <a href ng-click="changePageSortedArray(-1)" >« Prev</a>
+                            <li ng-class="{disabled: currentPageNumPhrases == 0}">
+                            <a href ng-click="changePagePhrases(-1)" >« Prev</a>
                             </li>
-                            <li ng-class="{disabled: countArraySorted.length <= (currentPageNumSortedArray+1)*numShowKeywordsSortedArray }">
-                            <a href ng-click="changePageSortedArray(1)">Next »</a>
+                            <li ng-class="{disabled: countArraySorted.length <= (currentPageNumPhrases+1)*numShowPhrases }">
+                            <a href ng-click="changePagePhrases(1)">Next »</a>
                             </li>
                         </ul>
                     </div>
                 <!-- Actual Data Length: {{actualData.length}} -->
                 </div>
                 <div class="col-md-3">
-                    <input ng-change="updateKeywordTableSortedArray()" ng-model="numShowKeywordsSortedArray" type="text" class="form-control pager">
+                    <input ng-change="updatePhrasesTable()" ng-model="numShowPhrases" type="text" class="form-control pager">
                 </div>
             </div> <!-- end row -->
             <div class="row">
@@ -100,27 +103,28 @@
                     <table class="table table-condensed table-hover">
                         <thead>
                             <tr>
-                                <th class="id">Keyword&nbsp;<a ng-click="sort_by('id')"><i class="icon-sort"></i></a></th>
+                                <th class="id">Phrase&nbsp;<a ng-click="sort_by('id')"><i class="icon-sort"></i></a></th>
                                 <th class="name">Count&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
-                                <th class="description">Segment Input&nbsp;<a ng-click="sort_by('description')"><i class="icon-sort"></i></a></th>
+                                <th class="description">Input Segment&nbsp;<a ng-click="sort_by('description')"><i class="icon-sort"></i></a></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="" ng-repeat="item in dummyDataSortedArray track by $index">
-                                <td>{{item.Keyword}}</td>
+                            <tr class="" ng-repeat="item in dummyDataPhrases">
+                                <td>{{item.phrase}}</td>
                                 <td>{{item.count}}</td>
-                                <td><input ng-change="applyUserSegments(item.Keyword, item.userInputSegment)" ng-model="item.userInputSegment" type="input" class="1form-control"></td>
+                                <!--                                <td><input ng-change="applyUserSegments(item.id, item.userInputSegment)" ng-model="item.userInputSegment" type="input" class="1form-control"></td> -->
+                                <td><input ng-change="applyUserSegments(item.id, item.segments, false)" ng-model="item.segments" type="input" class="1form-control"></td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <td colspan="3">
                                 <div>
                                     <ul class="pager">
-                                        <li ng-class="{disabled: currentPageNumSortedArray == 0}">
-                                        <a href ng-click="changePageSortedArray(-1)" >« Prev</a>
+                                        <li ng-class="{disabled: currentPageNumPhrases == 0}">
+                                        <a href ng-click="changePagePhrases(-1)" >« Prev</a>
                                         </li>
-                                        <li ng-class="{disabled: countArraySorted.length <= (currentPageNumSortedArray+1)*numShowKeywordsSortedArray }">
-                                        <a href ng-click="changePageSortedArray(1)">Next »</a>
+                                        <li ng-class="{disabled: countArraySorted.length <= (currentPageNumPhrases+1)*numShowPhrases }">
+                                        <a href ng-click="changePagePhrases(1)">Next »</a>
                                         </li>
                                     </ul>
                                 </div>

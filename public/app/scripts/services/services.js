@@ -34,6 +34,34 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
 
 	return {
 		// Actual Data
+        ////////////////////////////////////// get keywords for the keywords table
+        fetchKeywords: function(pageNum, keywordsPerPage, callback) {
+
+            var resKeywords = $resource('api/keywords/' + pageNum + '/' + keywordsPerPage , {} , {
+                query: { method:'GET', params:{}, isArray:true }
+            });
+
+            resKeywords.query( function(data) { 
+                data.forEach( function(elem, index) {
+					// ugly hack but no time
+                    elem.KeywordStopWordHighlighted = elem.keyword;
+                    elem.userInputSegmentArray = [];
+                    elem.userInputSegment = '';
+                });
+                callback(data);
+            });
+
+        },
+
+/*
+        // Sync delete checkbox state with databse
+        toggleDeleteFlag: function(id, state, callback) {
+            $resource('api/keywords/toggledeleteflag', {} , {
+                query: { method:'POST', params:{id: id, state: state}, isArray:false }
+            }).query( function(res) { callback(res); } );
+        },
+*/
+/*
 		fetchActualData: function(callback) {
 			if (typeof actualData == 'undefined') {
 				resActualData.query(function(data) { 
@@ -55,7 +83,7 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
 		updateActualData: function(data) {
 			actualData = data;
 		},
-		
+*/		
 		////////////////////////////////// Stop wprds List Data
         fetchStopWordList: function(callback) {
             resStopWord.query(function(data) { 
@@ -153,24 +181,83 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
         },
 
 
-        ////////////////////////////////////// get keywords for the keywords table
-        fetchKeywords: function(pageNum, keywordsPerPage, callback) {
-
-            var resKeywords = $resource('api/keywords/' + pageNum + '/' + keywordsPerPage , {} , {
-                query: { method:'GET', params:{}, isArray:true }
-            });
-
-            resKeywords.query( function(data) { callback(data); } );
-
-        },
 
         //////////////////  OPS
-        deleteMatchingStopWordsFromKeywords: function(callback) {
-             $resource('api/deletestopwordsfromkeywords/', {} , {
-                query: { method:'DELETE', params:{}, isArray:false }
+        // Delete stopwords which match stopwords within keywords
+        deleteMatchingStopWordsFromKeywords: function(doNotDelete, callback) {
+             $resource('api/ops/deletestopwordsfromkeywords', {} , {
+                 query: { method:'POST', params:{ doNotDelete: doNotDelete }, isArray:false }
             }).query( function(res) { callback(res); } );
-        }
+        },
+        // delete matching negative keywords
+        deleteMatchingNegativewordsFromKeywords: function(doNotDelete, callback) {
+             $resource('api/ops/deletematchingnegativewordsfromkeywords', {} , {
+                 query: { method:'POST', params:{ doNotDelete: doNotDelete }, isArray:false }
+            }).query( function(res) { callback(res); } );
+        },
+        // delete order independent duplicates
+        deleteDuplicatesFromKeywords: function(doNotDelete, callback) {
+             $resource('api/ops/deleteduplicatesfromkeywords', {} , {
+                 query: { method:'POST', params:{ doNotDelete: doNotDelete }, isArray:false }
+            }).query( function(res) { callback(res); } );
+        },
 
+        /// Fetch subset of 2 word and 1 word phrases data
+        fetchPhrases: function(pageNum, keywordsPerPage, callback) {
+            var resPhrases = $resource('api/ops/phrases/' + pageNum + '/' + keywordsPerPage , {} , {
+                query: { method:'GET', params:{}, isArray:true }
+            });
+            // post processing
+            resPhrases.query( function(data) { 
+                callback(data);
+            });
+        },
+
+        /// Fetch ALL 2 word and 1 word phrases data
+        fetchAllPhrases: function(phraselength, callback) {
+            var resPhrases = $resource('api/ops/getallphrases/' + phraselength, {} , {
+                query: { method:'GET', params:{}, isArray:true }
+            });
+            // post processing
+            resPhrases.query( function(data) { 
+                callback(data);
+            });
+        },
+
+        /// Refresh segmentmap table with 1 and 2 words phrases by recalulating
+        //counts
+        refreshPhrases: function(callback) {
+            var resPhrases = $resource('api/ops/refreshphrases', {} , {
+                query: { method:'GET', params:{}, isArray:false }
+            });
+            // post processing
+            resPhrases.query( function(res) { 
+                callback(res);
+            });
+        },
+
+        // Save user inputted segments to segments map table
+        saveInputSegments: function(segmentMap, callback) {
+           
+            $http({
+                method: 'POST',
+                url: 'api/ops/saveinputsegments',
+                data: {segmentMap: segmentMap},
+                //headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            }).success( function(res) {
+                callback(res);
+            });
+
+            /*
+            var resPhrases = $resource('api/ops/saveinputsegments', {} , {
+                query: { method:'POST', {segmentMap}, isArray:false }
+            });
+            resPhrases.query({}, function(res) { 
+                callback(res);
+            });
+            */
+
+        }
 		
     };  // end return
 		

@@ -27,6 +27,8 @@ Route::group(array('prefix' => 'api/keywords'), function()
     Route::get( '/{start}/{count}', 'KeywordController@listKeywords' );
     // create a new keyword
     Route::post( '/', 'KeywordController@create' );
+    // save delete flag checkbox
+    Route::post( '/toggledeleteflag', 'KeywordController@toggleDeleteFlag' );   
     // delete a new keyword
     Route::delete( '/{id}', 'KeywordController@destroy' );
 
@@ -64,12 +66,26 @@ Route::group(array('prefix' => 'api/negativekeywords'), function()
 Route::group(array('prefix' => 'api/ops'), function()
 {
     // delete stopwords from keywords
-    Route::get( '/deletestopwordsfromkeywords', 'OperationsController@deleteStopWords'); //deleteStopWords' );
-
+    Route::post( '/deletestopwordsfromkeywords', 'OperationsController@deleteStopWords');
+    // delete matching negative keywords from keywords
+    Route::post( '/deletematchingnegativewordsfromkeywords', 'OperationsController@deleteMatchingNegativeKeywords');
+    // delete order indep duplicates
+    Route::post( '/deleteduplicatesfromkeywords', 'OperationsController@deleteDuplicatesFromKeywords');
+	// Refresh segmentmap table with phrases
+	Route::get( '/refreshphrases', 'OperationsController@refreshPhrases');    //step3
+	// fetch 2 and 1 word phrases
+	Route::get( '/phrases/{start}/{count}', 'OperationsController@getPhrases');    //step3
+	// fetch ALL 2 and 1 word phrases
+	Route::get( '/getallphrases/{phraselength}', 'OperationsController@getAllPhrases');    //step3
+	// save user inputted segments mapping to phrases in the segmentmap table
+	Route::post( '/saveinputsegments', 'OperationsController@saveInputSegments');    //step3
+	
 });
 
 // Catch all route
 App::missing(function($exception)
 {
+	return "XXXX";
+	return var_dump($exception);
     return View::make('index');
 });

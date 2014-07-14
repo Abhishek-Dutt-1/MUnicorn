@@ -1,10 +1,11 @@
 'use strict';
 
-keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', 'DataShareService', function ($scope, $http, $sce, DataShareService) {
-    $scope.numShowKeywords = 10;
+keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$sce', 'DataShareService', function ($scope, $sce, DataShareService) {
+    $scope.numShowKeywords = 50;
     $scope.currentPageNum = 0;      // 0 == first page
     $scope.currentKeywordsMatched = 0;
-	
+    $scope.doNotDelete = [];	
+    $scope.matchButtonPressed = false;
 	/*
 	// Fetch Keywords, expects JSON
 	$http.get('scripts/Dish Tv Sample.json').success(function(data) {
@@ -28,7 +29,10 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', '
     };
 
     $scope.updateKeywordTable = function() {
-        DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords, $scope.numShowKeywords, function(data) { $scope.dummyData = data; } );
+        DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords, $scope.numShowKeywords, function(data) { 
+            $scope.dummyData = data; 
+            if($scope.matchButtonPressed) $scope.markMatches();
+        } );
     };
 /*   
     $scope.changePage = function(next) {
@@ -59,8 +63,60 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', '
     };
 */
     //////////////////////////// End Keywords Table and Pager /////////////////////////
-    
+    $scope.markButton = function() {
+        $scope.matchButtonPressed = true;
+        $scope.markMatches();
+    };
     // Mark matches between keywords and Stop Word List
+    $scope.markMatches = function() {
+
+        $scope.dummyData.forEach( function(currentValue, index, array) {
+
+            if(typeof $scope.stopWordList !== 'undefined')             // Mark all false if stopWordsList does not exists
+            {
+
+                if($scope.stopWordList.length > 0)               // Exist and has at least one element
+                {
+
+                    $scope.stopWordList.forEach( function(stopWord, index, array)           //  .some returns true for matches at least one match
+                    {
+                        if($scope.doNotDelete.indexOf(currentValue.id) === -1)
+                        {
+                            if( new RegExp('\\b' + stopWord.stopword + '\\b', 'i').test( currentValue.keyword )  === true )                // returns true of false
+                            {
+
+                                if(currentValue.stopWordMatch === true)          // current keyword has already been matched atleast once.
+                                {
+                                    currentValue.KeywordStopWordHighlighted = currentValue.KeywordStopWordHighlighted.replace(new RegExp('\\b' + stopWord.stopword + '\\b', 'ig'), '<mark><b>$&</b></mark>');
+                                }
+                                else
+                                {
+                                    currentValue.KeywordStopWordHighlighted = currentValue.keyword.replace( new RegExp('\\b' + stopWord.stopword + '\\b', 'ig') , '<mark><b>$&</b></mark>' );
+                                    //console.log(currentValue.KeywordStopWordHighlighted);
+                                    currentValue.stopWordMatch = true;                      // atleast one match found in the stop word list for current keyword
+                                }
+                            }
+                            else
+                            {
+                            }
+                        }
+                        else
+                        {
+                        }
+                    });
+                }
+                else
+                {
+                }
+            }
+            else
+            {
+            }
+        });
+        countMatchedKeywords();
+    };
+
+/*
     $scope.markMatches = function() {
        //actualData vs StopWordList Matching Code Here 
         $scope.actualData = $scope.actualData.map( function(currentValue, index, array) {   // Map returns a new array leaving orginal array untouched
@@ -102,7 +158,7 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', '
         });
         countMatchedKeywords();
     };
-
+*/
     // small hack to display KeywordStopWordHighlighted string as html
     $scope.renderHtml = function(html_code)
     {
@@ -111,17 +167,25 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', '
 
     // Reset button pressed
     $scope.resetMatches = function() {
-        $scope.actualData.forEach( function(element, index){
-            element.KeywordStopWordHighlighted = "";
+        $scope.dummyData.forEach( function(element, index){
+            element.KeywordStopWordHighlighted = element.keyword;
             element.stopWordMatch = false; 
         });
+        $scope.doNotDelete = [];
+        $scope.matchButtonPressed = false;
         countMatchedKeywords();
     };
 
     // Delete stop word matches within the keyword, no element is deleted, only
     // keword is altered
     $scope.deleteMatches = function() {
-        DataShareService.deleteMatchingStopWordsFromKeywords( function(res) {} );
+        console.log($scope.doNotDelete);
+        DataShareService.deleteMatchingStopWordsFromKeywords($scope.doNotDelete.toString(), function(res) { 
+            //console.log(res); 
+            $scope.updateKeywordTable();
+        } );
+        $scope.matchButtonPressed = false;
+        countMatchedKeywords();
     };
 /*
     $scope.deleteMatches = function() {
@@ -137,8 +201,30 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', '
         countMatchedKeywords();
     };
 */
-    // Handle manula stopWordMatch check box toggle 
-           
+
+    // Handle manual stopWordMatch check box toggle 
+    $scope.stopWordCheckBoxToggle = function(id) {
+
+        $scope.dummyData.forEach( function(element, index){
+            if(element.id === id) {
+                if(element.stopWordMatch === true) {
+                    element.stopWordMatch = !true; 
+                    if( $scope.doNotDelete.indexOf(id) === -1 ) $scope.doNotDelete.push(id);
+                    //DataShareService.toggleDeleteFlag( id, element.stopWordMatch, function(res) {} );
+                }
+                else
+                {
+                    element.stopWordMatch = true; 
+                    if( $scope.doNotDelete.indexOf(id) !== -1 ) $scope.doNotDelete.splice( $scope.doNotDelete.indexOf(id), 1 );
+                }
+            }
+        });
+
+        if($scope.matchButtonPressed) $scope.markMatches();
+        console.log($scope.doNotDelete);
+        countMatchedKeywords();
+    };
+/*
     $scope.stopWordCheckBoxToggle = function(keyword) {
         $scope.actualData.forEach( function(element, index){
             if(element.keyword === keyword) {
@@ -147,15 +233,18 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$http', '$sce', '
         });
         countMatchedKeywords();
     };
+*/
 
     // Maintain a count of keywords currently matched (local function);
     var countMatchedKeywords = function() {
+/*
         $scope.currentKeywordsMatched = 0; 
         $scope.actualData.forEach( function(element, index) {
             if(element.stopWordMatch === true) {
                 $scope.currentKeywordsMatched = $scope.currentKeywordsMatched + 1;
             }
         });
+*/
     };
 
     //////////////////////////// Handle Stop Words Interface ///////////////////
