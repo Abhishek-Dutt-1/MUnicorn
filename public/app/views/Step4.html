@@ -68,8 +68,8 @@
                         <tbody>
                         <tr ng-repeat="item in dummyData" ng-class="{danger: item.negativeKeywordMatch123}">
                             <!-- <td>{{item.Sno}}</td> -->
-                            <td>{{item.keyword}}</td>
-                            <td>{{item.userInputSegment}}</td>
+                            <td>{{item.id}} - {{item.keyword}}</td>
+                            <td>{{item.NAME}}</td>
                             <td>{{item.avMonthlySearches}}</td>
                             <td>{{item.competition | number: 2}}</td>
                             <td>{{item.suggestedBid | number: 2}}</td>

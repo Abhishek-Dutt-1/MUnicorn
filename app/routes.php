@@ -17,18 +17,17 @@ Route::get('/', function()
 	return View::make('index');     // will return app/views/index.php
 });
 
-
 // API routes for Keywords
 Route::group(array('prefix' => 'api/keywords'), function()
 {
     // fetch all keywords
     Route::get( '/', 'KeywordController@index' );
     //fetch a subset of keywords
-    Route::get( '/{start}/{count}', 'KeywordController@listKeywords' );
+    Route::get( '/{dataaccountid}/{start}/{count}', 'KeywordController@listKeywords' );
     // create a new keyword
     Route::post( '/', 'KeywordController@create' );
     // save delete flag checkbox
-    Route::post( '/toggledeleteflag', 'KeywordController@toggleDeleteFlag' );   
+    //Route::post( '/toggledeleteflag', 'KeywordController@toggleDeleteFlag' );   
     // delete a new keyword
     Route::delete( '/{id}', 'KeywordController@destroy' );
 
@@ -38,7 +37,7 @@ Route::group(array('prefix' => 'api/keywords'), function()
 Route::group(array('prefix' => 'api/stopwords'), function()
 {
     // fetch all stopword
-    Route::get( '/', 'StopwordController@index' );
+    Route::get( '/{dataaccountid}', 'StopwordController@index' );
     //fetch a subset of stopword
     Route::get( '/{start}/{count}', 'StopwordController@listStopwords' );
     // create a new stopword
@@ -52,7 +51,7 @@ Route::group(array('prefix' => 'api/stopwords'), function()
 Route::group(array('prefix' => 'api/negativekeywords'), function()
 {
     // fetch all Negativekeywords
-    Route::get( '/', 'NegativekeywordController@index' );
+    Route::get( '/{dataaccountid}', 'NegativekeywordController@index' );
     //fetch a subset of Negativekeywords
     Route::get( '/{start}/{count}', 'NegativekeywordController@listNegativekeywords' );
     // create a new Negativekeyword
@@ -72,15 +71,37 @@ Route::group(array('prefix' => 'api/ops'), function()
     // delete order indep duplicates
     Route::post( '/deleteduplicatesfromkeywords', 'OperationsController@deleteDuplicatesFromKeywords');
 	// Refresh segmentmap table with phrases
-	Route::get( '/refreshphrases', 'OperationsController@refreshPhrases');    //step3
+	Route::get( '/refreshphrases/{dataaccountid}', 'OperationsController@refreshPhrases');    //step3
 	// fetch 2 and 1 word phrases
 	Route::get( '/phrases/{start}/{count}', 'OperationsController@getPhrases');    //step3
 	// fetch ALL 2 and 1 word phrases
-	Route::get( '/getallphrases/{phraselength}', 'OperationsController@getAllPhrases');    //step3
+	Route::get( '/getallphrases/{dataaccountid}/{phraselength}', 'OperationsController@getAllPhrases');    //step3
 	// save user inputted segments mapping to phrases in the segmentmap table
 	Route::post( '/saveinputsegments', 'OperationsController@saveInputSegments');    //step3
+
+	// STEP-4 :: fetch data from keywords-segment table
+	Route::get( '/fetchkeywordsandsegmentsdata/{dataaccountid}/{start}/{count}', 'OperationsController@fetchKeywordsAndSegmentsData');
 	
+	// SELECT DATA :: Fetach all account names
+	Route::get( '/fetchallaccountnames', 'OperationsController@fetchAllAccountNames');
 });
+
+// API routes for Data Account operations
+Route::group(array('prefix' => 'api/'), function()
+{
+	Route::resource('dataaccounts', 'DataAccountController');
+/*	
+	Verb		Path							Action		Route Name
+	GET			/resource						index		resource.index
+	GET			/resource/create				create		resource.create
+	POST		/resource						store		resource.store
+	GET			/resource/{resource}			show		resource.show
+	GET			/resource/{resource}/edit		edit		resource.edit
+	PUT/PATCH	/resource/{resource}			update		resource.update
+	DELETE		/resource/{resource}			destroy		resource.destroy
+*/
+});
+
 
 // Catch all route
 App::missing(function($exception)

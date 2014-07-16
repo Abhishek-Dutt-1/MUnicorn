@@ -9,6 +9,10 @@ keywordSegmentsApp.config(['$routeProvider',
 			templateUrl: 'app/views/main.html',
 			controller: 'MainCtrl'
 		}).
+		when('/data', {
+			templateUrl: 'app/views/SelectData.html',
+			controller: 'SelectDataCtrl'
+		}).
 		when('/Step1', {
 			templateUrl: 'app/views/Step1.html',
 			controller: 'Step1Ctrl'

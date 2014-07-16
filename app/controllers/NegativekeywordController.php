@@ -7,10 +7,10 @@ class NegativekeywordController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function index($dataaccountid)
 	{
         //return Response::json(Route::input());
-        return Response::json(Negativekeyword::get());
+        return Response::json(Negativekeyword::where('dataAccount', $dataaccountid)->get());
 	}
 
 	public function listNegativekeywords($start, $count)
@@ -27,6 +27,7 @@ class NegativekeywordController extends \BaseController {
 	{
         Negativekeyword::create(array(
             'negativekeyword' => Input::get('Negativekeyword'),
+			'dataAccount' => (int)Input::get("dataaccountid")
         ));
 
         return Response::json(array('success' => true)); 

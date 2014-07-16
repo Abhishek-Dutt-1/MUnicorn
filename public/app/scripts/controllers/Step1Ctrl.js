@@ -4,8 +4,10 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$sce', 'DataShare
     $scope.numShowKeywords = 50;
     $scope.currentPageNum = 0;      // 0 == first page
     $scope.currentKeywordsMatched = 0;
-    $scope.doNotDelete = [];	
+    $scope.doNotDelete = [-1];	
     $scope.matchButtonPressed = false;
+    $scope.selectedDataAccount = {};
+
 	/*
 	// Fetch Keywords, expects JSON
 	$http.get('scripts/Dish Tv Sample.json').success(function(data) {
@@ -343,7 +345,16 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$sce', 'DataShare
     /////////////////////// End Handle Stop Words Interface ///////////////////
     
     // INIT
-    $scope.updateKeywordTable();
+//	$scope.currentDataAccount = DataShareService.getSelectedDataAccount();		
+
+    $scope.selectedDataAccount = DataShareService.getSelectedDataAccount();
+    console.log($scope.selectedDataAccount);
+    if($scope.selectedDataAccount.id >= 0)      // since id must be >= 0
+    {
+        $scope.updateKeywordTable();
+        $scope.updateStopwordTable();
+    }
+
 /*
 	DataShareService.fetchActualData( function(data) {
 		data.forEach( function(elem, index) {
@@ -355,7 +366,7 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$sce', 'DataShare
 //		$scope.updateKeywordTable();
 	});
 */
-    $scope.updateStopwordTable();
+
 /*	
 	DataShareService.fetchStopWordList( function(data) {
 		// Create JS array splitting at new line

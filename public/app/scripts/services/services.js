@@ -4,8 +4,9 @@ var keywordSegmentsServices = angular.module('keywordSegmentsServices', ['ngReso
 
 keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource', function ($http, $q, $resource) {
     
-	var actualData, stopWordList, negativeKeywordList;
-	
+	var actualData, stopWordList, negativeKeywordList, selectedDataAccount;
+    selectedDataAccount = {};
+
     /*
 	var resActualData = $resource('scripts/Dish Tv Sample.json', {}, {
       query: {method:'GET', params:{}, isArray:true}
@@ -24,20 +25,14 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
       query: { method:'GET', params:{}, isArray:true }
     });
 
-	var resStopWord = $resource('api/stopwords', {}, {
-      query: { method:'GET', params:{}, isArray:true }
-    });
 	
-	var resNegativeKeyword = $resource('api/negativekeywords', {}, {
-      query: { method:'GET', params:{}, isArray:true }
-    });
 
 	return {
 		// Actual Data
         ////////////////////////////////////// get keywords for the keywords table
         fetchKeywords: function(pageNum, keywordsPerPage, callback) {
 
-            var resKeywords = $resource('api/keywords/' + pageNum + '/' + keywordsPerPage , {} , {
+            var resKeywords = $resource('api/keywords/' + selectedDataAccount.id + '/' + pageNum + '/' + keywordsPerPage , {} , {
                 query: { method:'GET', params:{}, isArray:true }
             });
 
@@ -48,6 +43,7 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
                     elem.userInputSegmentArray = [];
                     elem.userInputSegment = '';
                 });
+                //console.log(data);
                 callback(data);
             });
 
@@ -86,6 +82,11 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
 */		
 		////////////////////////////////// Stop wprds List Data
         fetchStopWordList: function(callback) {
+
+            var resStopWord = $resource('api/stopwords/' + selectedDataAccount.id, {}, {
+              query: { method:'GET', params:{}, isArray:true }
+            });
+
             resStopWord.query(function(data) { 
                 stopWordList = data;
                 // ugly hack but no time
@@ -112,16 +113,20 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
 				callback(stopWordList);
 			}
 		},
-        */
-		
 		updateStopWordList: function(data) {
 			stopWordList = data;
 		},
+        */
 
         saveNewStopword: function(data, callback) {
+
+            console.log(data);
             $resource('api/stopwords', {} , {
-                query: { method:'POST', params:{stopword: data}, isArray:false }
-            }).query( function(res) { callback(res); } );
+                query: { method:'POST', params:{dataaccountid: selectedDataAccount.id, stopword: data}, isArray:false }
+            }).query( function(res) { 
+                console.log(res); 
+                callback(res); 
+            } );
             //temp.query( function(res) { callback(res); } );
         },
 			
@@ -134,6 +139,11 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
 
 		////////////////////////////// Negative Keyword List Data
 		fetchNegativeKeywordList: function(callback) {
+
+            var resNegativeKeyword = $resource('api/negativekeywords/' + selectedDataAccount.id, {}, {
+              query: { method:'GET', params:{}, isArray:true }
+            });
+
             resNegativeKeyword.query(function(data) { 
                 negativeKeywordList = data;
                 console.log(data);
@@ -162,14 +172,14 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
 				callback(negativeKeywordList);
 			}
 		},
-        */
 		updateNegativeKeywordList: function(data) {
 			negativeKeywordList = data;
 		},
+        */
 
         saveNewNegativeKeyword: function(data, callback) {
             $resource('api/negativekeywords', {} , {
-                query: { method:'POST', params:{Negativekeyword: data}, isArray:false }
+                query: { method:'POST', params:{dataaccountid: selectedDataAccount.id, Negativekeyword: data}, isArray:false }
             }).query( function(res) { callback(res); } );
             //temp.query( function(res) { callback(res); } );
         },
@@ -186,23 +196,23 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
         // Delete stopwords which match stopwords within keywords
         deleteMatchingStopWordsFromKeywords: function(doNotDelete, callback) {
              $resource('api/ops/deletestopwordsfromkeywords', {} , {
-                 query: { method:'POST', params:{ doNotDelete: doNotDelete }, isArray:false }
+                 query: { method:'POST', params:{ dataaccountid: selectedDataAccount.id, doNotDelete: doNotDelete }, isArray:false }
             }).query( function(res) { callback(res); } );
         },
         // delete matching negative keywords
         deleteMatchingNegativewordsFromKeywords: function(doNotDelete, callback) {
              $resource('api/ops/deletematchingnegativewordsfromkeywords', {} , {
-                 query: { method:'POST', params:{ doNotDelete: doNotDelete }, isArray:false }
+                 query: { method:'POST', params:{ dataaccountid: selectedDataAccount.id, doNotDelete: doNotDelete }, isArray:false }
             }).query( function(res) { callback(res); } );
         },
         // delete order independent duplicates
         deleteDuplicatesFromKeywords: function(doNotDelete, callback) {
              $resource('api/ops/deleteduplicatesfromkeywords', {} , {
-                 query: { method:'POST', params:{ doNotDelete: doNotDelete }, isArray:false }
+                 query: { method:'POST', params:{ dataaccountid: selectedDataAccount.id, doNotDelete: doNotDelete }, isArray:false }
             }).query( function(res) { callback(res); } );
         },
 
-        /// Fetch subset of 2 word and 1 word phrases data
+        /// Fetch subset of 2 word and 1 word phrases data -- NOT USED
         fetchPhrases: function(pageNum, keywordsPerPage, callback) {
             var resPhrases = $resource('api/ops/phrases/' + pageNum + '/' + keywordsPerPage , {} , {
                 query: { method:'GET', params:{}, isArray:true }
@@ -215,7 +225,7 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
 
         /// Fetch ALL 2 word and 1 word phrases data
         fetchAllPhrases: function(phraselength, callback) {
-            var resPhrases = $resource('api/ops/getallphrases/' + phraselength, {} , {
+            var resPhrases = $resource('api/ops/getallphrases/' + selectedDataAccount.id + '/' + phraselength, {} , {
                 query: { method:'GET', params:{}, isArray:true }
             });
             // post processing
@@ -227,18 +237,19 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
         /// Refresh segmentmap table with 1 and 2 words phrases by recalulating
         //counts
         refreshPhrases: function(callback) {
-            var resPhrases = $resource('api/ops/refreshphrases', {} , {
+
+            var resPhrases = $resource('api/ops/refreshphrases/' + selectedDataAccount.id, {} , {
                 query: { method:'GET', params:{}, isArray:false }
             });
             // post processing
             resPhrases.query( function(res) { 
                 callback(res);
             });
+
         },
 
         // Save user inputted segments to segments map table
         saveInputSegments: function(segmentMap, callback) {
-           
             $http({
                 method: 'POST',
                 url: 'api/ops/saveinputsegments',
@@ -256,9 +267,71 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
                 callback(res);
             });
             */
+        },
 
+        // Fetch keywords and segemnt data
+		fetchKeywordsAndSegmentsData: function(pageNum, keywordsPerPage, callback) {
+
+            var resKeywords = $resource('api/ops/fetchkeywordsandsegmentsdata/' + selectedDataAccount.id + '/' + pageNum + '/' + keywordsPerPage , {} , {
+                query: { method:'GET', params:{}, isArray:true }
+            });
+
+            resKeywords.query( function(data) { 
+                /*
+                data.forEach( function(elem, index) {
+					// ugly hack but no time
+                    elem.KeywordStopWordHighlighted = elem.keyword;
+                    elem.userInputSegmentArray = [];
+                    elem.userInputSegment = '';
+                });
+                */
+                callback(data);
+            });
+
+        },
+
+        // SELECT DATA :: Fetch Account Names
+		fetchAllDataAccountNames: function(callback) {
+
+            var resKeywords = $resource('api/dataaccounts', {} , {
+                query: { method:'GET', params:{}, isArray:true }
+            });
+
+            resKeywords.query( function(data) { 
+                callback(data);
+            });
+
+        },
+
+        // SELECT DATA :: Save new Account Name
+		saveNewDataAccount: function(dataaccount, user, callback) {
+
+            $resource('api/dataaccounts', {} , {
+                query: { method:'POST', params:{dataaccount: dataaccount, user: user}, isArray:false }
+            }).query( function(res) { callback(res); } );
+
+        },
+        
+        // SELECT DATA :: Delete a Data Account Name
+		deleteDataAccount: function(dataAccountId, callback) {
+
+            $resource('api/dataaccounts/' + dataAccountId, {} , {
+                query: { method:'DELETE', params:{}, isArray:false }
+            }).query( function(res) { callback(res); } );
+
+        },
+
+        // store current selected data account in local variable
+        setSelectedDataAccount: function(dataAccountId, dataAccountName, callback) {
+            selectedDataAccount.id = dataAccountId;            
+            selectedDataAccount.name = dataAccountName;            
+            callback(selectedDataAccount);
+        },
+
+        getSelectedDataAccount: function() {
+            return selectedDataAccount;
         }
-		
+
     };  // end return
 		
 }]);

@@ -9,6 +9,7 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
     $scope.numShowPhrases = 50;
     $scope.currentPageNumPhrases = 0;
     $scope.userSegmentsSaved = true;
+    $scope.selectedDataAccount = {};
 
 	/*
 	// Fetch Keywords, expects JSON
@@ -436,7 +437,26 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
 
 
 	// Init
-    $scope.updateKeywordTable();
+    $scope.selectedDataAccount = DataShareService.getSelectedDataAccount();
+    console.log($scope.selectedDataAccount);
+    if($scope.selectedDataAccount.id >= 0)      // since id must be >= 0
+    {
+        //$scope.updateKeywordTable();
+        //$scope.updateStopwordTable();
+        $scope.updateKeywordTable();
+
+        DataShareService.refreshPhrases( function(res) {
+            // get 2 word phrases
+            DataShareService.fetchAllPhrases(2, function(data) {
+                $scope.actualDataPhrases = data;
+                $scope.updatePhrasesTable();
+                $scope.bulkApplyUserSegments();
+            });
+        });
+
+    }
+
+
 /*
 	DataShareService.fetchActualData( function(data) {
 		$scope.actualData = data;
@@ -446,14 +466,6 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
 		$scope.updateKeywordTableSortedArray();
 	});
 */
-    DataShareService.refreshPhrases( function(res) {
-        // get 2 word phrases
-        DataShareService.fetchAllPhrases(2, function(data) {
-            $scope.actualDataPhrases = data;
-            $scope.updatePhrasesTable();
-            $scope.bulkApplyUserSegments();
-        });
-    });
 
 
 }]);

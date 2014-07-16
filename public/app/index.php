@@ -73,6 +73,7 @@
         <script src="app/scripts/controllers/SecondaryNavCtrl.js"></script>
 		<script src="app/scripts/services/services.js"></script>
 		<script src="app/scripts/controllers/AboutCtrl.js"></script>
+		<script src="app/scripts/controllers/SelectDataCtrl.js"></script>
 		<script src="app/scripts/controllers/Step1Ctrl.js"></script>
 		<script src="app/scripts/controllers/Step2Ctrl.js"></script>
 		<script src="app/scripts/controllers/Step3Ctrl.js"></script>

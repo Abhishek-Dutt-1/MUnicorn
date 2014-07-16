@@ -9,6 +9,7 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', 'DataShareService'
     $scope.doNotDelete = [];
     $scope.matchButtonPressed = false;
     $scope.matchDuplicateButtonPressed = false;
+    $scope.selectedDataAccount = {};
 	/*
 	// Fetch Keywords, expects JSON
 	$http.get('scripts/Dish Tv Sample.json').success(function(data) {
@@ -349,7 +350,17 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', 'DataShareService'
 	};
   
 ////////////////////////////////////////// INIT	
-    $scope.updateKeywordTable();
+    $scope.selectedDataAccount = DataShareService.getSelectedDataAccount();
+    console.log($scope.selectedDataAccount);
+    if($scope.selectedDataAccount.id >= 0)      // since id must be >= 0
+    {
+        //$scope.updateKeywordTable();
+        //$scope.updateStopwordTable();
+        $scope.updateKeywordTable();
+        $scope.updateNegativeKeywordTable();
+    }
+
+
 /*
 	DataShareService.fetchActualData( function(data) {
 		$scope.actualData = data;
@@ -358,7 +369,7 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', 'DataShareService'
 		$scope.keywordCount();		// Update the word cloud
 	});
 */
-    $scope.updateNegativeKeywordTable();
+
 /*
 	DataShareService.fetchNegativeKeywordList( function(data) {
 		// Create JS array splitting at new line

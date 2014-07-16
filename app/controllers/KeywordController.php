@@ -10,12 +10,37 @@ class KeywordController extends \BaseController {
 	public function index()
 	{
         //return Response::json(Route::input());
-        return Response::json(Keyword::get());
+		return Response::json(Keyword::get());
 	}
 
-	public function listKeywords($start, $count)
+	public function listKeywords($dataaccountid, $start, $count)
 	{
-        return Response::json( Keyword::skip($start)->take($count)->get() ); 
+	/*
+		$details = new StdClass();
+		$details->host = 'localhost';
+		$details->database = 'data_17';
+		$details->username = 'root';
+		$details->password = 'root';
+		
+		//Config::set('database.connections.mysqlCustom.database', $details->database);
+		Config::set('database.connections.key', array(
+			'driver'    => 'mysql',
+			'host'      => 'localhost',
+			'database'  => 'data_18',
+			'username'  => 'root',
+			'password'  => 'root',
+			));
+		*/
+		
+		//Config::set('database.connections.account', ['driver' => 'mysql', 'host' => $details->host, 'database' => $details->database, 'username' => $details->username, 'password' => $details->password]);		
+		//Config::set('database.connections.default', 'account');
+		//DB::setDefaultConnection('account');
+		/*
+		Config::set('database.connections.mysql_tenant.database', $details->database);
+		DB::setDefaultConnection('mysql_tenant');
+		*/
+		
+		return Response::json( Keyword::where('dataAccount', $dataaccountid)->skip($start)->take($count)->get() ); 
 	}
 
 	/**
@@ -31,7 +56,6 @@ class KeywordController extends \BaseController {
         ));
 
         return Response::json(array('success' => true)); 
-
 	}
 
 	/**

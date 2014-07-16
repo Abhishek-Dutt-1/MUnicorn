@@ -1,0 +1,23 @@
+adGroup,keyword,currency,avMonthlySearches,competition,suggestedBid,impressionShare,inAccount,inPlan,extractedFrom
+
+-------------------------------------------------------
+
+SELECT 
+SUBSTRING_INDEX(keyword,' ',2),COUNT(1) FROM keywords
+GROUP BY SUBSTRING_INDEX(keyword,' ',2
+
+-------------------------------------------------------
+
+SELECT * FROM keywords;
+CALL final
+
+SELECT DISTINCT keyword FROM keywords_temp
+
+SELECT keywords,a.word,INSTR(keywords,a.word) FROM keywords,(SELECT DISTINCT keywords AS word  FROM keywords_temp) a
+WHERE INSTR(keywords,a.word)>0
+
+SELECT a.word,COUNT(1) FROM keywords,(SELECT DISTINCT keyword AS word  FROM keywords_temp) a
+WHERE INSTR(keyword,a.word)>0
+GROUP BY a.word
+
+-------------------------------------------------------

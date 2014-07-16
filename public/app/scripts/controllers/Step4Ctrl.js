@@ -4,7 +4,7 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
     $scope.numShowKeywords = 20;
     $scope.currentPageNum = 0;
     $scope.currentKeywordsMatched = 0;
-
+    $scope.selectedDataAccount = {};
 
 	$scope.exportCSV = function(){
 		//var test_array = [["name1", 2, 3], ["name2", 4, 5], ["name3", 6, 7], ["name4", 8, 9], ["name5", 10, 11]];
@@ -48,7 +48,10 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
     };
 
     $scope.updateKeywordTable = function() {
-        DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords, $scope.numShowKeywords, function(data) { $scope.dummyData = data; } );
+        DataShareService.fetchKeywordsAndSegmentsData( $scope.currentPageNum * $scope.numShowKeywords, $scope.numShowKeywords, function(data) { 
+            $scope.dummyData = data; 
+        } );
+
     };
 
 /*
@@ -223,7 +226,16 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
     };*/
 	
     // INIT
-    $scope.updateKeywordTable();
+
+
+    $scope.selectedDataAccount = DataShareService.getSelectedDataAccount();
+    console.log($scope.selectedDataAccount);
+    if($scope.selectedDataAccount.id >= 0)      // since id must be >= 0
+    {
+        $scope.updateKeywordTable();
+    }
+
+
 /*
 	DataShareService.fetchActualData( function(data) {
 		$scope.actualData = data;

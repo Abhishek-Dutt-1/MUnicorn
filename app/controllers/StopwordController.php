@@ -7,10 +7,10 @@ class StopwordController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function index($dataaccountid)
 	{
         //return Response::json(Route::input());
-        return Response::json(Stopword::get());
+        return Response::json(Stopword::where('dataAccount', $dataaccountid)->get());
 	}
 
 	public function listStopwords($start, $count)
@@ -31,13 +31,16 @@ class StopwordController extends \BaseController {
         ));
         return Response::json(array('success' => true)); 
          */
+		
         foreach( explode(",", Input::get("stopword")) as $stopWord )
         {
             Stopword::create(array(
-                'stopword' => trim($stopWord)
+                'stopword' => trim($stopWord),
+				'dataAccount' => (int)Input::get("dataaccountid")
             ));
         }
-        return Response::json(array('success' => true)); 
+        //return intval(trim( Input::get("dataaccountid") ));
+		return Response::json(array('success' => true)); 
 	}
 
 	/**
