@@ -6,7 +6,8 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
     $scope.currentKeywordsMatched = 0;
     $scope.selectedDataAccount = {};
 
-	$scope.exportCSV = function(){
+    /*
+	$scope.exportCSV = function() {
 		//var test_array = [["name1", 2, 3], ["name2", 4, 5], ["name3", 6, 7], ["name4", 8, 9], ["name5", 10, 11]];
 		var test_array = $scope.actualData.map( function(e, i) {
 			//console.log(e);
@@ -24,8 +25,32 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
 		var encodedUri = encodeURI(csvContent);
 		window.open(encodedUri);
 	};
+    */
 
-	
+	$scope.exportCSV = function() {
+
+        DataShareService.downloadCSV( function(data) {
+
+            console.log(data);
+
+            var element = angular.element('<a/>');
+            element.attr({
+                href: 'data:attachment/csv;charset=utf-8,' + encodeURI(data.file),
+//                href: '/' + data,
+                target: '_blank',
+                download: data.file
+            })[0].click();
+
+
+/*
+            var binUrl = data;
+            document.body.innerHTML += "<iframe src='" + binUrl + "' style='display: none;' ></iframe>"
+*/
+
+        } );
+
+    };
+
 	/*
 	// Fetch Keywords, expects JSON
 	$http.get('scripts/Dish Tv Sample.json').success(function(data) {
@@ -83,7 +108,8 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
     };
 */
     //////////////////////////// End Keywords Table and Pager /////////////////////////
-    
+   
+/*
     // Mark matches between keywords and Negative Keyword List
     $scope.markMatches = function() {
        //actualData vs StopWordList Matching Code Here 
@@ -113,7 +139,9 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
         });
         countMatchedKeywords();
     };
+*/
 
+/*
     // Reset button pressed
     $scope.resetMatches = function() {
         $scope.actualData.forEach( function(element, index){
@@ -121,7 +149,8 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
         });
         countMatchedKeywords();
     };
-
+*/
+/*
     // Delete matches
     $scope.deleteMatches = function() {
         $scope.actualData = $scope.actualData.filter( function(element, index) {
@@ -131,9 +160,9 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
         $scope.updateKeywordTable();
         countMatchedKeywords();
     };
-
+*/
+/*
     // Handle manula stopWordMatch check box toggle 
-           
     $scope.negativeKeyowrdCheckBoxToggle = function(keyword) {
         $scope.actualData.forEach( function(element, index){
             if(element.Keyword === keyword) {
@@ -143,7 +172,8 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
         });
         countMatchedKeywords();
     };
-
+*/
+/*
     // Maintain a count of keywords currently matched (local function);
     var countMatchedKeywords = function() {
         $scope.currentKeywordsMatched = 0; 
@@ -153,7 +183,7 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
             }
         });
     };
-
+*/
     //////////////////////////// Handle Negative Keyword (Stop Words) Interface ///////////////////
 	// Fetch Stop words list
 	// Expects a string with new line separating individual words

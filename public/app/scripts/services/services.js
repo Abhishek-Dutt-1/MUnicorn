@@ -253,7 +253,7 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
             $http({
                 method: 'POST',
                 url: 'api/ops/saveinputsegments',
-                data: {segmentMap: segmentMap},
+                data: {dataaccountid: selectedDataAccount.id, segmentMap: segmentMap},
                 //headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             }).success( function(res) {
                 callback(res);
@@ -317,7 +317,11 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
 
             $resource('api/dataaccounts/' + dataAccountId, {} , {
                 query: { method:'DELETE', params:{}, isArray:false }
-            }).query( function(res) { callback(res); } );
+            }).query( function(res) {
+				callback(res);
+				selectedDataAccount.id = -1;
+				selectedDataAccount.name = null;
+			} );
 
         },
 
@@ -330,7 +334,33 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
 
         getSelectedDataAccount: function() {
             return selectedDataAccount;
+        },
+
+        /// Download data as CSV
+        downloadCSV: function(callback) {
+
+            var resKeywords = $resource('api/ops/downloadcsv/' + selectedDataAccount.id, {} , {
+                query: { method:'GET', params:{}, isArray:false }
+            });
+
+            resKeywords.query( function(data) { 
+                callback(data);
+            });
+               
+        },
+
+        getTagCloud: function( callback ) {
+
+             var resKeywords = $resource('api/ops/gettagcloud/' + selectedDataAccount.id, {} , {
+                query: { method:'GET', params:{}, isArray:false }
+            });
+
+            resKeywords.query( function(data) { 
+                callback(data);
+            });
+           
         }
+
 
     };  // end return
 		

@@ -10,6 +10,7 @@
             </div>
         </div>
         <div class="row" style="padding-top: 10px;">
+            <h4 class="pull-left1">Dataset: {{selectedDataAccount.name}}</h4>
             <div class="col-md-12">
                 Total Keywords: {{actualData.length}}
 				<button type="button" ng-click="exportCSV()" class="btn btn-info pull-right">Export CSV</button>
@@ -43,6 +44,8 @@
                             <!--<th class="id">Id&nbsp;<a ng-click="sort_by('id')"><i class="icon-sort"></i></a></th>
 								-->
                                 <th class="name">Keyword&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
+                                <th class="name">Brand&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
+                                <th class="name">Compete&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
                                 <th class="name">Segment&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
                                 <th class="name">Volume&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
                                 <th class="name">Competition&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
@@ -68,7 +71,9 @@
                         <tbody>
                         <tr ng-repeat="item in dummyData" ng-class="{danger: item.negativeKeywordMatch123}">
                             <!-- <td>{{item.Sno}}</td> -->
-                            <td>{{item.id}} - {{item.keyword}}</td>
+                            <td>{{item.keyword}}</td>
+                            <td>{{item.Brand | checkmark}}</td>
+                            <td>{{item.Compete | checkmark}}</td>
                             <td>{{item.NAME}}</td>
                             <td>{{item.avMonthlySearches}}</td>
                             <td>{{item.competition | number: 2}}</td>

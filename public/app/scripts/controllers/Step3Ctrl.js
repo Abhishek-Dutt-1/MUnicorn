@@ -5,11 +5,27 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
     $scope.currentPageNum = 0;
     $scope.currentKeywordsMatched = 0;
 	$scope.countArray = []
+
     $scope.actualDataPhrases = [];
+    $scope.actualDataPhrases1Word = [];
+
     $scope.numShowPhrases = 50;
+    $scope.numShowPhrases1Word = 50;
+
     $scope.currentPageNumPhrases = 0;
+    $scope.currentPageNumPhrases1Word = 0;
+
     $scope.userSegmentsSaved = true;
+
     $scope.selectedDataAccount = {};
+
+    $scope.phrasesSavingSpinner = false;
+    $scope.phrasesSavingSpinner1Word = false;
+    
+    $scope.phrasesLoadingSpinner = false;
+    $scope.phrasesLoadingSpinner1Word = false;
+
+    $scope.showPhrases1WordTable = false;
 
 	/*
 	// Fetch Keywords, expects JSON
@@ -37,6 +53,7 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
         DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords, $scope.numShowKeywords, function(data) {
             $scope.dummyData = data;
             $scope.bulkApplyUserSegments();
+            $scope.bulkApplyUserSegments1Word();
         } );
 
     };
@@ -71,6 +88,7 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
     //////////////////////////// End Keywords Table and Pager /////////////////////////
     
     // Mark matches between keywords and Negative Keyword List
+/*
     $scope.markMatches = function() {
        //actualData vs StopWordList Matching Code Here 
         $scope.actualData = $scope.actualData.map( function(currentValue, index, array) {   // Map returns a new array leaving orginal array untouched
@@ -99,6 +117,7 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
         });
         countMatchedKeywords();
     };
+*/
 
     // Reset button pressed
     $scope.resetMatches = function() {
@@ -114,6 +133,7 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
     };
 
     // Delete matches
+/*
     $scope.deleteMatches = function() {
         $scope.actualData = $scope.actualData.filter( function(element, index) {
 			return !element.negativeKeywordMatch;
@@ -122,9 +142,10 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
         $scope.updateKeywordTable();
         countMatchedKeywords();
     };
+*/
 
     // Handle manula stopWordMatch check box toggle 
-           
+/*
     $scope.negativeKeyowrdCheckBoxToggle = function(keyword) {
         $scope.actualData.forEach( function(element, index){
             if(element.Keyword === keyword) {
@@ -134,6 +155,7 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
         });
         countMatchedKeywords();
     };
+*/
 
     // Maintain a count of keywords currently matched (local function);
     var countMatchedKeywords = function() {
@@ -167,6 +189,7 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
 	};
 
     // count two word phrases
+/*
     $scope.twoKeywordCount = function() {
         var temp, tempJoin;
         var i, tempArray = [];
@@ -195,8 +218,10 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
             }
         });
     };
+*/
 
     // local function to sort keyword count sudo assoc array
+/*
 	$scope.bySortedValue = function(obj, callback, context) {
 		var tuples = [];
 		for (var key in obj) {
@@ -208,7 +233,7 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
 		while (length--) callback.call(context, tuples[length][0], tuples[length][1]);
 		//bySortedValue(someObj, this.method, this);
 	};
-
+*/
 
 
     // Updates pager(at the bottom of the table) on initial load and on change of numShowKeywords
@@ -232,6 +257,7 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
     };
 */
 
+///////////////////////////////////////////////////////// 2 Words Phrases
     $scope.changePagePhrases = function(next) {
         if(next >= 0) {
             $scope.currentPageNumPhrases = ($scope.actualDataPhrases.length > ($scope.currentPageNumPhrases+1)*$scope.numShowPhrases) ? $scope.currentPageNumPhrases + 1 : $scope.currentPageNumPhrases;
@@ -256,6 +282,33 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
         }
         var endIndex = Number( (Number(startIndex) + Number($scope.numShowPhrases) < Number($scope.actualDataPhrases.length)) ? Number(startIndex) + Number($scope.numShowPhrases) : $scope.actualDataPhrases.length );
         $scope.dummyDataPhrases = $scope.actualDataPhrases.slice(startIndex, endIndex);
+    };
+
+///////////////////////////////////////////////////////// 1 Words Phrases
+    $scope.changePagePhrases1Word = function(next) {
+        if(next >= 0) {
+            $scope.currentPageNumPhrases1Word = ($scope.actualDataPhrases1Word.length > ($scope.currentPageNumPhrases1Word+1)*$scope.numShowPhrases1Word) ? $scope.currentPageNumPhrases1Word + 1 : $scope.currentPageNumPhrases1Word;
+        } else {
+            $scope.currentPageNumPhrases1Word = ($scope.currentPageNumPhrases1Word === 0)? 0 : $scope.currentPageNumPhrases1Word - 1;
+        }
+        $scope.updatePhrasesTable1Word();
+    };
+
+    // Updates phrases on initial load and on change of numShowPhrases
+    $scope.updatePhrasesTable1Word = function() {
+        // Calculate Keywords to show
+        // First page is currentPageNum = 0
+        var startIndex = 0;
+        if( Number( $scope.currentPageNumPhrases1Word * $scope.numShowPhrases1Word ) < Number($scope.actualDataPhrases1Word.length) ) {
+            startIndex = Number( $scope.currentPageNumPhrases1Word * $scope.numShowPhrases1Word );
+        } else {
+            // Changed startIndex is too high set it to 0 and start page also
+            // to 0
+            startIndex = 0;
+            $scope.currentPageNumPhrases1Word = 0;
+        }
+        var endIndex = Number( (Number(startIndex) + Number($scope.numShowPhrases1Word) < Number($scope.actualDataPhrases1Word.length)) ? Number(startIndex) + Number($scope.numShowPhrases1Word) : $scope.actualDataPhrases1Word.length );
+        $scope.dummyDataPhrases1Word = $scope.actualDataPhrases1Word.slice(startIndex, endIndex);
     };
 
 /*
@@ -287,6 +340,7 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
     };
 */
 
+//////////////////////////////////////////// 2 Word Phrases
     // Bulk apply user segments
     $scope.bulkApplyUserSegments = function() {
         $scope.actualDataPhrases.forEach( function(elem, ind) {
@@ -330,10 +384,64 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
 		countMatchedKeywords();
     };
 
+//////////////////////////////////////////// 1 Word Phrases
+    // Bulk apply user segments
+    $scope.bulkApplyUserSegments1Word = function() {
+        $scope.actualDataPhrases1Word.forEach( function(elem, ind) {
+             $scope.applyUserSegments1Word(elem.id, elem.segments, true);
+        });
+    };
+
+    $scope.applyUserSegments1Word = function(phraseId, userSegment, isBulk) {
+
+        // dont change save button color in case of bulkApplyUserSegments
+        if(!isBulk) { $scope.userSegmentsSaved = false; }
+
+        var keyword
+        $scope.actualDataPhrases1Word.forEach(function(elem, ind) {
+            if(elem.id === phraseId) {
+                elem.segments = userSegment;
+                keyword = elem.phrase;
+            }
+        });
+        
+        $scope.dummyData.forEach(function(elem, ind) {
+            if(new RegExp('\\b' + keyword + '\\b', 'i').test(elem.keyword)) {    // returns true or false
+
+                elem.userInputSegmentArray[keyword] = userSegment.split(',');
+
+                elem.userInputSegment = '';
+                for (var key in elem.userInputSegmentArray) {
+                    //console.log(elem.userInputSegmentArray[key].join());
+                    if(elem.userInputSegmentArray[key].join().length) {
+						elem.userInputSegment = elem.userInputSegment + ", " + elem.userInputSegmentArray[key].join();
+//                    console.log(elem.userInputSegmentArray[key].join(", "));
+                    }
+                }
+                elem.userInputSegment = elem.userInputSegment.substring(2, elem.userInputSegment.length);
+//                console.log(elem.userInputSegment);
+                //elem.userInputSegment = elem.userInputSegmentArray.map( function(element, index) {
+                //};
+                //console.log(elem);
+            }
+        });
+		countMatchedKeywords();
+    };
+
+
+//////////////////////////////////////// 
     // save button pressed
     $scope.saveInputSegments = function() {
+        $scope.phrasesSavingSpinner = true;
+        console.log($scope.phrasesSavingSpinner);
         var segmentMap = [];
         $scope.actualDataPhrases.forEach( function(elem, ind) {
+            segmentMap.push({
+                    id: elem.id,
+                    segments: elem.segments
+                });
+        });
+        $scope.actualDataPhrases1Word.forEach( function(elem, ind) {
             segmentMap.push({
                     id: elem.id,
                     segments: elem.segments
@@ -343,7 +451,25 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
         DataShareService.saveInputSegments(segmentMap, function(res) {
             console.log(res);
             $scope.userSegmentsSaved = true;
+            $scope.phrasesSavingSpinner = false;
+            console.log($scope.phrasesSavingSpinner);
         });
+    };
+
+
+    $scope.switchInputTable = function(phraseLength) {
+        
+        if(phraseLength == 1) 
+        {
+            console.log("Phrase Length :: " + phraseLength);
+            $scope.showPhrases1WordTable = true;
+        }
+        if(phraseLength == 2) 
+        {
+            console.log("Phrase Length :: " + phraseLength);
+            $scope.showPhrases1WordTable = false;
+        }
+           
     };
 
 /*
@@ -443,16 +569,29 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
     {
         //$scope.updateKeywordTable();
         //$scope.updateStopwordTable();
+
         $scope.updateKeywordTable();
 
+        $scope.phrasesLoadingSpinner = true;
         DataShareService.refreshPhrases( function(res) {
             // get 2 word phrases
             DataShareService.fetchAllPhrases(2, function(data) {
                 $scope.actualDataPhrases = data;
                 $scope.updatePhrasesTable();
                 $scope.bulkApplyUserSegments();
+                $scope.phrasesLoadingSpinner = false;
+                console.log("2 Word");
+            });
+            // get 1 word phrases
+            DataShareService.fetchAllPhrases(1, function(data) {
+                $scope.actualDataPhrases1Word = data;
+                $scope.updatePhrasesTable1Word();
+                $scope.bulkApplyUserSegments1Word();
+                $scope.phrasesLoadingSpinner1Word = false;
+                console.log("1 Word");
             });
         });
+
 
     }
 

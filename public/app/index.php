@@ -2,12 +2,12 @@
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
   <head>
     <meta charset="utf-8">
     <title></title>
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
@@ -16,8 +16,9 @@
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
     <link rel="stylesheet" href="app/styles/main.css">
-	<link rel="stylesheet" href="app/styles/WordCloud.css">
+	<link rel="stylesheet/less" type="text/css" href="app/styles/less.less">
     <!-- endbuild -->
+	<script src="app/bower_components/less/dist/less-1.7.3.min.js"></script>
   </head>
   <body ng-app="keywordSegmentsApp">
     <!--[if lt IE 7]>
@@ -25,18 +26,24 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="container">
-		<div ng-controller="NavCtrl">
-		<!--
-		<div ng-include="'views/navbar.html'" ng-controller="MainNavCtrl"></div>
-		<div ng-show="" ng-include="'views/SecondaryNav.html'" ng-controller="SecondaryNavCtrl"></div>
-		-->
-		<div ng-include="'app/views/navbar.html'"></div>
-		<div ng-class="{hidden:isActive('/') || isActive('/About')}" ng-include="'app/views/SecondaryNav.html'"></div>
+    <div class="container-fluid">
+		<div class="row">
+			<div ng-controller="NavCtrl" class="col-md-12">
+				<!--
+				<div ng-include="'views/navbar.html'" ng-controller="MainNavCtrl"></div>
+				<div ng-show="" ng-include="'views/SecondaryNav.html'" ng-controller="SecondaryNavCtrl"></div>
+				-->
+				<div ng-include="'app/views/navbar.html'"></div>
+				<div ng-class="{hidden:isActive('/') || isActive('/About')}" ng-include="'app/views/SecondaryNav.html'"></div>
+			</div>
 		</div>
-        <div class="container">
-            <div ng-view></div>
-        </div>
+		<div>
+			<div class="row">
+				<div class="col-md-12">
+					<div ng-view></div>
+				</div>
+			</div>
+		</div>
 	</div>
 		
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
@@ -58,20 +65,23 @@
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
+    <script src="app/bower_components/ng-file-upload/angular-file-upload-shim.min.js"></script>
     <script src="app/bower_components/jquery/dist/jquery.js"></script>
     <script src="app/bower_components/angular/angular.js"></script>
     <script src="app/bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="app/bower_components/angular-resource/angular-resource.js"></script>
     <script src="app/bower_components/angular-route/angular-route.js"></script>
     <script src="app/bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="app/bower_components/ng-file-upload/angular-file-upload.min.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="app/scripts/app.js"></script>
+		<script src="app/scripts/filters/filters.js"></script>
+		<script src="app/scripts/services/services.js"></script>
         <script src="app/scripts/controllers/controllers.js"></script>
         <script src="app/scripts/controllers/SecondaryNavCtrl.js"></script>
-		<script src="app/scripts/services/services.js"></script>
 		<script src="app/scripts/controllers/AboutCtrl.js"></script>
 		<script src="app/scripts/controllers/SelectDataCtrl.js"></script>
 		<script src="app/scripts/controllers/Step1Ctrl.js"></script>

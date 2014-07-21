@@ -1,5 +1,6 @@
 <?php
 
+
 class OperationsController extends \BaseController {
 
     // delete stop words
@@ -54,16 +55,21 @@ class OperationsController extends \BaseController {
 		return Response::json( DB::table('segmentmap')->where('Current_Keyword_Flag', 1)->where('phraselength', 2)->orderBy('count', 'desc')->skip($start)->take($count)->get() );
 	}
 	
-	public function getAllPhrases($dataaccountid, $phraselength)
-	{
-		return Response::json( DB::table('segmentmap')->where('Current_Keyword_Flag', 1)->where('dataAccount', $dataaccountid)->where('phraselength', $phraselength)->orderBy('count', 'desc')->get() );
-	}
+	// update segmentmap table
 	public function refreshPhrases($dataaccountid)
 	{
 		//$result = DB::statement(" call keyword_count( 1 ) " );
-		$result = DB::statement(" call keyword_count( '". Input::get('dataaccountid') ."', 2 ) " );
+		//return $dataaccountid;
+		$result = DB::statement(" call keyword_count( '". $dataaccountid ."', 2 ) " );
 		
+		return " call keyword_count( '". $dataaccountid ."', 2 ) ";
 		return ( array('success' => true) );
+	}
+		
+	// get all phrases data for a given dataAccount
+	public function getAllPhrases($dataaccountid, $phraselength)
+	{
+		return Response::json( DB::table('segmentmap')->where('Current_Keyword_Flag', 1)->where('dataAccount', $dataaccountid)->where('phraselength', $phraselength)->orderBy('count', 'desc')->get() );
 	}
 	
 	public function saveInputSegments()
@@ -78,7 +84,7 @@ class OperationsController extends \BaseController {
 		//return var_dump($temp);
 		//return var_dump($temp);
 		$idsToNotClear = [];
-		
+		$idsToNotClear[] = -1;
 		foreach($temp as $key => $stopword)
 		{
 			if( trim($stopword["segments"]) != "") 
@@ -91,9 +97,9 @@ class OperationsController extends \BaseController {
 			}
 		}
 		// clear if $stopword["segments"] == ""
-		DB::table('segmentmap')->whereNotIn('id', $idsToNotClear)->update(array('segments' => "" ));;
+		DB::table('segmentmap')->where('dataAccount', Input::get('dataaccountid'))->whereNotIn('id', $idsToNotClear)->update(array('segments' => "" ));;
 		
-		$result = DB::statement(" call keyword_count( 2 ) " );
+		$result = DB::statement(" call keyword_count( '". Input::get('dataaccountid') ."', 2 ) " );
 		
 		//return count($temp);
 		//return ( var_dump($temp[0]->id) );
@@ -110,5 +116,192 @@ class OperationsController extends \BaseController {
 		return Response::json( DB::table('dataaccounts')->get() );
 	}
 
+    // handle uploaded CSV data file
+	public function uploadCSV()
+	{
+		//return public_path();
+		$dataAccount = DataAccount::create(array(
+			'dataaccount' => Input::get('newdataaccount'),
+			'user' => 'USER'
+		));
+		$dataaccount = $dataAccount->id;
+		
+		//return Input::get('newdataaccount');
+	    
+		if (Input::hasFile('file'))
+		{
+			$file = Input::file('file');
+			$name = time() . '-' . $file->getClientOriginalName();
+			//check out the edit content on bottom of my answer for details on $storage
+			//$storage = public_path().'/../app/storage'; 
+			$storage = public_path(); 
+			$path = $storage . '/uploads/CSV/';
+			// Moves file to folder on server
+			$file->move($path, $name);
+			// Import the moved file to DB and return OK if there were rows affected
+			return ( $this->_import_csv($path, $name, $dataaccount) ? 'OK' : 'No rows affected' );
+
+		}
+		//return Response::json( Input::file('file')->getClientOriginalName() );
+	}
+
+	// Private helper function to help importing keyword csv to database
+	private function _import_csv($path, $filename, $dataaccount)
+	//private function _import_csv($filename)
+	{
+		$csv = $path.$filename;
+		/*
+		//ofcourse you have to modify that with proper table and field names
+		//$query = sprintf("LOAD DATA local INFILE '%s' INTO TABLE your_table FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' ESCAPED BY '\"' LINES TERMINATED BY '\\n' IGNORE 0 LINES (`filed_one`, `field_two`, `field_three`)", addslashes($csv));
+		*/
+		$query = sprintf("LOAD DATA local INFILE '%s' INTO TABLE keywords FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' ESCAPED BY '\"' LINES TERMINATED BY '\n' IGNORE 0 LINES (`adGroup`, `keyword`, `currency`, `avMonthlySearches`, `competition`, `suggestedBid`, `impressionShare`, `inAccount`, `inPlan`, `extractedFrom`)", addslashes($csv));
+		//return DB::connection()->getpdo()->exec($query);
+
+		///////////////////////////////////////////////////////////////////////		
+		//get the csv file 
+		$i = 0;		// to skip first header row of the csv file
+		$file = $csv;
+		$handle = fopen($file,"r"); 
+		//loop through the csv file and insert into database 
+		while ($data = fgetcsv($handle,1000,",","'"))
+		{
+			if( $i == 0) { $i++; continue;}
+			if ($data[0]) { 
+				DB::statement("INSERT INTO keywords (`adGroup`, `keyword`, `currency`, `avMonthlySearches`, `competition`, `suggestedBid`, `impressionShare`, `inAccount`, `inPlan`, `extractedFrom`, `dataAccount`) VALUES 
+					( 
+						'".addslashes($data[0])."', 
+						'".addslashes($data[1])."', 
+						'".addslashes($data[2])."', 
+						'".addslashes($data[3])."', 
+						'".addslashes($data[4])."', 
+						'".addslashes($data[5])."', 
+						'".addslashes($data[6])."', 
+						'".addslashes($data[7])."', 
+						'".addslashes($data[8])."', 
+						'".addslashes($data[9])."',
+						'".$dataaccount."'
+					)
+				");
+			}
+		}
+	}
+	
+	public function downloadCSV($dataaccountid)
+	{
+		$headers = array(
+			'Content-Type' => 'text/csv',
+			'Content-Disposition' => 'attachment; filename="ExportFileName.csv"',
+			'Pragma' => 'no-cache',
+			'Expires' => 0,
+		);
+		
+		//return Response::json( DB::table('keywords-segment')->where('dataAccount', $dataaccountid)->skip($start)->take($count)->get() );
+	
+		//return DB::statement(' SELECT * INTO OUTFILE "../../../tmp/resultTMP1111.csv" FIELDS TERMINATED BY "," OPTIONALLY ENCLOSED BY "" ESCAPED BY "\\" LINES TERMINATED BY "||"  FROM keywords-segment ');
+		
+		/*
+		DB::statement(' SELECT * INTO OUTFILE "../../htdocs/xxx.csv" FIELDS TERMINATED BY "," FROM `keywords-segment` ');
+		return Response::json( array( 'file' => 'xxx.csv' ));
+		*/
+
+		$table = DB::table('keywords-segment')->where('dataAccount', $dataaccountid)->get();
+		//$output='';
+		$output = "Ad group,Keyword,Currency,Avg. Monthly Searches (exact match only),Competition,Suggested bid,Impr. share,In account?,In plan?,Extracted From,Segment,Brand,Compete".PHP_EOL;
+		
+		foreach ($table as $row) {
+			//return var_dump($row);
+			//return $row->adGroup . "," . $row->keyword . "," . $row->currency . "," . $row->avMonthlySearches . "," . $row->competition . "," . $row->suggestedBid . "," . $row->impressionShare . "," . $row->inAccount . "," . $row->inPlan . "," . $row->NAME . "," . $row->Brand . "," . $row->Compete;
+			
+			
+			
+			$output.= $row->adGroup . "," 
+				. $row->keyword . "," 
+				. $row->currency . "," 
+				. $row->avMonthlySearches 
+				. "," . $row->competition 
+				. "," . $row->suggestedBid 
+				. "," . $row->impressionShare 
+				. "," . $row->inAccount 
+				. "," . $row->inPlan 
+				. "," . $row->extractedFrom 
+				. "," . str_replace(',', ';', $row->NAME)
+				. "," . $row->Brand 
+				. "," . $row->Compete 
+				. PHP_EOL;
+			//return Response::json($output);
+			//$output.=  $row; //implode(",",$row->to_array());
+		}
+
+		
+		return Response::json( array( 'file' => $output ));
+		
+		//return Response::json($output);
+		
+		//return Response::make($output, 200, $headers);
+		
+	}
+	
+	public function getTagCloud($dataaccountid)
+	{
+		$cloud = new Arg\Tagcloud\TagCloud();
+		//$cloud->addTag("tag-cloud");
+		//$cloud->addTag("programming");
+		//echo $cloud->render();
+		
+		$output = '';
+		$output1 = '';
+		$tagArray = [];
+		$temp = Keyword::where('dataAccount', $dataaccountid)->get( array('keyword'));
+		foreach($temp as $key => $keywrd)
+		{
+			$output .= $keywrd->keyword . " ";
+			//$output[] = $keywrd->keyword;
+			//$cloud->addTag( array( 'tag' => $keywrd->keyword, 'colour' => rand() ) );
+
+			foreach(explode(" ", $keywrd->keyword) as $k => $v)
+			{
+				if( isset($tagArray[$v]) )
+				{
+					$tagArray[$v]++;
+				}
+				else {
+					$tagArray[$v] = 1;				
+				}
+				
+				//$tagArray[$v] = $tagArray[$v] + 1;
+			}
+		}
+		
+		$maxCount = 0; $minCount = 0; $class ='';
+		foreach($tagArray as $tag => $count)
+		{
+			$maxCount = ($count > $maxCount) ? $count : $maxCount;
+			$minCount = ($count < $minCount || $minCount == NULL) ? $count: $minCount;
+		}
+		foreach($tagArray as $tag => $count)
+		{
+		/*
+			if($count == $maxCount) $class = 'largeTag';
+			else if($count >= ($maxCount/3)) $class = 'mediumTag';
+			else $class = 'smallTag';
+			$output1 .= '<span class="'. $class .'" style="font-size:' . $count/$maxCount . 'em;" >'. $tag .'</span>';
+		*/
+			//$class = 'tag'.(int)(($count/$maxCount)*10);
+			$output1 .= '<span class="'. $class .'" style="font-size:' . $count/$maxCount . 'em;" >'. $tag . '('.$count.')' .'</span> ';
+		}
+		
+		$output1 = '<div style="font-size: 56px">' . $output1 . '</div>';
+		return Response::json( array( 'tag' => $output1 ) );
+	
+	
+		
+		return Response::json( $tagArray );
+		//$cloud->addTags( $output );
+		$cloud->addString( $output );
+		
+		
+		return Response::json( array( 'tag' => $cloud->render() ) );
+		
+	}
 	
 }

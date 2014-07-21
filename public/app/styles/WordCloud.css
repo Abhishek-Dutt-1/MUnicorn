@@ -1,89 +1,16 @@
-#word-cloud {
- width: 280px;
- /*height: 400px;
- */
- margin: 0 auto;
- /* padding: 2em 0;
- */
- font: 100% 'Yanone Kaffeesatz', Arial, sans-serif;
- /*
- position: relative;
- */
-}
-
-#word-cloud span {
- /*
- position: absolute;
- */
-}
-
-#word-cloud .word-1 {
-/* top: 1em;
-  left: 1.5em;
- */
- font-size: 100px;
- color: #626262;
-}
-
-#word-cloud .word-2 {
-/* top: 0;
-  left: 1em;
- */
- font-size: 80px;
- color: #906060;
-}
-
-#word-cloud .word-3 {
-/* top: 1em;
-  left: 1.5em;
- */
- font-size: 60px;
- color: #c5c5c5;
-}
-
-#word-cloud .word-4 {
-/* top: 1em;
- left: 0;
- */
- font-size: 40px;
- color: #511c1c;
- /*
- -moz-transform: rotate(-90deg);
- -webkit-transform: rotate(-90deg);
- -o-transform: rotate(-90deg);
- */
-}
-
-#word-cloud .word-5 {
-/* top: 1.5em;
- right: -0.3em;
- */
- color: #666;
- font-size: 70px;
- /*
- -moz-transform: rotate(-90deg);
- -webkit-transform: rotate(-90deg);
- -o-transform: rotate(-90deg);
- */	
-}
-
-#word-cloud .word-6 {
-/* bottom: 0;
- right: 1em;
- */
- color: #5e0000;
- font-size: 120px;
-}
-
-#word-cloud .word-7 {
-/* bottom: 0.6em;
- left: 0;
- */
- color: #6e6e6e;
- font-size: 90px;
- /*
- -moz-transform: rotate(-90deg);
- -webkit-transform: rotate(-90deg);
- -o-transform: rotate(-90deg);
- */
-}
+span { padding: 2px; }
+.tag1 { font-size: 1em; }
+.tag2 { font-size: 1.1em; }
+.tag3 { font-size: 1.2em; }
+.tag4 { font-size: 1.3em; }
+.tag5 { font-size: 1.4em; }
+.tag6 { font-size: 1.5em; }
+.tag7 { font-size: 1.6em; }
+.tag8 { font-size: 1.7em; }
+.tag9 { font-size: 1.8em; }
+.smallTag { font-size: 11px; }
+.mediumTag { font-size: 16px; }
+.largeTag { font-size: 24px; }
+a:link, a:visited { color: #0000CC; }
+a:hover { color: #999; }
+.instructions { font-size: 11px; color: #999; }

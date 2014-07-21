@@ -9,8 +9,10 @@
                 -->
                 <h4 class="pull-left">Dataset: {{selectedDataAccount.name}}</h4>
                 <div class="pull-right">
-                    <button type="button" ng-click="saveInputSegments()" class="btn" ng-class=" userSegmentsSaved ? 'btn-success' : 'btn-danger' " >Save</button>
-                    <button type="button" ng-click="resetMatches()" class="btn btn-default">Reset</button>
+                    <button type="button" ng-click="saveInputSegments()" class="btn" ng-class=" userSegmentsSaved ? 'btn-success' : 'btn-danger' ">Save
+                        <img ng-show="phrasesSavingSpinner" src="app/images/loader.gif">
+                    </button>
+                    <button type="button" ng-click="resetMatches()" class="btn btn-default">Clear</button>
                 </div>
         </div>
         </div>
@@ -21,6 +23,18 @@
             </div>
         </div>
 		<div class="col-md-7">
+            <div class="row">
+                <div class="pull-right">
+                    <div class="btn-group btn-group-xs" data-toggle="buttons">
+                        <label class="btn btn-default" >
+                            <input type="radio" name="options" id="option1" ></input>
+                        </label>
+                        <label class="btn btn-default" >
+                            <input type="radio" name="options" id="option2" ></input>
+                        </label>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-10">
                 <!-- Current Page Number: {{currentPageNum}} -->
@@ -77,63 +91,140 @@
                 </div>
             </div>  <!-- end row -->
 		</div> <!-- end col-md-8 -->
-
 		<div class="col-md-5">
 <!--            Input Segments ({{countArraySorted.length}}) -->
             <div class="row">
-                <div class="col-md-9">
-                <!-- Current Page Number: {{currentPageNum}} -->
-                    <div>
-                        <ul class="pager">
-                            <li ng-class="{disabled: currentPageNumPhrases == 0}">
-                            <a href ng-click="changePagePhrases(-1)" >« Prev</a>
-                            </li>
-                            <li ng-class="{disabled: countArraySorted.length <= (currentPageNumPhrases+1)*numShowPhrases }">
-                            <a href ng-click="changePagePhrases(1)">Next »</a>
-                            </li>
-                        </ul>
+                <div class="pull-right">
+                    <div class="btn-group btn-group-xs" data-toggle="buttons">
+                        <label class="btn btn-primary" ng-click="switchInputTable(1)">
+                            <input type="radio" name="options" id="option1" >1 Word</input>
+                        </label>
+                        <label class="btn btn-primary active"  ng-click="switchInputTable(2)">
+                            <input type="radio" name="options" id="option2" >2 Words</input>
+                        </label>
                     </div>
-                <!-- Actual Data Length: {{actualData.length}} -->
-                </div>
-                <div class="col-md-3">
-                    <input ng-change="updatePhrasesTable()" ng-model="numShowPhrases" type="text" class="form-control pager">
-                </div>
-            </div> <!-- end row -->
-            <div class="row">
-                <div class="col-md-12">
-                    <table class="table table-condensed table-hover">
-                        <thead>
-                            <tr>
-                                <th class="id">Phrase&nbsp;<a ng-click="sort_by('id')"><i class="icon-sort"></i></a></th>
-                                <th class="name">Count&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
-                                <th class="description">Input Segment&nbsp;<a ng-click="sort_by('description')"><i class="icon-sort"></i></a></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="" ng-repeat="item in dummyDataPhrases">
-                                <td>{{item.phrase}}</td>
-                                <td>{{item.count}}</td>
-                                <!--                                <td><input ng-change="applyUserSegments(item.id, item.userInputSegment)" ng-model="item.userInputSegment" type="input" class="1form-control"></td> -->
-                                <td><input ng-change="applyUserSegments(item.id, item.segments, false)" ng-model="item.segments" type="input" class="1form-control"></td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <td colspan="3">
-                                <div>
-                                    <ul class="pager">
-                                        <li ng-class="{disabled: currentPageNumPhrases == 0}">
-                                        <a href ng-click="changePagePhrases(-1)" >« Prev</a>
-                                        </li>
-                                        <li ng-class="{disabled: countArraySorted.length <= (currentPageNumPhrases+1)*numShowPhrases }">
-                                        <a href ng-click="changePagePhrases(1)">Next »</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tfoot>
-                    </table>
                 </div>
             </div>
+            <div ng-show="!showPhrases1WordTable"> <!-- ====================== begin 2 words Phrase table -->
+                <div class="row">  
+                    <div class="col-md-9">
+                    <!-- Current Page Number: {{currentPageNum}} -->
+                        <div>
+                            <ul class="pager">
+                                <li ng-class="{disabled: currentPageNumPhrases == 0}">
+                                <a href ng-click="changePagePhrases(-1)" >« Prev</a>
+                                </li>
+                                <li ng-class="{disabled: countArraySorted.length <= (currentPageNumPhrases+1)*numShowPhrases }">
+                                <a href ng-click="changePagePhrases(1)">Next »</a>
+                                </li>
+                            </ul>
+                        </div>
+                    <!-- Actual Data Length: {{actualData.length}} -->
+                    </div>
+                    <div class="col-md-3">
+                        <input ng-change="updatePhrasesTable()" ng-model="numShowPhrases" type="text" class="form-control pager">
+                    </div>
+                </div> <!-- end row -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-condensed table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="id">Phrase&nbsp;<a ng-click="sort_by('id')"><i class="icon-sort"></i></a></th>
+                                    <th class="name">Count&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
+                                    <th class="description">Input Segment&nbsp;<a ng-click="sort_by('description')"><i class="icon-sort"></i></a></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-show="phrasesLoadingSpinner">
+                                    <td colspan=3 class="text-center"><img src="app/images/loader-circle.gif"></td>
+                                </tr>
+                                <tr class="" ng-repeat="item in dummyDataPhrases">
+                                    <td>{{item.phrase}}</td>
+                                    <td>{{item.count}}</td>
+                                    <!--                                <td><input ng-change="applyUserSegments(item.id, item.userInputSegment)" ng-model="item.userInputSegment" type="input" class="1form-control"></td> -->
+                                    <td><input ng-change="applyUserSegments(item.id, item.segments, false)" ng-model="item.segments" type="input" class="1form-control"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <td colspan="3">
+                                    <div>
+                                        <ul class="pager">
+                                            <li ng-class="{disabled: currentPageNumPhrases == 0}">
+                                            <a href ng-click="changePagePhrases(-1)" >« Prev</a>
+                                            </li>
+                                            <li ng-class="{disabled: countArraySorted.length <= (currentPageNumPhrases+1)*numShowPhrases }">
+                                            <a href ng-click="changePagePhrases(1)">Next »</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>      <!-- end row -->
+            </div>
+
+            <div ng-show="showPhrases1WordTable">       <!-- ========================== begin 1 word phrase table -->
+                <div class="row">
+                    <div class="col-md-9">
+                    <!-- Current Page Number: {{currentPageNum}} -->
+                        <div>
+                            <ul class="pager">
+                                <li ng-class="{disabled: currentPageNumPhrases1Word == 0}">
+                                <a href ng-click="changePagePhrases1Word(-1)" >« Prev</a>
+                                </li>
+                                <li ng-class="{disabled: countArraySorted.length <= (currentPageNumPhrases1Word+1)*numShowPhrases1Word }">
+                                <a href ng-click="changePagePhrases1Word(1)">Next »</a>
+                                </li>
+                            </ul>
+                        </div>
+                    <!-- Actual Data Length: {{actualData.length}} -->
+                    </div>
+                    <div class="col-md-3">
+                        <input ng-change="updatePhrasesTable1Word()" ng-model="numShowPhrases1Word" type="text" class="form-control pager">
+                    </div>
+                </div> <!-- end row -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-condensed table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="id">Phrase&nbsp;<a ng-click="sort_by('id')"><i class="icon-sort"></i></a></th>
+                                    <th class="name">Count&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
+                                    <th class="description">Input Segment&nbsp;<a ng-click="sort_by('description')"><i class="icon-sort"></i></a></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-show="phrasesLoadingSpinner1Word">
+                                    <td colspan=3 class="text-center"><img src="app/images/loader-circle.gif"></td>
+                                </tr>
+                                <tr class="" ng-repeat="item in dummyDataPhrases1Word">
+                                    <td>{{item.phrase}}</td>
+                                    <td>{{item.count}}</td>
+                                    <!--                                <td><input ng-change="applyUserSegments(item.id, item.userInputSegment)" ng-model="item.userInputSegment" type="input" class="1form-control"></td> -->
+                                    <td><input ng-change="applyUserSegments1Word(item.id, item.segments, false)" ng-model="item.segments" type="input" class="1form-control"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <td colspan="3">
+                                    <div>
+                                        <ul class="pager">
+                                            <li ng-class="{disabled: currentPageNumPhrases1Word == 0}">
+                                            <a href ng-click="changePagePhrases1Word(-1)" >« Prev</a>
+                                            </li>
+                                            <li ng-class="{disabled: countArraySorted.length <= (currentPageNumPhrases1Word+1)*numShowPhrases1Word }">
+                                            <a href ng-click="changePagePhrases1Word(1)">Next »</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>        <!-- end 1 word phrase table -->
+
             <!--
 			<div class="input-group">
                 <div class="list-group-item" ng-repeat="item in countArraySorted track by $index">{{item.Keyword}}

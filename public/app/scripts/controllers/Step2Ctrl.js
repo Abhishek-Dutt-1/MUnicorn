@@ -1,6 +1,6 @@
 'use strict';
 
-keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', 'DataShareService', function ($scope, DataShareService) {
+keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', '$sce', 'DataShareService', function ($scope, $sce, DataShareService) {
     $scope.numShowKeywords = 50;
     $scope.currentPageNum = 0;      //0 == first page
     $scope.currentKeywordsMatched = 0;
@@ -10,6 +10,8 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', 'DataShareService'
     $scope.matchButtonPressed = false;
     $scope.matchDuplicateButtonPressed = false;
     $scope.selectedDataAccount = {};
+
+    $scope.tagCloudString ='';
 	/*
 	// Fetch Keywords, expects JSON
 	$http.get('scripts/Dish Tv Sample.json').success(function(data) {
@@ -349,6 +351,22 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', 'DataShareService'
 		//bySortedValue(someObj, this.method, this);
 	};
   
+    $scope.renderHtml = function(html_code)
+    {
+        return $sce.trustAsHtml(html_code);
+    };
+	
+    $scope.getTagCloud = function() {
+
+        DataShareService.getTagCloud( function(data) {
+
+            $scope.tagCloudString = data.tag;
+
+        });
+
+    };
+
+
 ////////////////////////////////////////// INIT	
     $scope.selectedDataAccount = DataShareService.getSelectedDataAccount();
     console.log($scope.selectedDataAccount);
@@ -358,6 +376,9 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', 'DataShareService'
         //$scope.updateStopwordTable();
         $scope.updateKeywordTable();
         $scope.updateNegativeKeywordTable();
+        
+        ///////////////////////  Tag cloud function
+        //$scope.getTagCloud();
     }
 
 

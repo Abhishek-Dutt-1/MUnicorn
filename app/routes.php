@@ -72,7 +72,7 @@ Route::group(array('prefix' => 'api/ops'), function()
     Route::post( '/deleteduplicatesfromkeywords', 'OperationsController@deleteDuplicatesFromKeywords');
 	// Refresh segmentmap table with phrases
 	Route::get( '/refreshphrases/{dataaccountid}', 'OperationsController@refreshPhrases');    //step3
-	// fetch 2 and 1 word phrases
+	// fetch 2 and 1 word phrases 	-- NOT USED
 	Route::get( '/phrases/{start}/{count}', 'OperationsController@getPhrases');    //step3
 	// fetch ALL 2 and 1 word phrases
 	Route::get( '/getallphrases/{dataaccountid}/{phraselength}', 'OperationsController@getAllPhrases');    //step3
@@ -81,9 +81,19 @@ Route::group(array('prefix' => 'api/ops'), function()
 
 	// STEP-4 :: fetch data from keywords-segment table
 	Route::get( '/fetchkeywordsandsegmentsdata/{dataaccountid}/{start}/{count}', 'OperationsController@fetchKeywordsAndSegmentsData');
-	
+
 	// SELECT DATA :: Fetach all account names
 	Route::get( '/fetchallaccountnames', 'OperationsController@fetchAllAccountNames');
+
+    // Upload file route
+    Route::post( '/uploadcsv', 'OperationsController@uploadCSV');
+	
+	// Download final CSV file
+	Route::get( '/downloadcsv/{dataaccountid}', 'OperationsController@downloadCSV');
+	
+	// Download tag cloud string
+	Route::get( '/gettagcloud/{dataaccountid}', 'OperationsController@getTagCloud');
+	
 });
 
 // API routes for Data Account operations

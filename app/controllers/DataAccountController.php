@@ -89,8 +89,13 @@ class DataAccountController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
+		// Delete the data account and all data associated with it
 		DataAccount::destroy($id);
-		
+		Keyword::where('dataAccount', $id)->delete();
+		Stopword::where('dataAccount', $id)->delete();
+		Negativekeyword::where('dataAccount', $id)->delete();
+		DB::table('keywords-segment')->where('dataAccount', $id)->delete();
+		DB::table('segmentmap')->where('dataAccount', $id)->delete();
 		//DB::statement( 'drop database data_' . $id );
 		
         return Response::json(array('success' => true));
