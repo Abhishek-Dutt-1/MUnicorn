@@ -1,14 +1,91 @@
-@base: #f938ab;
+/*
+// make height 100% for secondaryNav
+html, body { height: 100%; }
+.container {
+    min-height: 100%;
+    overflow: hidden;
+}
+#secondaryNav {
+    margin-bottom: -9999px;
+    padding-bottom: 9999px;
+    background: black;
+}
+*/
+body {
+	padding-top: 70px;
+	font-size: 13px;
+	font-family: "Open Sans",Arial,Helvetica,Sans-Serif;
+}
+.progress {
+    margin-bottom: 0px;
+}
 
-.box-shadow(@style, @c) when (iscolor(@c)) {
-  -webkit-box-shadow: @style @c;
-  box-shadow:         @style @c;
+///////////////////////
+/*!
+ * Start Bootstrap - Simple Sidebar HTML Template (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+#sidebar-wrapper {
+    z-index: 1000;
+    position: fixed;
+    //left: 250px;
+    //width: 0;
+    height: 100%;
+    //margin-left: -250px;
+    overflow-y: auto;
+    background: #222;
+	top: 50px;
+    //background: #000;
+    //-webkit-transition: all 0.5s ease;
+    //-moz-transition: all 0.5s ease;
+    //-o-transition: all 0.5s ease;
+    //transition: all 0.5s ease;
 }
-.box-shadow(@style, @alpha: 50%) when (isnumber(@alpha)) {
-  .box-shadow(@style, rgba(0, 0, 0, @alpha));
+#sidebar-wrapper li a{
+    color: lightgrey;
 }
-.box {
-  color: saturate(@base, 5%);
-  border-color: lighten(@base, 30%);
-  div { .box-shadow(0 0 5px, 30%) }
+#sidebar-wrapper li.active a{
+    //font-weight: bold;
+    color: white;
+    background-color: none;
+}
+#sidebar-wrapper li.active a:hover{
+    background-color: #428bca;
+}
+#sidebar-wrapper li a:hover{
+    background-color: #222;
+    //font-weight: bold;
+    color: white;
+}
+.segmentInputField {
+    height: 19px;
+}
+#tagCloud {
+    .panel-body { padding: 0px; }
+    ul{
+		margin: 0;
+		padding:.5em 10px;
+		text-align:center;
+		background:#71b5e9 url(../images/bg_tags.gif) repeat-x;		
+		}
+    li{
+		margin:0;
+		padding:0;
+		list-style:none;
+		display:inline;
+		}
+    li a{
+		text-decoration:none;
+		color:#fff;
+		padding:0 2px;	
+		}
+	 li a:hover{color:#cff400;}		
+	.tag1{font-size:100%;}
+	.tag2{font-size:120%;}
+	.tag3{font-size:140%;}
+	.tag4{font-size:160%;}
+	.tag5{font-size:180%;}
+	.tag6{font-size:200%;}
 }

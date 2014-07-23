@@ -1,7 +1,7 @@
 'use strict';
 
 keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShareService', function ($scope, $http, DataShareService) {
-    $scope.numShowKeywords = 50;
+    $scope.numShowKeywords = 10;
     $scope.currentPageNum = 0;
     $scope.currentKeywordsMatched = 0;
 	$scope.countArray = []
@@ -9,8 +9,8 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
     $scope.actualDataPhrases = [];
     $scope.actualDataPhrases1Word = [];
 
-    $scope.numShowPhrases = 50;
-    $scope.numShowPhrases1Word = 50;
+    $scope.numShowPhrases = 10;
+    $scope.numShowPhrases1Word = 10;
 
     $scope.currentPageNumPhrases = 0;
     $scope.currentPageNumPhrases1Word = 0;
@@ -125,10 +125,15 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
             elem.userInputSegmentArray = [];
             elem.userInputSegment = '';
         });
-        //$scope.updateKeywordTable();
+
         $scope.dummyDataPhrases.forEach( function(elem, index){
             elem.segments = '';
         });
+
+        $scope.dummyDataPhrases1Word.forEach( function(elem, index){
+            elem.segments = '';
+        });
+
         $scope.userSegmentsSaved = false;
     };
 

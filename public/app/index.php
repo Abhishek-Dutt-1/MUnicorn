@@ -16,9 +16,8 @@
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
     <link rel="stylesheet" href="app/styles/main.css">
-	<link rel="stylesheet/less" type="text/css" href="app/styles/less.less">
+	<link rel="stylesheet" href="app/styles/less.css">
     <!-- endbuild -->
-	<script src="app/bower_components/less/dist/less-1.7.3.min.js"></script>
   </head>
   <body ng-app="keywordSegmentsApp">
     <!--[if lt IE 7]>
@@ -28,20 +27,19 @@
     <!-- Add your site or application content here -->
     <div class="container-fluid">
 		<div class="row">
-			<div ng-controller="NavCtrl" class="col-md-12">
+			<div ng-include="'app/views/navbar.html'"></div>
+		</div>
+		<div class="row">
+			<div ng-controller="NavCtrl" class="col-md-2" >
 				<!--
 				<div ng-include="'views/navbar.html'" ng-controller="MainNavCtrl"></div>
 				<div ng-show="" ng-include="'views/SecondaryNav.html'" ng-controller="SecondaryNavCtrl"></div>
 				-->
-				<div ng-include="'app/views/navbar.html'"></div>
-				<div ng-class="{hidden:isActive('/') || isActive('/About')}" ng-include="'app/views/SecondaryNav.html'"></div>
-			</div>
-		</div>
-		<div>
-			<div class="row">
-				<div class="col-md-12">
-					<div ng-view></div>
+				<div id="secondaryNav" ng-class="{hidden:isActive('/') || isActive('/About')}" ng-include="'app/views/SecondaryNav.html'">
 				</div>
+			</div>
+			<div class="col-md-10">
+				<div ng-view></div>
 			</div>
 		</div>
 	</div>

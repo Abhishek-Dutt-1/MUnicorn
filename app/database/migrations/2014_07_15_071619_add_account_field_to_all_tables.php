@@ -14,19 +14,19 @@ class AddAccountFieldToAllTables extends Migration {
 	{
 		Schema::table('keywords', function(Blueprint $table)
 		{
-			$table->integer('dataAccount');
+			$table->integer('dataAccount')->default(0);
 		});
 		Schema::table('stopwords', function(Blueprint $table)
 		{
-			$table->integer('dataAccount');
+			$table->integer('dataAccount')->default(0);
 		});
 		Schema::table('negativekeywords', function(Blueprint $table)
 		{
-			$table->integer('dataAccount');
+			$table->integer('dataAccount')->default(0);
 		});
 		Schema::table('segmentmap', function(Blueprint $table)
 		{
-			$table->integer('dataAccount');
+			$table->integer('dataAccount')->default(0);
 		});
 	}
 

@@ -1,0 +1,6 @@
+/* CSS crunched with Crunch - http://crunchapp.net/ */
+body{padding-top:70px;font-size:13px;font-family:"Open Sans",Arial,Helvetica,Sans-Serif}.progress{margin-bottom:0px}/*!
+ * Start Bootstrap - Simple Sidebar HTML Template (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */#sidebar-wrapper{z-index:1000;position:fixed;height:100%;overflow-y:auto;background:#222;top:50px}#sidebar-wrapper li a{color:lightgrey}#sidebar-wrapper li.active a{color:white;background-color:none}#sidebar-wrapper li.active a:hover{background-color:#428bca}#sidebar-wrapper li a:hover{background-color:#222;color:white}.segmentInputField{height:19px}#tagCloud .panel-body{padding:0px}#tagCloud ul{margin:0;padding:.5em 10px;text-align:center;background:#71b5e9 url(../images/bg_tags.gif) repeat-x}#tagCloud li{margin:0;padding:0;list-style:none;display:inline}#tagCloud li a{text-decoration:none;color:#fff;padding:0 2px}#tagCloud li a:hover{color:#cff400}#tagCloud .tag1{font-size:100%}#tagCloud .tag2{font-size:120%}#tagCloud .tag3{font-size:140%}#tagCloud .tag4{font-size:160%}#tagCloud .tag5{font-size:180%}#tagCloud .tag6{font-size:200%}

@@ -139,7 +139,7 @@ class OperationsController extends \BaseController {
 			// Moves file to folder on server
 			$file->move($path, $name);
 			// Import the moved file to DB and return OK if there were rows affected
-			return ( $this->_import_csv($path, $name, $dataaccount) ? 'OK' : 'No rows affected' );
+			return ( $this->_import_csv($path, $name, $dataaccount) ); //? 'OK' : 'No rows affected' );
 
 		}
 		//return Response::json( Input::file('file')->getClientOriginalName() );
@@ -154,11 +154,16 @@ class OperationsController extends \BaseController {
 		//ofcourse you have to modify that with proper table and field names
 		//$query = sprintf("LOAD DATA local INFILE '%s' INTO TABLE your_table FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' ESCAPED BY '\"' LINES TERMINATED BY '\\n' IGNORE 0 LINES (`filed_one`, `field_two`, `field_three`)", addslashes($csv));
 		*/
-		$query = sprintf("LOAD DATA local INFILE '%s' INTO TABLE keywords FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' ESCAPED BY '\"' LINES TERMINATED BY '\n' IGNORE 0 LINES (`adGroup`, `keyword`, `currency`, `avMonthlySearches`, `competition`, `suggestedBid`, `impressionShare`, `inAccount`, `inPlan`, `extractedFrom`)", addslashes($csv));
-		//return DB::connection()->getpdo()->exec($query);
-
+		// Ignore 1st header row
+		$query = sprintf("LOAD DATA local INFILE '%s' INTO TABLE keywords FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' ESCAPED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 LINES (`adGroup`, `keyword`, `currency`, `avMonthlySearches`, `competition`, `suggestedBid`, `impressionShare`, `inAccount`, `inPlan`, `extractedFrom`)", addslashes($csv));
+		DB::connection()->getpdo()->exec($query);
+		// these new rows will have default dataAccount value of 0 change all of them to $dataaccount
+		return Keyword::where('dataAccount', 0)->update( array('dataAccount' => $dataaccount) );
+		
+		
 		///////////////////////////////////////////////////////////////////////		
 		//get the csv file 
+		/*	OLD Methond adding one row at a time
 		$i = 0;		// to skip first header row of the csv file
 		$file = $csv;
 		$handle = fopen($file,"r"); 
@@ -184,6 +189,7 @@ class OperationsController extends \BaseController {
 				");
 			}
 		}
+		*/
 	}
 	
 	public function downloadCSV($dataaccountid)
@@ -211,23 +217,38 @@ class OperationsController extends \BaseController {
 		foreach ($table as $row) {
 			//return var_dump($row);
 			//return $row->adGroup . "," . $row->keyword . "," . $row->currency . "," . $row->avMonthlySearches . "," . $row->competition . "," . $row->suggestedBid . "," . $row->impressionShare . "," . $row->inAccount . "," . $row->inPlan . "," . $row->NAME . "," . $row->Brand . "," . $row->Compete;
-			
-			
-			
+			/*
 			$output.= $row->adGroup . "," 
-				. $row->keyword . "," 
-				. $row->currency . "," 
-				. $row->avMonthlySearches 
-				. "," . $row->competition 
-				. "," . $row->suggestedBid 
-				. "," . $row->impressionShare 
-				. "," . $row->inAccount 
-				. "," . $row->inPlan 
-				. "," . $row->extractedFrom 
-				. "," . str_replace(',', ';', $row->NAME)
-				. "," . $row->Brand 
-				. "," . $row->Compete 
-				. PHP_EOL;
+					. $row->keyword . "," 
+					. $row->currency . "," 
+					. $row->avMonthlySearches . ","
+					. $row->competition . ","
+					. $row->suggestedBid . ","
+					. $row->impressionShare . ","
+					. $row->inAccount . ","
+					. $row->inPlan . ","
+					//. $row->extractedFrom . "," 
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->extractedFrom) . "," 
+					. str_replace(',', ';', $row->NAME) . "," 
+					. $row->Brand . "," 
+					. $row->Compete . PHP_EOL;
+					*/
+
+			$output.= preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->adGroup ) . "," 
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->keyword ) . "," 
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->currency ) . "," 
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->avMonthlySearches ) . ","
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->competition ) . ","
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->suggestedBid ) . ","
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->impressionShare ) . ","
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->inAccount ) . ","
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->inPlan ) . ","
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->extractedFrom ) . "," 
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', str_replace(',', ';', $row->NAME) ) . "," 
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->Brand ) . "," 
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->Compete ) . PHP_EOL;
+
+					
 			//return Response::json($output);
 			//$output.=  $row; //implode(",",$row->to_array());
 		}
@@ -244,9 +265,6 @@ class OperationsController extends \BaseController {
 	public function getTagCloud($dataaccountid)
 	{
 		$cloud = new Arg\Tagcloud\TagCloud();
-		//$cloud->addTag("tag-cloud");
-		//$cloud->addTag("programming");
-		//echo $cloud->render();
 		
 		$output = '';
 		$output1 = '';
@@ -271,6 +289,10 @@ class OperationsController extends \BaseController {
 				//$tagArray[$v] = $tagArray[$v] + 1;
 			}
 		}
+		arsort($tagArray, SORT_NUMERIC );		//Sort alphabetically
+		//sort($tagArray);
+		return Response::json( $tagArray );
+		
 		
 		$maxCount = 0; $minCount = 0; $class ='';
 		foreach($tagArray as $tag => $count)

@@ -38,10 +38,9 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
                 href: 'data:attachment/csv;charset=utf-8,' + encodeURI(data.file),
 //                href: '/' + data,
                 target: '_blank',
-                download: data.file
+//                download: "download.csv"
+                download: $scope.selectedDataAccount.name + ".csv"
             })[0].click();
-
-
 /*
             var binUrl = data;
             document.body.innerHTML += "<iframe src='" + binUrl + "' style='display: none;' ></iframe>"

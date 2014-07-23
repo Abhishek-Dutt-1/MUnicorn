@@ -16,16 +16,16 @@ class CreateKeywordsTable extends Migration {
 		{
 			$table->increments('id');
 			
-			$table->string('adGroup');
-            $table->string('keyword');
-            $table->string('currency');
-            $table->integer('avMonthlySearches');
-            $table->float('competition');
-            $table->float('suggestedBid');
-            $table->float('impressionShare');
-            $table->string('inAccount');
-            $table->string('inPlan');
-            $table->string('extractedFrom');
+			$table->string('adGroup')->default(null)->nullable();
+            $table->string('keyword')->default(null)->nullable();
+            $table->string('currency')->default(null)->nullable();
+            $table->integer('avMonthlySearches')->default(null)->nullable();
+            $table->float('competition')->default(null)->nullable();
+            $table->float('suggestedBid')->default(null)->nullable();
+            $table->float('impressionShare')->default(null)->nullable();
+            $table->string('inAccount')->default(null)->nullable();
+            $table->string('inPlan')->default(null)->nullable();
+            $table->string('extractedFrom')->default(null)->nullable();
 			
 			$table->timestamps();
 		});

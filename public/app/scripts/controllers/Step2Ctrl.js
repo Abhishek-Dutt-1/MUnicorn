@@ -11,7 +11,7 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', '$sce', 'DataShare
     $scope.matchDuplicateButtonPressed = false;
     $scope.selectedDataAccount = {};
 
-    $scope.tagCloudString ='';
+    $scope.tagCloudArray = [];
 	/*
 	// Fetch Keywords, expects JSON
 	$http.get('scripts/Dish Tv Sample.json').success(function(data) {
@@ -360,7 +360,31 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', '$sce', 'DataShare
 
         DataShareService.getTagCloud( function(data) {
 
-            $scope.tagCloudString = data.tag;
+            var maxCount, minCount;
+            maxCount = 0; minCount = 0;
+
+            var word = Object.keys(data), 
+                len = word.length,
+                i = 0,
+                prop,
+                count;
+
+            while (i < len) {
+                prop = word[i];
+                count = data[prop];
+                i += 1;
+                if( !((prop == "$promise")||(prop == "$resolved")) )
+                {
+                    $scope.tagCloudArray.push({word: prop, count: count});
+                    maxCount = (count > maxCount) ? count : maxCount;
+                    minCount = (count < minCount) ? count : minCount;
+                }
+            }
+
+            $scope.tagCloudArray.forEach( function(elem, ind) {
+                elem.level = (0 | (elem.count - minCount)/(maxCount - minCount) * 5) + 1;
+            });
+            
 
         });
 
@@ -378,7 +402,7 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', '$sce', 'DataShare
         $scope.updateNegativeKeywordTable();
         
         ///////////////////////  Tag cloud function
-        //$scope.getTagCloud();
+        $scope.getTagCloud();
     }
 
 

@@ -1,11 +1,33 @@
-<div class="row">
-    <div class="col-md-12">
-        <ul class="nav nav-tabs nav-justified" role="tablist">
-            <li ng-class="{active:isActive('/data')}" ><a href="#/data">Select Data</a></li>
-            <li ng-class="{active:isActive('/Step1'), disabled: !selectedDataAccount.id}" ><a href="#/Step1">Stopwords</a></li>
-            <li ng-class="{active:isActive('/Step2'), disabled: !selectedDataAccount.id}" ><a href="#/Step2">Negative words</a></li>
-            <li ng-class="{active:isActive('/Step3'), disabled: !selectedDataAccount.id}" ><a href="#/Step3">Segments</a></li>
-			<li ng-class="{active:isActive('/Step4'), disabled: !selectedDataAccount.id}" ><a href="#/Step4">Output</a></li>
-        </ul>
-    </div>
+<div id="secondaryNavInner" class="row">
+
+	<div id="sidebar-wrapper" class="col-md-2">
+		<ul class="nav nav-pills nav-stacked">
+			<li ng-class="{active:isActive('/data')}" >
+				<a href="#/data">
+					<span class="glyphicon glyphicon-home"></span> Datasets
+				</a>
+			</li>
+			<li ng-class="{active:isActive('/Step1'), disabled: !selectedDataAccount.id}" >
+				<a href="#/Step1">
+					<span class="glyphicon glyphicon-align-left"></span> Stopwords
+				</a>
+			</li>
+			<li ng-class="{active:isActive('/Step2'), disabled: !selectedDataAccount.id}" >
+				<a href="#/Step2">
+					<span class="glyphicon glyphicon-align-justify"></span> Negative words
+				</a>
+			</li>
+			<li ng-class="{active:isActive('/Step3'), disabled: !selectedDataAccount.id}" >
+				<a href="#/Step3">
+					<span class="glyphicon glyphicon-pencil"></span> Segments
+				</a>
+			</li>
+			<li ng-class="{active:isActive('/Step4'), disabled: !selectedDataAccount.id}" >
+				<a href="#/Step4">
+					<span class="glyphicon glyphicon-save"></span> Output
+				</a>
+			</li>
+		</ul>
+	</div>
+
 </div>
