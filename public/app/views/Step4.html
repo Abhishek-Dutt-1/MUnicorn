@@ -42,7 +42,7 @@
         <div class="panel-body">
             <div ng-show="!selectedDataAccount.id">Please select a dataset</div>
             <div ng-show="selectedDataAccount.id">
-                <div class="col-md-10">
+                <div class="col-md-11">
                     <!--
                     <button type="button" ng-click="markButton()" class="btn btn-info">Match Negative Keywords</button>
                     <button type="button" ng-click="markOrderIndepDuplicates()" class="btn btn-info">Match Duplicate Keywords</button>
@@ -51,7 +51,7 @@
                     -->
                     <button type="button" ng-click="exportCSV()" class="btn btn-info">Export CSV</button>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <input ng-change="updateKeywordTable()" ng-model="numShowKeywords" type="text" class="form-control">
                 </div>
             </div>

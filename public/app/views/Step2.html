@@ -50,10 +50,10 @@
                     <div ng-show="!selectedDataAccount.id">Please select a dataset</div>
                     <div ng-show="selectedDataAccount.id">
                         <div class="col-md-10">
-                            <button type="button" ng-click="markButton()" class="btn btn-info">Match Negative Keywords</button>
-                            <button type="button" ng-click="markOrderIndepDuplicates()" class="btn btn-info">Match Duplicate Keywords</button>
-                            <button type="button" ng-click="deleteMatches()" class="btn btn-info">Delete Matched</button>
-                            <button type="button" ng-click="resetMatches()" class="btn btn-default">Reset</button>
+                            <button type="button" ng-click="markButton()" class="btn btn-primary" ng-class="{active: matchButtonPressed}">Match Negative Keywords</button>
+                            <button type="button" ng-click="markOrderIndepDuplicates()" class="btn btn-primary" ng-class="{active: matchDuplicateButtonPressed}">Match Duplicate Keywords</button>
+                            <button type="button" ng-click="deleteMatches()" class="btn btn-primary" ng-class="{disabled: !(matchButtonPressed || matchDuplicateButtonPressed)}">Delete Matched</button>
+                            <button type="button" ng-click="resetMatches()" class="btn btn-default" >Reset</button>
                         </div>
                         <div class="col-md-2">
                             <input ng-change="updateKeywordTable()" ng-model="numShowKeywords" type="text" class="form-control">
@@ -64,19 +64,24 @@
                 <table  ng-show="selectedDataAccount.id" class="table table-condensed table-hover">
                     <thead>
                         <tr>
+						<!--
                             <th class="name">Keyword&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
                             <th class="name">Volume&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
                             <th class="description">Delete&nbsp;<a ng-click="sort_by('description')"><i class="icon-sort"></i></a></th>
+							-->
+							<th class="name"><a href='' ng-click="sort_by('keyword')">Keyword&nbsp;<span class="glyphicon glyphicon-resize-vertical"></span></a></th>
+                            <th class="name"><a href='' ng-click="sort_by('avMonthlySearches')">Volume&nbsp;<span class="glyphicon glyphicon-resize-vertical"></span></a></th>
+                            <th class="description">Delete&nbsp;</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <td colspan="3">
                             <div>
                                 <ul class="pager">
-                                    <li ng-class="{disabled: currentPageNum == 0}">
+                                    <li ng-class="{disabled: keywordFirstPage}">
                                     <a href ng-click="changePage(-1)" >« Prev</a>
                                     </li>
-                                    <li ng-class="{disabled: actualData.length <= (currentPageNum+1)*numShowKeywords }">
+                                    <li ng-class="{disabled: keywordLastPage}">
                                     <a href ng-click="changePage(1)">Next »</a>
                                     </li>
                                 </ul>

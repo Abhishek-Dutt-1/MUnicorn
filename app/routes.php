@@ -23,7 +23,7 @@ Route::group(array('prefix' => 'api/keywords'), function()
     // fetch all keywords
     Route::get( '/', 'KeywordController@index' );
     //fetch a subset of keywords
-    Route::get( '/{dataaccountid}/{start}/{count}', 'KeywordController@listKeywords' );
+    Route::get( '/{dataaccountid}/{start}/{count}/{orderby}/{desc}', 'KeywordController@listKeywords' );
     // create a new keyword
     Route::post( '/', 'KeywordController@create' );
     // save delete flag checkbox

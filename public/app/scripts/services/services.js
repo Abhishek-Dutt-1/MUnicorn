@@ -30,20 +30,21 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
 	return {
 		// Actual Data
         ////////////////////////////////////// get keywords for the keywords table
-        fetchKeywords: function(pageNum, keywordsPerPage, callback) {
+        fetchKeywords: function(pageNum, keywordsPerPage, sortOn, callback) {
 
-            var resKeywords = $resource('api/keywords/' + selectedDataAccount.id + '/' + pageNum + '/' + keywordsPerPage , {} , {
-                query: { method:'GET', params:{}, isArray:true }
+            var resKeywords = $resource('api/keywords/' + selectedDataAccount.id + '/' + pageNum + '/' + keywordsPerPage + '/' + sortOn.field + '/' + sortOn.desc , {} , {
+                query: { method:'GET', params:{}, isArray:false }
             });
 
             resKeywords.query( function(data) { 
-                data.forEach( function(elem, index) {
+
+                data.data.forEach( function(elem, index) {
 					// ugly hack but no time
                     elem.KeywordStopWordHighlighted = elem.keyword;
                     elem.userInputSegmentArray = [];
                     elem.userInputSegment = '';
                 });
-                //console.log(data);
+
                 callback(data);
             });
 

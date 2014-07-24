@@ -1,12 +1,19 @@
 'use strict';
 
 keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$sce', 'DataShareService', function ($scope, $sce, DataShareService) {
-    $scope.numShowKeywords = 50;
+    $scope.numShowKeywords = 10;
     $scope.currentPageNum = 0;      // 0 == first page
     $scope.currentKeywordsMatched = 0;
     $scope.doNotDelete = [-1];	
     $scope.matchButtonPressed = false;
     $scope.selectedDataAccount = {};
+
+    $scope.totalDataRowsCount = 0;
+    $scope.currentTopRow = 1;
+    $scope.keywordLastPage = false;
+    $scope.keywordFirstPage = true;
+
+    $scope.trackSort = { sortOn: {field: 'id', desc: false}, track: [{field: 'keyword', desc: true}, {field: 'avMonthlySearches', desc: true}] };
 
 	/*
 	// Fetch Keywords, expects JSON
@@ -20,21 +27,68 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$sce', 'DataShare
     //////////////////////////// Keywords Table and Pager /////////////////////////
     // Updates pager(at the bottom of the table) on initial load and on change of numShowKeywords
     $scope.changePage = function(next) {
-        if(next >= 0) {
-            $scope.currentPageNum++;
+
+        if(next >= 0)
+        {
+            //$scope.currentPageNum = ($scope.totalDataRowsCount > ($scope.currentPageNum + 1) * $scope.numShowKeywords) ? $scope.currentPageNum + 1 : $scope.currentPageNum;
+            if( $scope.totalDataRowsCount > Number($scope.currentTopRow) + Number($scope.numShowKeywords) )
+            {
+                //$scope.currentPageNum = $scope.currentPageNum + 1;
+                $scope.currentTopRow  = Number($scope.currentTopRow) + Number($scope.numShowKeywords);
+                $scope.updateKeywordTable();
+            } else
+            {
+                // already at last page. do nothing;
+                console.log("Last Page :: " + $scope.currentTopRow + " : " + $scope.numShowKeywords + " = " + (Number($scope.currentTopRow) + Number($scope.numShowKeywords)) + " :: " + $scope.totalDataRowsCount);
+            }
+//            $scope.currentPageNum++;
 //            DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords , $scope.numShowKeywords, function(data) { $scope.dummyData = data; } );
-        } else {
-            $scope.currentPageNum = ($scope.currentPageNum === 0) ? 0 : $scope.currentPageNum - 1;
+        } else
+        {
+            //$scope.currentPageNum = ($scope.currentPageNum === 0) ? 0 : $scope.currentPageNum - 1;
+            //$scope.currentTopRow = ($scope.currentTopRow <= 1) ? 1 : $scope.currentTopRow - $scope.numShowKeywords;
+            if( $scope.currentTopRow > 1 )
+            {
+                $scope.currentTopRow = ($scope.currentTopRow - $scope.numShowKeywords <= 1) ? 1 : $scope.currentTopRow - $scope.numShowKeywords;
+                $scope.updateKeywordTable();
+            } else
+            {
+                // already at the last page. do nothing
+            }
 //           DataShareService.fetchKeywords( $scope.currentPageNum, $scope.numShowKeywords, function(data) { $scope.dummyData = data; } );
         }
-        $scope.updateKeywordTable();
+        //$scope.updateKeywordTable();
     };
 
     $scope.updateKeywordTable = function() {
-        DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords, $scope.numShowKeywords, function(data) { 
-            $scope.dummyData = data; 
+        //DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords, $scope.numShowKeywords, function(data) { 
+
+        // ($scope.currentTopRow - 1) since that corresponds to number of rows to skip
+        DataShareService.fetchKeywords( $scope.currentTopRow - 1, $scope.numShowKeywords, $scope.trackSort.sortOn, function(data) { 
+
+            //console.log( $scope.currentTopRow + " :: " + $scope.numShowKeywords );
+            $scope.dummyData = data.data; 
+            $scope.totalDataRowsCount = data.count;
+            
+            // update pager
+            if( $scope.totalDataRowsCount > Number($scope.currentTopRow) + Number($scope.numShowKeywords) ) {
+                $scope.keywordLastPage = false;
+            } else {
+                $scope.keywordLastPage = true;
+            }
+            console.log($scope.keywordLastPage);
+            // update pager
+            if( $scope.currentTopRow > 1 ) {
+                $scope.keywordFirstPage = false;
+            } else {
+                $scope.keywordFirstPage = true;
+            }
+
             if($scope.matchButtonPressed) $scope.markMatches();
+
         } );
+
+
     };
 /*   
     $scope.changePage = function(next) {
@@ -66,8 +120,15 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$sce', 'DataShare
 */
     //////////////////////////// End Keywords Table and Pager /////////////////////////
     $scope.markButton = function() {
+
+        $scope.matchButtonPressed = !$scope.matchButtonPressed;
+        if($scope.matchButtonPressed) $scope.markMatches();
+        else $scope.resetMatches();
+        console.log($scope.matchButtonPressed);
+        /*
         $scope.matchButtonPressed = true;
         $scope.markMatches();
+        */
     };
     // Mark matches between keywords and Stop Word List
     $scope.markMatches = function() {
@@ -182,11 +243,14 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$sce', 'DataShare
     // keword is altered
     $scope.deleteMatches = function() {
         console.log($scope.doNotDelete);
-        DataShareService.deleteMatchingStopWordsFromKeywords($scope.doNotDelete.toString(), function(res) { 
-            //console.log(res); 
-            $scope.updateKeywordTable();
-        } );
+
+        if($scope.matchButtonPressed) {         // only delete if Match button is pressed
+            DataShareService.deleteMatchingStopWordsFromKeywords($scope.doNotDelete.toString(), function(res) { 
+                $scope.updateKeywordTable();
+            } );
+        }
         $scope.matchButtonPressed = false;
+        
         countMatchedKeywords();
     };
 /*
@@ -263,8 +327,10 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$sce', 'DataShare
     $scope.deleteStopWord = function(id) {
         //$scope.stopWordList.splice( $scope.stopWordList.indexOf(stopWord), 1 );
 		//DataShareService.updateStopWordList($scope.stopWordList);
-        DataShareService.destroyStopWord(id, function(res) {});
-        $scope.updateStopwordTable();
+        DataShareService.destroyStopWord(id, function(res) {
+            $scope.updateStopwordTable();
+        });
+        //$scope.updateStopwordTable();
     };
 
 /*
@@ -298,6 +364,7 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$sce', 'DataShare
             //data = data.split('\r\n');
 //            $scope.addStopWordList(data);
             $scope.stopWordList = data;
+            if($scope.matchButtonPressed) { $scope.resetMatches(); $scope.matchButtonPressed = true; $scope.markMatches(); }
         });
 
     };
@@ -343,12 +410,30 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$sce', 'DataShare
     };
 */
     /////////////////////// End Handle Stop Words Interface ///////////////////
-    
+
+    $scope.sort_by = function(sortField) {
+
+//        $scope.trackSort = { sortOn: {field: 'id', desc: false}, track: [{field: 'keyword', desc: true}, {field: 'volume', desc: true}] };
+        var sortObj = {};
+
+        $scope.trackSort.track.forEach( function(elem, ind) {
+            if(elem.field === sortField)
+            {
+                elem.desc = !elem.desc;
+                sortObj = elem;
+            }
+        });
+
+        $scope.currentTopRow = 1;
+        $scope.trackSort.sortOn = sortObj;
+        $scope.updateKeywordTable();
+    };
+
+
     // INIT
-//	$scope.currentDataAccount = DataShareService.getSelectedDataAccount();		
+//$scope.currentDataAccount = DataShareService.getSelectedDataAccount();		
 
     $scope.selectedDataAccount = DataShareService.getSelectedDataAccount();
-    console.log($scope.selectedDataAccount);
     if($scope.selectedDataAccount.id >= 0)      // since id must be >= 0
     {
         $scope.updateKeywordTable();

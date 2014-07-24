@@ -13,7 +13,7 @@ class KeywordController extends \BaseController {
 		return Response::json(Keyword::get());
 	}
 
-	public function listKeywords($dataaccountid, $start, $count)
+	public function listKeywords($dataaccountid, $start, $count, $orderby, $desc)
 	{
 	/*
 		$details = new StdClass();
@@ -39,8 +39,9 @@ class KeywordController extends \BaseController {
 		Config::set('database.connections.mysql_tenant.database', $details->database);
 		DB::setDefaultConnection('mysql_tenant');
 		*/
-		
-		return Response::json( Keyword::where('dataAccount', $dataaccountid)->skip($start)->take($count)->get() ); 
+		if($desc == 'true') $desc = 'desc'; else $desc = 'asc';
+		$totalRows = Keyword::where('dataAccount', $dataaccountid)->count();
+		return Response::json( array( 'count' => $totalRows, 'data' => Keyword::where('dataAccount', $dataaccountid)->skip($start)->take($count)->orderBy($orderby, $desc)->get() ) ); 
 	}
 
 	/**
