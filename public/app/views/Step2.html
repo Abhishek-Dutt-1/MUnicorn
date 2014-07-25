@@ -51,7 +51,7 @@
                     <div ng-show="selectedDataAccount.id">
                         <div class="col-md-10">
                             <button type="button" ng-click="markButton()" class="btn btn-primary" ng-class="{active: matchButtonPressed}">Match Negative Keywords</button>
-                            <button type="button" ng-click="markOrderIndepDuplicates()" class="btn btn-primary" ng-class="{active: matchDuplicateButtonPressed}">Match Duplicate Keywords</button>
+                            <button type="button" ng-click="markOrderIndepDuplicates()" class="btn btn-primary" ng-class="{active: matchDuplicateButtonPressed}">Match Duplicates</button>
                             <button type="button" ng-click="deleteMatches()" class="btn btn-primary" ng-class="{disabled: !(matchButtonPressed || matchDuplicateButtonPressed)}">Delete Matched</button>
                             <button type="button" ng-click="resetMatches()" class="btn btn-default" >Reset</button>
                         </div>
@@ -69,14 +69,17 @@
                             <th class="name">Volume&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
                             <th class="description">Delete&nbsp;<a ng-click="sort_by('description')"><i class="icon-sort"></i></a></th>
 							-->
-							<th class="name"><a href='' ng-click="sort_by('keyword')">Keyword&nbsp;<span class="glyphicon glyphicon-resize-vertical"></span></a></th>
-                            <th class="name"><a href='' ng-click="sort_by('avMonthlySearches')">Volume&nbsp;<span class="glyphicon glyphicon-resize-vertical"></span></a></th>
+							<th class="name"><a href='' ng-click="sort_by('keyword')">Keyword&nbsp;</a></th>
+                            <th class="name"><a href='' ng-click="sort_by('avMonthlySearches')">Volume&nbsp;</a></th>
                             <th class="description">Delete&nbsp;</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <td colspan="3">
-                            <div>
+							<div class="pagerInfo pull-left">
+								Showing {{currentTopRow}} to {{currentTopRow*1 + dummyData.length*1 - 1}} of {{totalDataRowsCount}} rows
+							</div>
+                            <div class="pull-right">
                                 <ul class="pager">
                                     <li ng-class="{disabled: keywordFirstPage}">
                                     <a href ng-click="changePage(-1)" >« Prev</a>
@@ -130,18 +133,55 @@
 
             <div ng-show="selectedDataAccount.id" class="panel panel-primary" id="tagCloud">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Word Cloud</h3>
+                    <h3 class="panel-title">Word Cloud
+						<a href="" class="pull-right" data-toggle="modal" data-target="#myModal">
+							<span class="glyphicon glyphicon-fullscreen"></span>
+						</a>
+					</h3>
                 </div>
                 <div class="panel-body">
                     <div id="1tagCloud">
                         <ul>
                             <li ng-repeat="tag in tagCloudArray" class="tag{{tag.level}}">
-                                <a href="">{{tag.word}} ({{tag.count}}) </a>
+                                <a href="" ng-click="addNewNegativeKeyword(tag.word)">{{tag.word}} ({{tag.count}}) </a>
                             </li>
                         </ul>
                     </div>
                 </div>
             </div>      <!-- end word cloud panel -->
+
+<!-- Button trigger modal -->
+<!--
+<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+Launch demo modal
+</button>
+-->
+			<!-- Modal -->
+			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-lg" id="modalTagCloud">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">
+								<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+							</button>
+							<h4 class="modal-title" id="myModalLabel">Word Cloud</h4>
+						</div>
+						<div class="modal-body">
+							<div id="1tagCloud">
+								<ul>
+									<li ng-repeat="tag in tagCloudArray" class="tag{{tag.level}}">
+										<a href="" ng-click="addNewNegativeKeyword(tag.word)">{{tag.word}} <span class="hidden">({{tag.count}})</span> </a>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- End Modal -->
 
         </div> <!-- end col-md-4 -->
 	</div>

@@ -10,7 +10,15 @@ class DataAccountController extends \BaseController {
 	public function index()
 	{
 		// Return all data accounts
-		return Response::json(DataAccount::get());
+		$temp = [];
+		$dataac = DataAccount::all();
+		foreach($dataac as $k => $v)
+		{
+			$v->keywordCount = Keyword::where('dataAccount', $v->id)->count();
+			$temp[] = $v;
+		}
+		return Response::json($temp);
+		//return Response::make(DataAccount::get());
 	}
 
 

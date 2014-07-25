@@ -69,14 +69,29 @@
                             <th class="name">Segment&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
                             <th class="description">Volume&nbsp;<a ng-click="sort_by('description')"><i class="icon-sort"></i></a></th>
 							-->
-							<th class="name"><a href='' ng-click="sort_by('keyword')">Keyword&nbsp;<span class="glyphicon glyphicon-resize-vertical"></span></a></th>
-							<th class="name">Segment&nbsp;</th>
-                            <th class="name"><a href='' ng-click="sort_by('avMonthlySearches')">Volume&nbsp;<span class="glyphicon glyphicon-resize-vertical"></span></a></th>
+							<th>
+								<a href='' ng-click="sort_by('keyword'); predicate = 'keyword'; reverse=!reverse">
+								Keyword&nbsp;
+								</a>
+							</th>
+							<th>
+								<a href='' ng-click="predicate = 'userInputSegment'; reverse=!reverse">
+								Segment&nbsp;
+								</a>
+							</th>
+                            <th>
+								<a href='' ng-click="sort_by('avMonthlySearches'); predicate = 'avMonthlySearches'; reverse=!reverse">
+									Volume&nbsp;
+								</a>
+							</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <td colspan="3">
-                            <div>
+							<div class="pagerInfo pull-left">
+								Showing {{currentTopRow}} to {{currentTopRow*1 + dummyData.length*1 - 1}} of {{totalDataRowsCount}} rows
+							</div>
+                            <div class="pull-right">
                                 <ul class="pager">
                                     <li ng-class="{disabled: keywordFirstPage}">
                                     <a href ng-click="changePage(-1)" >« Prev</a>
@@ -89,7 +104,7 @@
                         </td>
                     </tfoot>
                     <tbody>
-                    <tr ng-repeat="item in dummyData" ng-class="{danger: item.negativeKeywordMatch123}">
+                    <tr ng-repeat="item in dummyData | orderBy:predicate:reverse">
                         <td>{{item.keyword}}</td>
                         <td>{{item.userInputSegment}}
                         <!-- <input type="checkbox" class="1form-control" ng-click="negativeKeyowrdCheckBoxToggle(item.Keyword)" ng-checked="item.negativeKeywordMatch" >    -->

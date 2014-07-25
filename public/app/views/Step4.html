@@ -62,13 +62,13 @@
                 <tr>
                 <!--<th class="id">Id&nbsp;<a ng-click="sort_by('id')"><i class="icon-sort"></i></a></th>
                     -->
-                    <th class="name">Keyword&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
-                    <th class="name">Brand&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
-                    <th class="name">Compete&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
-                    <th class="name">Segment&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
-                    <th class="name">Volume&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
-                    <th class="name">Competition&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
-                    <th class="name">Suggested bid&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
+                    <th><a href='' ng-click="sort_by('keyword')">Keyword&nbsp;</a></th>
+                    <th><a href='' ng-click="sort_by('Brand')">Brand&nbsp;</a></th>
+                    <th><a href='' ng-click="sort_by('Compete')">Compete&nbsp;</a></th>
+                    <th><a href='' ng-click="sort_by('NAME')">Segment&nbsp;</a></th>
+                    <th><a href='' ng-click="sort_by('avMonthlySearches')">Volume&nbsp;</a></th>
+                    <th><a href='' ng-click="sort_by('competition')">Competition&nbsp;</a></th>
+                    <th><a href='' ng-click="sort_by('suggestedBid')">Suggested bid&nbsp;</a></th>
 <!--                                <th class="description">Delete&nbsp;<a ng-click="sort_by('description')"><i class="icon-sort"></i></a></th>
                     -->
                 </tr>
@@ -77,10 +77,10 @@
                 <td colspan="7">
                     <div>
                         <ul class="pager">
-                            <li ng-class="{disabled: currentPageNum == 0}">
+                            <li ng-class="{disabled: keywordFirstPage}">
                             <a href ng-click="changePage(-1)" >« Prev</a>
                             </li>
-                            <li ng-class="{disabled: actualData.length <= (currentPageNum+1)*numShowKeywords }">
+                            <li ng-class="{disabled: keywordLastPage}">
                             <a href ng-click="changePage(1)">Next »</a>
                             </li>
                         </ul>

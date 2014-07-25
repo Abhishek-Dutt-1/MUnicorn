@@ -67,14 +67,15 @@
                             <th class="name">Volume&nbsp;<a ng-click="sort_by('avMonthlySearches')"><span class="glyphicon glyphicon-resize-vertical"></span></a></th>
                             <th class="description">Delete&nbsp;</th>
                             -->
-                            <th class="name"><a href='' ng-click="sort_by('keyword')">Keyword&nbsp;<span class="glyphicon glyphicon-resize-vertical"></span></a></th>
-                            <th class="name"><a href='' ng-click="sort_by('avMonthlySearches')">Volume&nbsp;<span class="glyphicon glyphicon-resize-vertical"></span></a></th>
+                            <th class="name"><a href='' ng-click="sort_by('keyword')">Keyword ({{totalDataRowsCount}})&nbsp;</a></th>
+                            <th class="name"><a href='' ng-click="sort_by('avMonthlySearches')">Volume&nbsp;</a></th>
                             <th class="description">Delete&nbsp;</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <td colspan="3">
-                            <div>
+                            <div class="pagerInfo pull-left">Showing {{currentTopRow}} to {{currentTopRow*1 + dummyData.length*1 - 1}} of {{totalDataRowsCount}} rows</div>
+                            <div class="pull-right">
                                 <ul class="pager">
                                     <li ng-class="{disabled: keywordFirstPage}">
                                     <a href ng-click="changePage(-1)" >« Prev</a>

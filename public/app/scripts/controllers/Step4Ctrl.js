@@ -6,6 +6,22 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
     $scope.currentKeywordsMatched = 0;
     $scope.selectedDataAccount = {};
 
+    $scope.totalDataRowsCount = 0;
+    $scope.currentTopRow = 1;
+    $scope.keywordLastPage = false;
+    $scope.keywordFirstPage = true;
+
+    $scope.trackSort = {
+        sortOn: {field: 'id', desc: false},
+        track: [{field: 'keyword', desc: true},
+                {field: 'Brand', desc: true},
+                {field: 'Compete', desc: true},
+                {field: 'NAME', desc: true},
+                {field: 'avMonthlySearches', desc: true},
+                {field: 'competition', desc: true},
+                {field: 'suggestedBid', desc: true},
+                ]};
+
     /*
 	$scope.exportCSV = function() {
 		//var test_array = [["name1", 2, 3], ["name2", 4, 5], ["name3", 6, 7], ["name4", 8, 9], ["name5", 10, 11]];
@@ -60,6 +76,7 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
 	*/
     //////////////////////////// Keywords Table and Pager /////////////////////////
     // Updates pager(at the bottom of the table) on initial load and on change of numShowKeywords
+/*
     $scope.changePage = function(next) {
         if(next >= 0) {
             $scope.currentPageNum++;
@@ -70,12 +87,76 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
         }
         $scope.updateKeywordTable();
     };
-
+*/
+    /*
     $scope.updateKeywordTable = function() {
         DataShareService.fetchKeywordsAndSegmentsData( $scope.currentPageNum * $scope.numShowKeywords, $scope.numShowKeywords, function(data) { 
             $scope.dummyData = data; 
         } );
+    };
+    */
 
+    $scope.changePage = function(next)
+    {
+        if(next >= 0)
+        {
+            //$scope.currentPageNum = ($scope.totalDataRowsCount > ($scope.currentPageNum + 1) * $scope.numShowKeywords) ? $scope.currentPageNum + 1 : $scope.currentPageNum;
+            if( $scope.totalDataRowsCount > Number($scope.currentTopRow) + Number($scope.numShowKeywords) )
+            {
+                //$scope.currentPageNum = $scope.currentPageNum + 1;
+                $scope.currentTopRow  = Number($scope.currentTopRow) + Number($scope.numShowKeywords);
+                $scope.updateKeywordTable();
+            } else
+            {
+                // already at last page. do nothing;
+                console.log("Last Page :: " + $scope.currentTopRow + " : " + $scope.numShowKeywords + " = " + (Number($scope.currentTopRow) + Number($scope.numShowKeywords)) + " :: " + $scope.totalDataRowsCount);
+            }
+//            $scope.currentPageNum++;
+//            DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords , $scope.numShowKeywords, function(data) { $scope.dummyData = data; } );
+        } else
+        {
+            //$scope.currentPageNum = ($scope.currentPageNum === 0) ? 0 : $scope.currentPageNum - 1;
+            //$scope.currentTopRow = ($scope.currentTopRow <= 1) ? 1 : $scope.currentTopRow - $scope.numShowKeywords;
+            if( $scope.currentTopRow > 1 )
+            {
+                $scope.currentTopRow = ($scope.currentTopRow - $scope.numShowKeywords <= 1) ? 1 : $scope.currentTopRow - $scope.numShowKeywords;
+                $scope.updateKeywordTable();
+            } else
+            {
+                // already at the last page. do nothing
+            }
+//           DataShareService.fetchKeywords( $scope.currentPageNum, $scope.numShowKeywords, function(data) { $scope.dummyData = data; } );
+        }
+        //$scope.updateKeywordTable();
+    };
+
+    $scope.updateKeywordTable = function() {
+        //DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords, $scope.numShowKeywords, function(data) { 
+
+        // ($scope.currentTopRow - 1) since that corresponds to number of rows to skip
+        DataShareService.fetchKeywordsAndSegmentsData( $scope.currentTopRow - 1, $scope.numShowKeywords, $scope.trackSort.sortOn, function(data) { 
+                    
+            //console.log( $scope.currentTopRow + " :: " + $scope.numShowKeywords );
+            $scope.dummyData = data.data; 
+            $scope.totalDataRowsCount = data.count;
+
+            // update pager
+            if( $scope.totalDataRowsCount > Number($scope.currentTopRow) + Number($scope.numShowKeywords) ) {
+                $scope.keywordLastPage = false;
+            } else {
+                $scope.keywordLastPage = true;
+            }
+            //console.log($scope.keywordLastPage);
+            // update pager
+            if( $scope.currentTopRow > 1 ) {
+                $scope.keywordFirstPage = false;
+            } else {
+                $scope.keywordFirstPage = true;
+            }
+
+//            if($scope.matchButtonPressed) $scope.markMatches();
+
+        } );
     };
 
 /*
@@ -253,10 +334,24 @@ keywordSegmentsControllers.controller('Step4Ctrl', ['$scope', '$http', 'DataShar
         });
         countMatchedKeywords();
     };*/
-	
-    // INIT
+    $scope.sort_by = function(sortField) {
+        //        $scope.trackSort = { sortOn: {field: 'id', desc: false}, track: [{field: 'keyword', desc: true}, {field: 'volume', desc: true}] };
+        var sortObj = {};
+        $scope.trackSort.track.forEach( function(elem, ind) {
+            if(elem.field === sortField)
+            {
+                elem.desc = !elem.desc;
+                sortObj = elem;
+            }
+        });
+        $scope.currentTopRow = 1;
+        $scope.trackSort.sortOn = sortObj;
+        $scope.updateKeywordTable();
+        console.log(sortObj);
+    };	
+    
 
-
+    //////////////////////////////// INIT
     $scope.selectedDataAccount = DataShareService.getSelectedDataAccount();
     console.log($scope.selectedDataAccount);
     if($scope.selectedDataAccount.id >= 0)      // since id must be >= 0

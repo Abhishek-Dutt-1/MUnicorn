@@ -76,7 +76,7 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$sce', 'DataShare
             } else {
                 $scope.keywordLastPage = true;
             }
-            console.log($scope.keywordLastPage);
+            //console.log($scope.keywordLastPage);
             // update pager
             if( $scope.currentTopRow > 1 ) {
                 $scope.keywordFirstPage = false;
@@ -348,10 +348,18 @@ keywordSegmentsControllers.controller('Step1Ctrl', ['$scope', '$sce', 'DataShare
             newStopWord = newStopWord.replace(/(\s)+/g, '$1');
             // Dont add only blank space input
             if(newStopWord !== '') {
-                DataShareService.saveNewStopword(newStopWord, function(res) {
-                    $scope.newStopWord = "";
-                    $scope.updateStopwordTable();
-                });
+				// check if it already exists
+				if (!($scope.stopWordList.some( function(elem, ind) {
+					return elem.stopword == newStopWord;
+				}) ))
+				{
+					DataShareService.saveNewStopword(newStopWord, function(res) {
+						$scope.newStopWord = "";
+						$scope.updateStopwordTable();
+					});
+				} else {
+					$scope.newStopWord = "";
+				}
             }
         }
     };

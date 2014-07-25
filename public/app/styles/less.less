@@ -20,6 +20,9 @@ body {
 .progress {
     margin-bottom: 0px;
 }
+#mainNavTitle {
+    color: white;
+}
 
 ///////////////////////
 /*!
@@ -63,7 +66,7 @@ body {
 .segmentInputField {
     height: 19px;
 }
-
+//////////////// Tag cloud
 #tagCloud {
     .panel-body { padding: 0px; }
     ul{
@@ -91,6 +94,112 @@ body {
 	.tag5{font-size:180%;}
 	.tag6{font-size:200%;}
 }
-#mainNavTitle {
-    color: white;
+////////////////// Modal Tag cloud
+#modalTagCloud {
+    .modal-body { 
+        font-size: 1.5em;
+        padding: 0px; 
+        }
+    ul{
+		margin: 0;
+		padding:.5em 10px;
+		text-align:center;
+		//background:#71b5e9 url(../images/bg_tags.gif) repeat-x;		
+		}
+    li{
+		margin:0;
+		padding:0;
+		list-style:none;
+		display:inline;
+		}
+    li a{
+		text-decoration:none;
+//		color:#fff;
+		color:black;
+		padding:0 2px;
+		span {
+		        color: grey;
+		    }
+		}
+	 li a:hover{color:#cff400;}		
+	.tag1{font-size:100%;}
+	.tag2{font-size:120%;}
+	.tag3{font-size:240%;}
+	.tag4{font-size:260%;}
+	.tag5{font-size:300%;}
+	.tag6{font-size:400%;}
+}
+
+///////////////// Buttons
+.btn {
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+    -moz-box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+    -webkit-box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+}
+////////// Panel
+.panel {
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+}
+.panel-heading {
+//    border-bottom: 0px;
+//    border: 1px solid #C2C2C2;
+//    background-color: #4C4F53!important;
+//    color: #FFF;
+//    border-color: #4C4F53!important;
+    height: 34px;
+    padding: 0px;
+    padding-right: 10px;
+    line-height: 40px;
+}
+.panel-title {
+    font-size: 14px;
+    margin: 0;
+    line-height: 34px;
+    font-weight: bold;
+    letter-spacing: 0;
+    margin-left: 10px;
+//    color: white;
+}
+//// form-control
+.form-control {
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;  
+}
+///// Pager
+.pagerInfo {
+    margin: 5px;
+    font-weight: bold;
+    color: lightgrey;
+    font-style: italic;
+    font-size: 0.9em;
+}
+.pager{
+    margin: 5px;
+    li {
+       > a {
+            border-radius: 2px;
+            -webkit-border-radius: 2px;
+            -moz-border-radius: 2px;
+            border-color: #ddd;
+            box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+            -moz-box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+            -webkit-box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+    }
+}
+// Data account info on the data select page
+.dataAccountInfo {
+    //font-style: italic;
+    font-size: 0.8em;
+    color: lightgray;
+    padding-right: 10px;
+    padding-top: 3px;
 }

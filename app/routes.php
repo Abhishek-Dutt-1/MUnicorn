@@ -30,7 +30,9 @@ Route::group(array('prefix' => 'api/keywords'), function()
     //Route::post( '/toggledeleteflag', 'KeywordController@toggleDeleteFlag' );   
     // delete a new keyword
     Route::delete( '/{id}', 'KeywordController@destroy' );
-
+	// Get total keywords count
+	Route::get( '/getkeywordcount/{dataaccountid}', 'KeywordController@getKeywordCount' );
+    
 });
 
 // API routes for Stopwords
@@ -80,7 +82,7 @@ Route::group(array('prefix' => 'api/ops'), function()
 	Route::post( '/saveinputsegments', 'OperationsController@saveInputSegments');    //step3
 
 	// STEP-4 :: fetch data from keywords-segment table
-	Route::get( '/fetchkeywordsandsegmentsdata/{dataaccountid}/{start}/{count}', 'OperationsController@fetchKeywordsAndSegmentsData');
+	Route::get( '/fetchkeywordsandsegmentsdata/{dataaccountid}/{start}/{count}/{orderby}/{desc}', 'OperationsController@fetchKeywordsAndSegmentsData');
 
 	// SELECT DATA :: Fetach all account names
 	Route::get( '/fetchallaccountnames', 'OperationsController@fetchAllAccountNames');

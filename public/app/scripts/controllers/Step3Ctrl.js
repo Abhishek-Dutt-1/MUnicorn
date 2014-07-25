@@ -32,7 +32,7 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
     $scope.keywordLastPage = false;
     $scope.keywordFirstPage = true;
 
-    $scope.trackSort = { sortOn: {field: 'id', desc: false}, track: [{field: 'keyword', desc: true}, {field: 'avMonthlySearches', desc: true}] };
+    $scope.trackSort = { sortOn: {field: 'id', desc: false}, track: [{field: 'keyword', desc: true}, {field: 'Segment', desc: true},{field: 'avMonthlySearches', desc: true}] };
 
 	
 	/*
@@ -88,7 +88,7 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
             //console.log( $scope.currentTopRow + " :: " + $scope.numShowKeywords );
             $scope.dummyData = data.data; 
             $scope.totalDataRowsCount = data.count;
-            
+
             // update pager
             if( $scope.totalDataRowsCount > Number($scope.currentTopRow) + Number($scope.numShowKeywords) ) {
                 $scope.keywordLastPage = false;
@@ -639,7 +639,6 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
 */
     $scope.sort_by = function(sortField) {
 
-//        $scope.trackSort = { sortOn: {field: 'id', desc: false}, track: [{field: 'keyword', desc: true}, {field: 'volume', desc: true}] };
         var sortObj = {};
 
         $scope.trackSort.track.forEach( function(elem, ind) {
@@ -649,11 +648,11 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
                 sortObj = elem;
             }
         });
-
         $scope.currentTopRow = 1;
         $scope.trackSort.sortOn = sortObj;
         $scope.updateKeywordTable();
     };
+
 	
     //////////////////////////// End Handle Stop Words Interface ///////////////////
 
@@ -666,8 +665,14 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
         //$scope.updateKeywordTable();
         //$scope.updateStopwordTable();
 
-        $scope.updateKeywordTable();
+		DataShareService.getKeywordCount( function(data){
 
+			data.count = (data.count > 5000) ? 5000 : data.count;
+			$scope.numShowKeywords = data.count;
+			$scope.updateKeywordTable();
+
+		});
+		
         $scope.phrasesLoadingSpinner = true;
         DataShareService.refreshPhrases( function(res) {
             // get 2 word phrases
@@ -685,6 +690,15 @@ keywordSegmentsControllers.controller('Step3Ctrl', ['$scope', '$http', 'DataShar
                 $scope.bulkApplyUserSegments1Word();
                 $scope.phrasesLoadingSpinner1Word = false;
                 console.log("1 Word");
+				
+				/*
+				DataShareService.getKeywordCount( function(data){
+					console.log(data);
+					$scope.numShowKeywords = data.count;
+					$scope.updateKeywordTable();
+				});
+				*/
+				
             });
         });
 

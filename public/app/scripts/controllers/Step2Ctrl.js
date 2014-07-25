@@ -335,10 +335,21 @@ keywordSegmentsControllers.controller('Step2Ctrl', ['$scope', '$sce', 'DataShare
             newNegativeKeyword = newNegativeKeyword.replace(/(\s)+/g, '$1');
             // Dont add only blank space input
             if(newNegativeKeyword !== '') {
-                DataShareService.saveNewNegativeKeyword(newNegativeKeyword, function(res) {
-                    $scope.newNegativeKeyword = "";
-                    $scope.updateNegativeKeywordTable();
-                });
+				// check if it already exists
+				console.log($scope.negativeKeywordList);
+				if (!($scope.negativeKeywordList.some( function(elem, ind) {
+					return elem.negativekeyword == newNegativeKeyword;
+				}) ))
+				{
+					DataShareService.saveNewNegativeKeyword(newNegativeKeyword, function(res) {
+						$scope.newNegativeKeyword = "";
+						$scope.updateNegativeKeywordTable();
+					});
+				}
+				else
+				{
+					$scope.newNegativeKeyword = "";
+				}
             }
         }
     };

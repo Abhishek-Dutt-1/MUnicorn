@@ -11,6 +11,7 @@
                 <a class="list-group-item" ng-class="{active: selectedDataAccount.id == account.id}" ng-repeat="account in accountNameList | orderBy:'account':false" ng-click="setSelectDataAccount(account.id, account.dataaccount)" >
                     {{account.dataaccount}}
                     <span ng-click="deleteDataAccount(account.id)" class="close" type="button" aria-hidden="true">&times;</span>
+					<span class="dataAccountInfo pull-right"> Keywords: {{account.keywordCount}} Created: {{account.created_at}}</span>
                 </a>
             </div>
         </div>

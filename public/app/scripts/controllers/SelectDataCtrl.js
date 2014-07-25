@@ -42,11 +42,20 @@ keywordSegmentsControllers.controller('SelectDataCtrl', ['$scope', '$upload', 'D
     // data account name clicked in the View
     $scope.setSelectDataAccount = function(dataAccountId, dataAccountName) {
 
-        DataShareService.setSelectedDataAccount( dataAccountId, dataAccountName, function(res) {
-            $scope.selectedDataAccount.id = res.id; 
-            $scope.selectedDataAccount.name = res.name; 
-            console.log( $scope.selectedDataAccount );
-        } );
+		// toggle if already selected
+		if( DataShareService.getSelectedDataAccount().id == dataAccountId )
+		{
+			$scope.selectedDataAccount = DataShareService.unsetSelectedDataAccount();
+			return;
+		}	
+		
+		//
+		DataShareService.setSelectedDataAccount( dataAccountId, dataAccountName, function(res) {
+			$scope.selectedDataAccount.id = res.id; 
+			$scope.selectedDataAccount.name = res.name; 
+			console.log( $scope.selectedDataAccount );
+		} );
+		
 
     };
 

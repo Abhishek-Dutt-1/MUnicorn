@@ -49,7 +49,15 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
             });
 
         },
-
+		
+        getKeywordCount: function(callback) {
+            var resKeywords = $resource('api/keywords/getkeywordcount/' + selectedDataAccount.id , {} , {
+                query: { method:'GET', params:{}, isArray:false }
+            });
+            resKeywords.query( function(data) {
+                callback(data);
+            });
+        },
 /*
         // Sync delete checkbox state with databse
         toggleDeleteFlag: function(id, state, callback) {
@@ -270,11 +278,41 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
             */
         },
 
-        // Fetch keywords and segemnt data
-		fetchKeywordsAndSegmentsData: function(pageNum, keywordsPerPage, callback) {
+		
+		
+		
+		
+		
+		
+		
+		/*
+		
+		fetchKeywords: function(pageNum, keywordsPerPage, sortOn, callback) {
 
-            var resKeywords = $resource('api/ops/fetchkeywordsandsegmentsdata/' + selectedDataAccount.id + '/' + pageNum + '/' + keywordsPerPage , {} , {
-                query: { method:'GET', params:{}, isArray:true }
+            var resKeywords = $resource('api/keywords/' + selectedDataAccount.id + '/' + pageNum + '/' + keywordsPerPage + '/' + sortOn.field + '/' + sortOn.desc , {} , {
+                query: { method:'GET', params:{}, isArray:false }
+            });
+
+            resKeywords.query( function(data) { 
+
+                data.data.forEach( function(elem, index) {
+					// ugly hack but no time
+                    elem.KeywordStopWordHighlighted = elem.keyword;
+                    elem.userInputSegmentArray = [];
+                    elem.userInputSegment = '';
+                });
+
+                callback(data);
+            });
+
+        },
+		*/
+		
+        // Fetch keywords and segemnt data
+		fetchKeywordsAndSegmentsData: function(pageNum, keywordsPerPage, sortOn, callback) {
+
+            var resKeywords = $resource('api/ops/fetchkeywordsandsegmentsdata/' + selectedDataAccount.id + '/' + pageNum + '/' + keywordsPerPage + '/' + sortOn.field + '/' + sortOn.desc , {} , {
+                query: { method:'GET', params:{}, isArray:false }
             });
 
             resKeywords.query( function(data) { 
@@ -332,7 +370,12 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
             selectedDataAccount.name = dataAccountName;            
             callback(selectedDataAccount);
         },
-
+        
+		unsetSelectedDataAccount: function() {
+			selectedDataAccount = {};
+            return selectedDataAccount;
+        },
+		
         getSelectedDataAccount: function() {
             return selectedDataAccount;
         },

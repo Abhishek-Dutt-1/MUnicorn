@@ -106,9 +106,14 @@ class OperationsController extends \BaseController {
 		return ( array('success' => true) );
 	}
 	
-	public function fetchKeywordsAndSegmentsData($dataaccountid, $start, $count)
+	public function fetchKeywordsAndSegmentsData($dataaccountid, $start, $count, $orderby, $desc)
 	{
-		return Response::json( DB::table('keywords-segment')->where('dataAccount', $dataaccountid)->skip($start)->take($count)->get() );
+		if($desc == 'true') $desc = 'desc'; else $desc = 'asc';
+		$totalRows = DB::table('keywords-segment')->where('dataAccount', $dataaccountid)->count();
+		
+		return Response::json( array( 'count' => $totalRows, 'data' => DB::table('keywords-segment')->where('dataAccount', $dataaccountid)->skip($start)->take($count)->orderBy($orderby, $desc)->get() ) ); 
+		
+		//return Response::json( DB::table('keywords-segment')->where('dataAccount', $dataaccountid)->skip($start)->take($count)->get() );
 	}
 
 	public function fetchAllAccountNames()
