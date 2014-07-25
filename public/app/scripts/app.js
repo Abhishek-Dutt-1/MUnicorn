@@ -25,6 +25,10 @@ keywordSegmentsApp.config(['$routeProvider',
 			templateUrl: 'app/views/Step3.html',
 			controller: 'Step3Ctrl'
 		}).
+		when('/Step5', {
+			templateUrl: 'app/views/Step5.html',
+			controller: 'Step5Ctrl'
+		}).
 		when('/Step4', {
 			templateUrl: 'app/views/Step4.html',
 			controller: 'Step4Ctrl'
