@@ -12,6 +12,7 @@
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="app/bower_components/bootstrap/dist/css/bootstrap.css" />
+	<link rel="stylesheet" href="app/bower_components/angular-motion/dist/angular-motion.min.css">
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
@@ -66,11 +67,14 @@
     <script src="app/bower_components/ng-file-upload/angular-file-upload-shim.min.js"></script>
     <script src="app/bower_components/jquery/dist/jquery.js"></script>
     <script src="app/bower_components/angular/angular.js"></script>
+	<script src="app/bower_components/angular-animate/angular-animate.min.js"></script>
     <script src="app/bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="app/bower_components/angular-resource/angular-resource.js"></script>
     <script src="app/bower_components/angular-route/angular-route.js"></script>
     <script src="app/bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="app/bower_components/ng-file-upload/angular-file-upload.min.js"></script>
+    <script src="app/bower_components/angular-strap/dist/angular-strap.min.js"></script>
+	<script src="app/bower_components/angular-strap/dist/angular-strap.tpl.min.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -78,6 +82,7 @@
         <script src="app/scripts/app.js"></script>
 		<script src="app/scripts/filters/filters.js"></script>
 		<script src="app/scripts/services/services.js"></script>
+<!--		<script src="app/scripts/directives/directives.js"></script>	-->
         <script src="app/scripts/controllers/controllers.js"></script>
         <script src="app/scripts/controllers/SecondaryNavCtrl.js"></script>
 		<script src="app/scripts/controllers/AboutCtrl.js"></script>
@@ -86,6 +91,7 @@
 		<script src="app/scripts/controllers/Step2Ctrl.js"></script>
 		<script src="app/scripts/controllers/Step3Ctrl.js"></script>
 		<script src="app/scripts/controllers/Step4Ctrl.js"></script>
+		<script src="app/scripts/controllers/Step5Ctrl.js"></script>
         <!-- endbuild -->
 </body>
 </html>

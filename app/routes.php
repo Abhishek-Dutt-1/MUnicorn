@@ -94,7 +94,7 @@ Route::group(array('prefix' => 'api/ops'), function()
 	Route::get( '/downloadcsv/{dataaccountid}', 'OperationsController@downloadCSV');
 	
 	// Download tag cloud string
-	Route::get( '/gettagcloud/{dataaccountid}', 'OperationsController@getTagCloud');
+	Route::get( '/gettagcloud/{dataaccountid}', 'OperationsController@getTagCloud2');
 	
 });
 

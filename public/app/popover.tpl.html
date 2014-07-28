@@ -1,0 +1,37 @@
+<div class="popover ng-scope am-flip-x" tabindex="-1" ng-show="content">
+	<div class="arrow"></div>
+	<h3 class="popover-title ng-binding" ng-bind-html="title" ng-show="title">Title</h3>
+	<div class="popover-content">
+		<form role="form" class="tagPopover">
+			<!--
+			<div class="btn-group" data-toggle="buttons">
+				<label class="btn btn-primary">
+					<input type="radio" name="optionsRadios" value="stopword" ng-model="word1.type" >
+					Stopword
+				</label>
+				<label class="btn btn-primary">
+					<input type="radio" name="optionsRadios" value="negativeword" ng-model="word1.type">
+					Negative word
+				</label>
+			</div>
+			-->
+			<div class="form-group">
+				<div class="radio">
+					<label>
+						<input type="radio" ng-model="word1.type" value="stopword" />Stopword
+					</label>
+				</div>
+				<div class="radio">
+					<label>
+						<input type="radio" ng-model="word1.type" value="negativeword" />Negative word<br />
+					</label>
+				</div>
+			</div>
+
+			<input type="text" class="form-control" placeholder="Input segment" ng-model="word1.segment" ng-change="showPopoverForm({word: tag.word, data: word1, });"><br/>
+			<button class="btn btn-danger btn-sm" ng-click="$hide()">Close</button>
+			<button class="btn btn-primary btn-sm" ng-click="showPopoverForm({word: tag.word, data: word1, }); $hide();">OK</button>
+		</form>
+	
+	</div>
+</div>

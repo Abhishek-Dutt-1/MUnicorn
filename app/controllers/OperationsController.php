@@ -269,7 +269,7 @@ class OperationsController extends \BaseController {
 	
 	public function getTagCloud($dataaccountid)
 	{
-		$cloud = new Arg\Tagcloud\TagCloud();
+		//$cloud = new Arg\Tagcloud\TagCloud();
 		
 		$output = '';
 		$output1 = '';
@@ -298,7 +298,6 @@ class OperationsController extends \BaseController {
 		//sort($tagArray);
 		return Response::json( $tagArray );
 		
-		
 		$maxCount = 0; $minCount = 0; $class ='';
 		foreach($tagArray as $tag => $count)
 		{
@@ -320,15 +319,43 @@ class OperationsController extends \BaseController {
 		$output1 = '<div style="font-size: 56px">' . $output1 . '</div>';
 		return Response::json( array( 'tag' => $output1 ) );
 	
-	
-		
 		return Response::json( $tagArray );
 		//$cloud->addTags( $output );
-		$cloud->addString( $output );
-		
-		
-		return Response::json( array( 'tag' => $cloud->render() ) );
-		
+		//$cloud->addString( $output );
+		//return Response::json( array( 'tag' => $cloud->render() ) );
 	}
 	
+	public function getTagCloud2($dataaccountid)
+	{
+		$tagArray = [];
+		$temp = [];
+		$temp = Keyword::where('dataAccount', $dataaccountid)->get( array('keyword') );
+		foreach($temp as $key => $keywrd)
+		{
+			$temp = explode(" ", $keywrd->keyword);
+			if(sizeof($temp) > 1) {
+				if( isset($tagArray[ $temp[0] . " " . $temp[1] ]) )
+				{
+					$tagArray[ $temp[0] . " " . $temp[1] ]++;
+				}
+				else {
+					$tagArray[ $temp[0] . " " . $temp[1] ] = 1;
+				}
+			}
+			/*
+			foreach(explode(" ", $keywrd->keyword) as $k => $v)
+			{
+				if( isset($tagArray[$v]) )
+				{
+					$tagArray[$v]++;
+				}
+				else {
+					$tagArray[$v] = 1;				
+				}
+			}
+			*/
+		}
+		arsort($tagArray, SORT_NUMERIC );		//Sort alphabetically
+		return Response::json( $tagArray );
+	}
 }

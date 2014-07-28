@@ -9,3 +9,4 @@ Thumbs.db
 *.csv
 *.rar
 /public/app/bower_components
+/public/uploads/CSV
