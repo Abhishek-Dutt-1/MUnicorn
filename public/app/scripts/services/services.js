@@ -49,7 +49,32 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
             });
 
         },
-		
+
+        // Get ALL keywords with given data account id
+        fetchAllKeywords: function(callback) {
+
+            var resKeywords = $resource('api/keywords/fetchallkeywords/' + selectedDataAccount.id, {} , {
+                query: { method:'GET', params:{}, isArray:true }
+            });
+
+            resKeywords.query( function(data) { 
+                data.forEach( function(elem, index) {
+					// ugly hack but no time
+                    elem.KeywordStopWordHighlighted = elem.keyword;
+                    elem.userInputSegmentArray = [];
+                    elem.userInputSegment = '';
+                    elem.userInput = {};
+                    elem.userInput.stopword = false;
+                    elem.userInput.negativeword = false;
+                    elem.userInput.segment = '';
+                    elem.userInput.hasSegment = false;
+                });
+                callback(data);
+                console.log(data);
+            });
+
+        },
+	
         getKeywordCount: function(callback) {
             var resKeywords = $resource('api/keywords/getkeywordcount/' + selectedDataAccount.id , {} , {
                 query: { method:'GET', params:{}, isArray:false }

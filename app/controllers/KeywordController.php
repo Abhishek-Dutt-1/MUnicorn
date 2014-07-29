@@ -12,10 +12,15 @@ class KeywordController extends \BaseController {
         //return Response::json(Route::input());
 		return Response::json(Keyword::get());
 	}
+
+	public function fetchAllKeywords($dataaccountid)
+	{
+		return Response::json( Keyword::where('dataAccount', $dataaccountid)->get() );
+	}
 	
 	public function getKeywordCount($dataaccountid)
 	{
-		return Response::json( array('count' => Keyword::where('dataAccount', $dataaccountid)->count() ) );
+		return Response::json( array( 'count' => Keyword::where('dataAccount', $dataaccountid)->count() ) );
 	}
 
 	public function listKeywords($dataaccountid, $start, $count, $orderby, $desc)

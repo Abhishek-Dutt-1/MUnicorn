@@ -22,7 +22,9 @@ Route::group(array('prefix' => 'api/keywords'), function()
 {
     // fetch all keywords
     Route::get( '/', 'KeywordController@index' );
-    //fetch a subset of keywords
+    // Get All keywords for a given data account id
+	Route::get( '/fetchallkeywords/{dataaccountid}', 'KeywordController@fetchAllKeywords' );
+	//fetch a subset of keywords
     Route::get( '/{dataaccountid}/{start}/{count}/{orderby}/{desc}', 'KeywordController@listKeywords' );
     // create a new keyword
     Route::post( '/', 'KeywordController@create' );

@@ -1,6 +1,6 @@
 'use strict';
 
-keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', 'DataShareService', function ($scope, $http, DataShareService) {
+keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter', 'DataShareService', function ($scope, $http, $filter, DataShareService) {
     $scope.numShowKeywords = 10;
     $scope.currentPageNum = 0;
     $scope.currentKeywordsMatched = 0;
@@ -28,18 +28,88 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', 'DataShar
     $scope.showPhrases1WordTable = false;
 
 	$scope.totalDataRowsCount = 0;
-    $scope.currentTopRow = 1;
+    $scope.currentTopRow = 0;       // 0 == first row
     $scope.keywordLastPage = false;
     $scope.keywordFirstPage = true;
 
     $scope.trackSort = { sortOn: {field: 'id', desc: false}, track: [{field: 'keyword', desc: true}, {field: 'Segment', desc: true},{field: 'avMonthlySearches', desc: true}] };
 
-     $scope.tagCloudArray = [];   
+     $scope.wordCloudArray = [];   
 
     //////////////////////////// Keywords Table and Pager /////////////////////////
     // Updates pager(at the bottom of the table) on initial load and on change of numShowKeywords
     $scope.changePage = function(next) {
 
+        if(next >= 0)
+        {
+            //$scope.currentPageNum = ($scope.totalDataRowsCount > ($scope.currentPageNum + 1) * $scope.numShowKeywords) ? $scope.currentPageNum + 1 : $scope.currentPageNum;
+            if( $scope.actualData.length > Number($scope.currentTopRow) + Number($scope.numShowKeywords) )
+            {
+                //$scope.currentPageNum = $scope.currentPageNum + 1;
+                $scope.currentTopRow  = Number($scope.currentTopRow) + Number($scope.numShowKeywords);
+//                $scope.updateKeywordTable();
+
+            } else
+            {
+                // already at last page. do nothing;
+                console.log("Last Page :: " + $scope.currentTopRow + " : " + $scope.numShowKeywords + " = " + (Number($scope.currentTopRow) + Number($scope.numShowKeywords)) + " :: " + $scope.totalDataRowsCount);
+            }
+//            $scope.currentPageNum++;
+//            DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords , $scope.numShowKeywords, function(data) { $scope.dummyData = data; } );
+        } else
+        {
+            //$scope.currentPageNum = ($scope.currentPageNum === 0) ? 0 : $scope.currentPageNum - 1;
+            //$scope.currentTopRow = ($scope.currentTopRow <= 1) ? 1 : $scope.currentTopRow - $scope.numShowKeywords;
+            if( $scope.currentTopRow > 0 )
+            {
+                $scope.currentTopRow = ($scope.currentTopRow - $scope.numShowKeywords <= 0) ? 0 : $scope.currentTopRow - $scope.numShowKeywords;
+//                $scope.updateKeywordTable();
+            } else
+            {
+                // already at the first page. do nothing
+            }
+//           DataShareService.fetchKeywords( $scope.currentPageNum, $scope.numShowKeywords, function(data) { $scope.dummyData = data; } );
+        }
+        //$scope.updateKeywordTable();
+    };
+
+    $scope.updateKeywordTable = function() {
+        // Calculate Keywords to show
+        $scope.dummyData = $scope.actualData.slice($scope.currentTopRow, $scope.currentTopRow*1 + $scope.numShowKeywords*1);
+        console.log($scope.currentTopRow + " :: " + $scope.numShowKeywords);
+//        $scope.bulkApplyUserSegments();
+//        $scope.bulkApplyUserSegments1Word();
+
+/*       
+        // ($scope.currentTopRow - 1) since that corresponds to number of rows to skip
+        DataShareService.fetchKeywords( $scope.currentTopRow - 1, $scope.numShowKeywords, $scope.trackSort.sortOn, function(data) { 
+
+            //console.log( $scope.currentTopRow + " :: " + $scope.numShowKeywords );
+            $scope.dummyData = data.data; 
+            $scope.totalDataRowsCount = data.count;
+
+            // update pager
+            if( $scope.totalDataRowsCount > Number($scope.currentTopRow) + Number($scope.numShowKeywords) ) {
+                $scope.keywordLastPage = false;
+            } else {
+                $scope.keywordLastPage = true;
+            }
+            console.log($scope.keywordLastPage);
+            // update pager
+            if( $scope.currentTopRow > 1 ) {
+                $scope.keywordFirstPage = false;
+            } else {
+                $scope.keywordFirstPage = true;
+            }
+
+            $scope.bulkApplyUserSegments();
+            $scope.bulkApplyUserSegments1Word();
+        } );
+*/
+    };
+
+/* 
+    $scope.changePage = function(next) {
         if(next >= 0)
         {
             //$scope.currentPageNum = ($scope.totalDataRowsCount > ($scope.currentPageNum + 1) * $scope.numShowKeywords) ? $scope.currentPageNum + 1 : $scope.currentPageNum;
@@ -71,7 +141,8 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', 'DataShar
         }
         //$scope.updateKeywordTable();
     };
-
+*/
+/*
     $scope.updateKeywordTable = function() {
         //DataShareService.fetchKeywords( $scope.currentPageNum * $scope.numShowKeywords, $scope.numShowKeywords, function(data) { 
 
@@ -99,9 +170,8 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', 'DataShar
             $scope.bulkApplyUserSegments();
             $scope.bulkApplyUserSegments1Word();
         } );
-
-
     };
+*/
 	/*
     $scope.changePage = function(next) {
         if(next >= 0) {
@@ -648,15 +718,153 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', 'DataShar
                 i += 1;
                 if( !((prop == "$promise")||(prop == "$resolved")) )
                 {
-                    $scope.tagCloudArray.push({word: prop, count: count});
+                    $scope.wordCloudArray.push({word: prop, count: count});
                     maxCount = (count > maxCount) ? count : maxCount;
                     minCount = (count < minCount) ? count : minCount;
                 }
             }
-            $scope.tagCloudArray.forEach( function(elem, ind) {
+            $scope.wordCloudArray.forEach( function(elem, ind) {
                 elem.level = (0 | (elem.count - minCount)/(maxCount - minCount) * 5) + 1;
+                //// There should be a better way to do this
+                elem.selected = false;
+                elem.negativeword = false;
+                elem.stopword = false;
+                elem.segment = '';
+                elem.hasSegment = false;
+            });
+            console.log($scope.wordCloudArray);
+        });
+    };
+    
+    // filter word cloud textbox changed
+    $scope.filterWordCloudChanged = function() {
+
+        //console.log($scope.filterWordCloud);
+        if($scope.filterWordCloud == '')
+        {
+            $scope.wordCloudArray.forEach( function(elem) {
+                elem.selected = false;
+            });
+        }
+        else
+        {
+            $scope.wordCloudArray.forEach( function(elem) {
+                elem.selected = false;
+            });
+
+            /*
+            $scope.filteredWords.forEach( function(elem) {
+                elem.selected = true;
+            });
+            */
+
+            $filter('filter')($scope.wordCloudArray, $scope.filterWordCloud, false).forEach( function(elem) {
+                elem.selected = true;
+            });
+        }
+        //console.log($scope.filteredWords);
+    };
+
+    // user clicked on word in word cloud (todo: better name)
+    $scope.wordCloudWordClicked = function(word) {
+        $scope.wordCloudArray.forEach( function(elem) {
+            if(elem.word === word) elem.selected = !elem.selected; 
+        } );
+        //console.log($scope.filteredWords);
+    };
+
+    // Apply user inputs to all SELECTED WORDS
+    $scope.applyUserInputsToTags = function() 
+    {
+        var temp = [];
+
+        if($scope.userInput.type)
+        {
+            if($scope.userInput.type == 'stopword')
+            {
+                $scope.wordCloudArray.forEach( function(elem) {
+                    if(elem.selected) {
+                        elem.stopword = true;
+                        elem.negativeword = false;
+                        elem.segment = '';
+                        elem.hasSegment = false;
+                    }
+                });
+            }
+            else        // <--- can only be negativeword of stopword
+            {
+                $scope.wordCloudArray.forEach( function(elem) {
+                    if(elem.selected) {
+                        elem.stopword = false;
+                        elem.negativeword = true;
+                        elem.segment = '';
+                        elem.hasSegment = false;
+                    }
+                });
+            }
+        }
+        else if($scope.userInput.segment)           /// <-- user inputted something
+        {
+            $scope.wordCloudArray.forEach( function(elem) {
+                if(elem.selected) {
+                    elem.stopword = false;
+                    elem.negativeword = false;
+                    if(elem.segment) temp = elem.segment.split(',');
+                    temp.push.apply( temp, $scope.userInput.segment.split(',') );       // merge two arrays
+                    // Remove duplicates
+                    temp = temp.filter(function(elem, pos) {
+                        return temp.indexOf(elem) === pos;
+                    });
+                    elem.segment = temp.toString();     // so no duplicate segments
+                    elem.hasSegment = true;
+                }
+            });
+        }
+//        console.log($scope.wordCloudArray);
+        $scope.applyUserInputsToKeywords();
+    };
+
+    // Apply user inputs to all ALL KEYWORDS
+    $scope.applyUserInputsToKeywords = function() 
+    {
+        var sec = new Date().getTime(); 
+        $scope.currentPageKeywords.forEach( function(e, i) {
+
+            $scope.wordCloudArray.forEach( function(elem, ind) {
+
+                if(elem.negativeword) {
+                    if( new RegExp('\\b' + elem.word + '\\b', 'i').test(e.keyword) ) {
+                        e.userInput.stopword = false;
+                        e.userInput.negativeword = true;
+                        e.userInput.hasSegment = false;
+                        e.userInput.segment = '';                       
+                    }
+                }
+                if (elem.stopword) {
+                    if( new RegExp('\\b' + elem.word + '\\b', 'i').test(e.keyword) ) {
+                        e.userInput.stopword = true;
+                        e.userInput.negativeword = false;
+                        e.userInput.hasSegment = false;
+                        e.userInput.segment = '';                       
+                    }
+                }
+                if (elem.hasSegment) {
+                    if( new RegExp('\\b' + elem.word + '\\b', 'i').test(e.keyword) ) {
+                        e.userInput.stopword = false;
+                        e.userInput.hasSegment = true;
+                        e.userInput.segment = elem.segment;
+                        e.userInput.negativeword = false;
+                    }
+                }
+
             });
         });
+        console.log( new Date().getTime() - sec );
+    };
+
+    // User clicked input element 
+    $scope.userInputFormClicked = function() {
+       $scope.userInput.type = false;
     };
 
     $scope.sort_by = function(sortField) {
@@ -674,6 +882,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', 'DataShar
         $scope.trackSort.sortOn = sortObj;
         $scope.updateKeywordTable();
     };
+
 
     /////////////////////////////////////////////////////////////////////////////////////////
     ////// Show relevant popover form for tag cloud
@@ -730,12 +939,20 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', 'DataShar
     if($scope.selectedDataAccount.id >= 0)      // since id must be >= 0
     {
 
+        /*
 		DataShareService.getKeywordCount( function(data) {
 			data.count = (data.count > 5000) ? 5000 : data.count;
 			$scope.numShowKeywords = data.count;
 			$scope.updateKeywordTable();
 		});
+        */
 
+        DataShareService.fetchAllKeywords(function(data) {
+            // we are fetching whole data set now
+            $scope.actualData = data;
+			$scope.updateKeywordTable();
+        });
+        
         $scope.getTagCloud();
 
         /*

@@ -24,7 +24,7 @@
                     </div>
                 </div>
 
-                <table ng-show="selectedDataAccount.id" class="table table-condensed table-hover table-striped">
+                <table ng-show="selectedDataAccount.id" class="table table-condensed table-hover">
                     <thead>
                         <tr>
 							<th>
@@ -47,7 +47,7 @@
                     <tfoot>
                         <td colspan="3">
 							<div class="pagerInfo pull-left">
-								Showing {{currentTopRow}} to {{currentTopRow*1 + dummyData.length*1 - 1}} of {{totalDataRowsCount}} rows
+								Showing {{currentTopRow}} to {{currentTopRow*1 + dummyData.length*1}} of {{actualData.length}} rows
 							</div>
                             <div class="pull-right">
                                 <ul class="pager">
@@ -62,9 +62,12 @@
                         </td>
                     </tfoot>
                     <tbody>
-                    <tr ng-repeat="item in dummyData | orderBy:predicate:reverse">
-                        <td>{{item.keyword}}</td>
-                        <td>{{item.userInputSegment}}
+                    <!--     <tr ng-repeat="item in dummyData | orderBy:predicate:reverse">      -->
+                    <tr ng-repeat="item in currentPageKeywords = (actualData | startFrom: currentTopRow | limitTo: numShowKeywords | orderBy:predicate:reverse)"
+                        ng-class="{'bg-danger': item.userInput.negativeword, 'bg-warning': item.userInput.stopword}">
+                        <td>{{item.id}}-{{item.keyword}}</td>
+                        <!-- <td>{{item.userInputSegment}}  -->
+                        <td>{{item.userInput.segment}} 
                         <!-- <input type="checkbox" class="1form-control" ng-click="negativeKeyowrdCheckBoxToggle(item.Keyword)" ng-checked="item.negativeKeywordMatch" >    -->
                         </td>
                         <td>{{item.avMonthlySearches}}</td>
@@ -88,7 +91,7 @@
             </div>      <!-- end btn -->
 
 
-            <div ng-show="selectedDataAccount.id" class="panel panel-primary" id="tagCloud">
+            <div ng-show="selectedDataAccount.id" class="panel panel-primary" id="tagCloud1">
 
                 <div class="panel-heading">
                     <h3 class="panel-title">Word Cloud
@@ -99,19 +102,42 @@
                 </div>
                 <div class="panel-body">
 
-                    <div class="input-group input-group-sm">
-                        <input type="text" class="form-control pull-left" ng-model="searchText" >
-                            <span class="glyphicon glyphicon-remove pull-right" ng-click=" searchText='' "></span>
-                    </div>
+                    <form role="form">
+
+                            <div class="form-group">
+                                <label for="filterWordCloud">Filter</label>
+                                    <input ng-change="filterWordCloudChanged()" id="filterWordCloud" type="text" class="form-control" ng-model="filterWordCloud" placeholder="Filter">
+                                    <span class="glyphicon glyphicon-remove pull-right" ng-click=" filterWordCloud=''; filterWordCloudChanged();  "></span>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="stopword" ng-model="userInput.type">
+                                        Stopword
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="negativeword" ng-model="userInput.type">
+                                        Negative Word
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label for="userInputSegment">Segment</label>
+                                <input type="text" class="form-control" id="userInputSegment" placeholder="Segment" ng-model="userInput.segment" ng-click="userInputFormClicked()">
+                            </div>
+                            <button type="submit" class="btn btn-default" ng-click="applyUserInputsToTags()" >Apply</button>
+
+                    </form>
 
                     <div id="1tagCloud">
                         <ul>
-                            <li ng-repeat="tag in tagCloudArray | filter: searchText" class="tag{{tag.level}}">
+                            <li ng-repeat="word in filteredWords = (wordCloudArray | filter: filterWordCloud)" class="tag111{{word.level}}">
                                 <!--        <a  href="" ng-click="showPopoverForm(tag.word)">{{tag.word}} ({{tag.count}}) </a>          -->
-                                <!-- You can use a custom html template with the `data-template` attr -->
-                                <span><a href="" title="{{tag.word}} ({{tag.count}})"  data-placement="bottom" data-content="{{tag.word}}" data-template="app/popover.tpl.html" data-animation="am-flip-x" bs-popover>
+                                <!-- <span><a href="" title="{{tag.word}} ({{tag.count}})"  data-placement="bottom" data-content="{{tag.word}}" data-template="app/popover.tpl.html" data-animation="am-flip-x" bs-popover>
                                     {{tag.word}} ({{tag.count}}) 
                                 </a></span>
+                                -->
+                                <a href="" ng-click="wordCloudWordClicked(word.word)" ng-class="{'bg-primary': word.selected, 'bg-info': word.hasSegment, 'bg-danger': word.negativeword, 'bg-warning': word.stopword}" >{{word.word}} ({{word.count}}) [{{word.segment}}] </a>
                                 <!--   <a href="" popover-form popover-placement="left" popover-data="{{tag.word}}" xxx="showPopoverForm(word)">{{tag.word}} ({{tag.count}}) </a>      -->
                             </li>
                         </ul>

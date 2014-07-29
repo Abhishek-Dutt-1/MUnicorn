@@ -9,3 +9,13 @@ keywordSegmentsFilters.filter('checkmark', function () {
 	};
 	
 });
+
+// Used in paginating Keywords Table
+keywordSegmentsFilters.filter('startFrom', function () {
+
+	return function(input, start) {
+        start = +start;         // Parse to int
+		return (input) ? input.slice(start): null;
+	}
+	
+});
