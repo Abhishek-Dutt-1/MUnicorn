@@ -8,5 +8,5 @@ class Keyword extends Eloquent {
 
     //protected $fillable = array('keyword', 'deleteflag', 'dataAccount');     //make keyword field mass-assignable
 	
-	protected $fillable = array('adGroup', 'keyword', 'currency', 'avMonthlySearches', 'competition', 'suggestedBid', 'impressionShare', 'inAccount', 'inPlan', 'extractedFrom');
+	protected $fillable = array('adGroup', 'keyword', 'usersegment', 'currency', 'avMonthlySearches', 'competition', 'suggestedBid', 'impressionShare', 'inAccount', 'inPlan', 'extractedFrom');
 }

@@ -98,6 +98,9 @@ Route::group(array('prefix' => 'api/ops'), function()
 	// Download tag cloud string
 	Route::get( '/gettagcloud/{dataaccountid}', 'OperationsController@getTagCloud2');
 	
+	// Step 5 : delete delete Ids and save segmets
+	Route::post('/savesegmentmap', 'OperationsController@saveSegmentMap');
+	
 });
 
 // API routes for Data Account operations
@@ -120,7 +123,7 @@ Route::group(array('prefix' => 'api/'), function()
 // Catch all route
 App::missing(function($exception)
 {
-	return "XXXX";
+	return "XXXX PATH ERROR";
 	return var_dump($exception);
     return View::make('index');
 });

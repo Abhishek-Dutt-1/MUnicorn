@@ -60,13 +60,15 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
             resKeywords.query( function(data) { 
                 data.forEach( function(elem, index) {
 					// ugly hack but no time
+                    //elem.avMonthlySearches = elem.avMonthlySearches * 1;
                     elem.KeywordStopWordHighlighted = elem.keyword;
                     elem.userInputSegmentArray = [];
                     elem.userInputSegment = '';
                     elem.userInput = {};
                     elem.userInput.stopword = false;
                     elem.userInput.negativeword = false;
-                    elem.userInput.segment = '';
+                    elem.userInput.segment = [];
+                    elem.segmentToString = '';
                     elem.userInput.hasSegment = false;
                 });
                 callback(data);
@@ -428,7 +430,38 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
                 callback(data);
             });
            
+        },
+
+        /// Step 5: delete delete ids and save segments
+        saveSegmentMap: function(deleteIds, segmentMap, callback) {
+
+            /*
+            $resource('api/ops/savesegmentmap/', {} , {
+//                query: { method:'POST', params: {toBeDeleted: deleteIds, segmentMap: segmentMap}, isArray:false }
+                query: { method:'POST', params: {toBeDeleted: deleteIds}, isArray:false }
+
+            }).query( function(res) { callback(res); } );
+            */
+
+            $http({
+                method: 'POST',
+                url: 'api/ops/savesegmentmap',
+                data: {toBeDeleted: deleteIds, segmentMap: segmentMap},
+                //data: {dataaccountid: selectedDataAccount.id, segmentMap: segmentMap},
+                //headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            }).success( function(res) {
+                callback(res);
+            });
+
+
+
+
         }
+
+
+
+
+
 
 
     };  // end return

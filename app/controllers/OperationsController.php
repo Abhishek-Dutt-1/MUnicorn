@@ -333,12 +333,14 @@ class OperationsController extends \BaseController {
 		foreach($temp as $key => $keywrd)
 		{
 			$temp = explode(" ", $keywrd->keyword);
-			if(sizeof($temp) > 1) {
+			if(sizeof($temp) > 1)
+			{
 				if( isset($tagArray[ $temp[0] . " " . $temp[1] ]) )
 				{
 					$tagArray[ $temp[0] . " " . $temp[1] ]++;
 				}
-				else {
+				else
+				{
 					$tagArray[ $temp[0] . " " . $temp[1] ] = 1;
 				}
 			}
@@ -357,5 +359,30 @@ class OperationsController extends \BaseController {
 		}
 		arsort($tagArray, SORT_NUMERIC );		//Sort alphabetically
 		return Response::json( $tagArray );
+	}
+	
+	public function saveSegmentMap() 
+	{
+		//return Response::json( count(Input::get('toBeDeleted')) );
+		if( count(Input::get('toBeDeleted')) > 0 ) Keyword::destroy(Input::get('toBeDeleted'));
+		
+		$tempId = [];
+		$tempSeg = [];
+		
+		//return Response::json( count(Input::get('segmentMap')) );
+		
+		if( count(Input::has('segmentMap')) > 0)
+		{ 
+			foreach(Input::get('segmentMap') as $key => $val)
+			{
+				$tempId[] = $val['id'];
+				$tempSeg[] = $val['segment'];
+				Keyword::find($val['id'])->update( array('usersegment' => $val['segment']) );
+			}
+		}
+		//Keyword::find($tempId)->update( array('usersegment' => $tempSeg) )->save();
+		return Response::json( Keyword::find($tempId) );
+		//return Response::json( array('success' => true) );
+		//return Response::json( Input::get('segmentMap') );
 	}
 }

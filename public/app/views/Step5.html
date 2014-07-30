@@ -9,8 +9,10 @@
                     <div ng-show="!selectedDataAccount.id">Please select a dataset</div>
                     <div ng-show="selectedDataAccount.id">
                         <div class="col-md-10">
-                            <button type="button" ng-click="" class="btn btn-success">Save</button>
-                            <button type="button" ng-click="" class="btn btn-default">Reset</button>
+                            <button type="button" ng-click="saveButtonPressed()" class="btn btn-success">Save
+                                <img ng-show="segmentsSavingSpinner" src="app/images/loader.gif">
+                            </button>
+                            <!--                            <button type="button" ng-click="" class="btn btn-default">Reset</button>        -->
                             <!--
                             <button type="button" ng-click="markButton()" class="btn btn-info">Match Negative Keywords</button>
                             <button type="button" ng-click="markOrderIndepDuplicates()" class="btn btn-info">Match Duplicate Keywords</button>
@@ -33,7 +35,8 @@
 								</a>
 							</th>
 							<th>
-								<a href='' ng-click="predicate = 'userInputSegment'; reverse=!reverse">
+                                <!-- <a href='' ng-click="predicate = 'userInputSegment'; reverse=!reverse">    -->
+								<a href='' ng-click="sort_by('segmentToString')">
 								Segment&nbsp;
 								</a>
 							</th>
@@ -47,7 +50,7 @@
                     <tfoot>
                         <td colspan="3">
 							<div class="pagerInfo pull-left">
-								Showing {{currentTopRow}} to {{currentTopRow*1 + dummyData.length*1}} of {{actualData.length}} rows
+								Showing {{currentTopRow + 1}} to {{currentTopRow*1 + dummyData.length*1}} of {{actualData.length}} rows
 							</div>
                             <div class="pull-right">
                                 <ul class="pager">
@@ -62,12 +65,12 @@
                         </td>
                     </tfoot>
                     <tbody>
-                    <!--     <tr ng-repeat="item in dummyData | orderBy:predicate:reverse">      -->
-                    <tr ng-repeat="item in currentPageKeywords = (actualData | startFrom: currentTopRow | limitTo: numShowKeywords | orderBy:predicate:reverse)"
-                        ng-class="{'bg-danger': item.userInput.negativeword, 'bg-warning': item.userInput.stopword}">
-                        <td>{{item.id}}-{{item.keyword}}</td>
+                    <tr ng-repeat="item in dummyData | orderBy:predicate:reverse" ng-class="{'bg-danger': item.userInput.negativeword, 'bg-warning': item.userInput.stopword}">
+<!--                    <tr ng-repeat="item in currentPageKeywords = (actualData | startFrom: currentTopRow | limitTo: numShowKeywords | orderBy:predicate:reverse)"
+                        ng-class="{'bg-danger': item.userInput.negativeword, 'bg-warning': item.userInput.stopword}" >      -->
+                        <td>{{item.keyword}}</td>
                         <!-- <td>{{item.userInputSegment}}  -->
-                        <td>{{item.userInput.segment}} 
+                        <td>{{item.userInput.segment.toString()}} 
                         <!-- <input type="checkbox" class="1form-control" ng-click="negativeKeyowrdCheckBoxToggle(item.Keyword)" ng-checked="item.negativeKeywordMatch" >    -->
                         </td>
                         <td>{{item.avMonthlySearches}}</td>
@@ -90,54 +93,66 @@
                 </div>
             </div>      <!-- end btn -->
 
-
-            <div ng-show="selectedDataAccount.id" class="panel panel-primary" id="tagCloud1">
+            <div ng-show="selectedDataAccount.id" class="panel panel-primary" id="tagCloud">
 
                 <div class="panel-heading">
                     <h3 class="panel-title">Word Cloud
-						<a href="" class="pull-right" data-toggle="modal" data-target="#myModal">
+						<a href="" class="pull-right hidden" data-toggle="modal" data-target="#myModal">
 							<span class="glyphicon glyphicon-fullscreen"></span>
 						</a>
 					</h3>
                 </div>
                 <div class="panel-body">
 
-                    <form role="form">
+                    <form role="form" id="wordCloudForm" class="form-horizontal">
 
                             <div class="form-group">
-                                <label for="filterWordCloud">Filter</label>
+                                <label for="filterWordCloud" class="col-sm-3 control-label">Filter</label>
+                                <div class="col-sm-9">
                                     <input ng-change="filterWordCloudChanged()" id="filterWordCloud" type="text" class="form-control" ng-model="filterWordCloud" placeholder="Filter">
-                                    <span class="glyphicon glyphicon-remove pull-right" ng-click=" filterWordCloud=''; filterWordCloudChanged();  "></span>
+                                    <span class="glyphicon glyphicon-remove pull-right hidden" ng-click=" filterWordCloud=''; filterWordCloudChanged();  "></span>
+                                </div>
                             </div>
-                            <div class="radio">
+                            <div class="form-group">
+                                <label for="userInputSegment" class="col-sm-3 control-label">Segment</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="userInputSegment" placeholder="Segment" ng-model="userInput.segment" ng-focus="userInputFormClicked()">
+                                </div>
+                            </div>
+                            <div class="radio hidden">
                                 <label>
                                     <input type="radio" name="optionsRadios" id="optionsRadios1" value="stopword" ng-model="userInput.type">
                                         Stopword
                                 </label>
                             </div>
-                            <div class="radio">
-                                <label>
-                                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="negativeword" ng-model="userInput.type">
-                                        Negative Word
-                                </label>
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-sm-9">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="optionsRadios" id="optionsRadios2" value="negativeword" ng-model="userInput.type">
+                                                Negative Word
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-group">
-                                <label for="userInputSegment">Segment</label>
-                                <input type="text" class="form-control" id="userInputSegment" placeholder="Segment" ng-model="userInput.segment" ng-click="userInputFormClicked()">
+                                <div class="col-sm-offset-3 col-sm-9">
+                                    <button type="submit" class="btn btn-default btn-sm" ng-click="applyUserInputsToTags()" >Apply</button>
+                                    <!--     <button type="submit" class="btn btn-default" ng-click="deleteNegativeWordsLocal()" >Delete</button>        -->
+                                    <button type="submit" class="btn btn-default btn-sm" ng-click="resetWordCloudForm()" >Reset</button>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-default" ng-click="applyUserInputsToTags()" >Apply</button>
-
                     </form>
 
                     <div id="1tagCloud">
                         <ul>
-                            <li ng-repeat="word in filteredWords = (wordCloudArray | filter: filterWordCloud)" class="tag111{{word.level}}">
+                            <li ng-repeat="word in filteredWords = (wordCloudArray | filter: filterWordCloud)" class="tag{{word.level}}">
                                 <!--        <a  href="" ng-click="showPopoverForm(tag.word)">{{tag.word}} ({{tag.count}}) </a>          -->
                                 <!-- <span><a href="" title="{{tag.word}} ({{tag.count}})"  data-placement="bottom" data-content="{{tag.word}}" data-template="app/popover.tpl.html" data-animation="am-flip-x" bs-popover>
                                     {{tag.word}} ({{tag.count}}) 
                                 </a></span>
                                 -->
-                                <a href="" ng-click="wordCloudWordClicked(word.word)" ng-class="{'bg-primary': word.selected, 'bg-info': word.hasSegment, 'bg-danger': word.negativeword, 'bg-warning': word.stopword}" >{{word.word}} ({{word.count}}) [{{word.segment}}] </a>
+                                <a href="" ng-click="wordCloudWordClicked(word.word)" ng-class="{'bg-primary': word.selected, 'text-success': word.hasSegment, 'bg-danger': word.negativeword, 'text-warning': word.stopword}" >{{word.word}} ({{word.count}})</a>&nbsp;<span class="label label-success" ng-repeat="tags in word.segment">{{tags}} <span style="cursor: pointer;" aria-hidden="true" ng-click="deleteTag(word.word, tags)">&times;</span></span>&nbsp; 
                                 <!--   <a href="" popover-form popover-placement="left" popover-data="{{tag.word}}" xxx="showPopoverForm(word)">{{tag.word}} ({{tag.count}}) </a>      -->
                             </li>
                         </ul>
@@ -158,14 +173,20 @@
 						<div class="modal-body">
 							<div id="1tagCloud">
 								<ul>
-									<li ng-repeat="tag in tagCloudArray" class="tag{{tag.level}}">
-<!--										<a href="" ng-click="addNewNegativeKeyword(tag.word)">{{tag.word}} <span class="nothidden">({{tag.count}})</span> </a>
--->
+									<li ng-repeat="word in wordCloudArray | filter: filterWordCloud" class="tag{{tag.level}}">
+                                    <!--	<a href="" ng-click="addNewNegativeKeyword(tag.word)">{{tag.word}} <span class="nothidden">({{tag.count}})</span> </a>      -->
+                                    <!--
                                         <span>
                                             <a href="" title="{{tag.word}} ({{tag.count}})"  data-placement="bottom" data-content="{{tag.word}}" data-template="app/popover.tpl.html" data-animation="am-flip-x" bs-popover>
                                                 {{tag.word}} ({{tag.count}}) 
                                             </a>
                                         </span>
+                                        -->
+                                        <a href="" ng-click="wordCloudWordClicked(word.word)" ng-class="{'bg-primary': word.selected, 'bg-info1': word.hasSegment, 'bg-danger': word.negativeword, 'bg-warning': word.stopword}" >
+                                            {{word.word}} ({{word.count}}) </a>
+                                            <span class="label label-info" ng-repeat="tags in word.segment">{{tags}} 
+                                                <span style="cursor: pointer;" aria-hidden="true" ng-click="deleteTag(word.word, tags)">&times;</span>
+                                            </span>&nbsp; 
 									</li>
 								</ul>
 							</div>
