@@ -72,7 +72,7 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
                     elem.userInput.hasSegment = false;
                 });
                 callback(data);
-                console.log(data);
+                //console.log(data);
             });
 
         },
@@ -422,8 +422,8 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
 
         getTagCloud: function( callback ) {
 
-             var resKeywords = $resource('api/ops/gettagcloud/' + selectedDataAccount.id, {} , {
-                query: { method:'GET', params:{}, isArray:false }
+             var resKeywords = $resource('api/wordcloud/gettagcloud/' + selectedDataAccount.id, {} , {
+                query: { method:'GET', params:{}, isArray: true }
             });
 
             resKeywords.query( function(data) { 
@@ -433,33 +433,27 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
         },
 
         /// Step 5: delete delete ids and save segments
-        saveSegmentMap: function(deleteIds, segmentMap, callback) {
+        saveSegmentMap: function(segmentMap, idsToBeDeleted, callback) {
 
             /*
-            $resource('api/ops/savesegmentmap/', {} , {
+            $resource('api/wordcloud/savesegmentmap/', {} , {
 //                query: { method:'POST', params: {toBeDeleted: deleteIds, segmentMap: segmentMap}, isArray:false }
-                query: { method:'POST', params: {toBeDeleted: deleteIds}, isArray:false }
+                query: { method:'POST', params: {segmentMap: segmentMap}, isArray:false }
 
             }).query( function(res) { callback(res); } );
             */
 
             $http({
                 method: 'POST',
-                url: 'api/ops/savesegmentmap',
-                data: {toBeDeleted: deleteIds, segmentMap: segmentMap},
+                url: 'api/wordcloud/savesegmentmap/' + selectedDataAccount.id,
+                data: {segmentMap: segmentMap, idsToBeDeleted: idsToBeDeleted},
                 //data: {dataaccountid: selectedDataAccount.id, segmentMap: segmentMap},
                 //headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             }).success( function(res) {
                 callback(res);
             });
 
-
-
-
         }
-
-
-
 
 
 

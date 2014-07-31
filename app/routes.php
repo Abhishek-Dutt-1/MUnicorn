@@ -95,12 +95,6 @@ Route::group(array('prefix' => 'api/ops'), function()
 	// Download final CSV file
 	Route::get( '/downloadcsv/{dataaccountid}', 'OperationsController@downloadCSV');
 	
-	// Download tag cloud string
-	Route::get( '/gettagcloud/{dataaccountid}', 'OperationsController@getTagCloud2');
-	
-	// Step 5 : delete delete Ids and save segmets
-	Route::post('/savesegmentmap', 'OperationsController@saveSegmentMap');
-	
 });
 
 // API routes for Data Account operations
@@ -117,6 +111,33 @@ Route::group(array('prefix' => 'api/'), function()
 	PUT/PATCH	/resource/{resource}			update		resource.update
 	DELETE		/resource/{resource}			destroy		resource.destroy
 */
+});
+
+// API routes for WordCloud
+Route::group(array('prefix' => 'api/wordcloud'), function()
+{
+    /*
+    // fetch all keywords
+    Route::get( '/', 'KeywordController@index' );
+    // Get All keywords for a given data account id
+	Route::get( '/fetchallkeywords/{dataaccountid}', 'KeywordController@fetchAllKeywords' );
+	//fetch a subset of keywords
+    Route::get( '/{dataaccountid}/{start}/{count}/{orderby}/{desc}', 'KeywordController@listKeywords' );
+    // create a new keyword
+    Route::post( '/', 'KeywordController@create' );
+    // save delete flag checkbox
+    //Route::post( '/toggledeleteflag', 'KeywordController@toggleDeleteFlag' );   
+    // delete a new keyword
+    Route::delete( '/{id}', 'KeywordController@destroy' );
+	// Get total keywords count
+	Route::get( '/getkeywordcount/{dataaccountid}', 'KeywordController@getKeywordCount' );
+     */
+	// Step 5 : Download word cloud string
+	Route::get( '/gettagcloud/{dataaccountid}', 'WordController@index');
+	
+	// Step 5 : delete delete Ids and save segmets
+	Route::post('/savesegmentmap/{dataaccount}', 'WordController@saveSegmentMap');
+
 });
 
 

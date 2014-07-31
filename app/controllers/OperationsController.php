@@ -144,8 +144,13 @@ class OperationsController extends \BaseController {
 			// Moves file to folder on server
 			$file->move($path, $name);
 			// Import the moved file to DB and return OK if there were rows affected
-			return ( $this->_import_csv($path, $name, $dataaccount) ); //? 'OK' : 'No rows affected' );
+			$this->_import_csv($path, $name, $dataaccount); //? 'OK' : 'No rows affected' );
 
+			// After upload create word cloud
+			return Response::json( Word::createWordCloud($dataaccount) );
+			
+			return ( 'OK' ); //? 'OK' : 'No rows affected' );
+			
 		}
 		//return Response::json( Input::file('file')->getClientOriginalName() );
 	}
@@ -267,122 +272,5 @@ class OperationsController extends \BaseController {
 		
 	}
 	
-	public function getTagCloud($dataaccountid)
-	{
-		//$cloud = new Arg\Tagcloud\TagCloud();
-		
-		$output = '';
-		$output1 = '';
-		$tagArray = [];
-		$temp = Keyword::where('dataAccount', $dataaccountid)->get( array('keyword'));
-		foreach($temp as $key => $keywrd)
-		{
-			$output .= $keywrd->keyword . " ";
-			//$output[] = $keywrd->keyword;
-			//$cloud->addTag( array( 'tag' => $keywrd->keyword, 'colour' => rand() ) );
 
-			foreach(explode(" ", $keywrd->keyword) as $k => $v)
-			{
-				if( isset($tagArray[$v]) )
-				{
-					$tagArray[$v]++;
-				}
-				else {
-					$tagArray[$v] = 1;				
-				}
-				
-				//$tagArray[$v] = $tagArray[$v] + 1;
-			}
-		}
-		arsort($tagArray, SORT_NUMERIC );		//Sort alphabetically
-		//sort($tagArray);
-		return Response::json( $tagArray );
-		
-		$maxCount = 0; $minCount = 0; $class ='';
-		foreach($tagArray as $tag => $count)
-		{
-			$maxCount = ($count > $maxCount) ? $count : $maxCount;
-			$minCount = ($count < $minCount || $minCount == NULL) ? $count: $minCount;
-		}
-		foreach($tagArray as $tag => $count)
-		{
-		/*
-			if($count == $maxCount) $class = 'largeTag';
-			else if($count >= ($maxCount/3)) $class = 'mediumTag';
-			else $class = 'smallTag';
-			$output1 .= '<span class="'. $class .'" style="font-size:' . $count/$maxCount . 'em;" >'. $tag .'</span>';
-		*/
-			//$class = 'tag'.(int)(($count/$maxCount)*10);
-			$output1 .= '<span class="'. $class .'" style="font-size:' . $count/$maxCount . 'em;" >'. $tag . '('.$count.')' .'</span> ';
-		}
-		
-		$output1 = '<div style="font-size: 56px">' . $output1 . '</div>';
-		return Response::json( array( 'tag' => $output1 ) );
-	
-		return Response::json( $tagArray );
-		//$cloud->addTags( $output );
-		//$cloud->addString( $output );
-		//return Response::json( array( 'tag' => $cloud->render() ) );
-	}
-	
-	public function getTagCloud2($dataaccountid)
-	{
-		$tagArray = [];
-		$temp = [];
-		$temp = Keyword::where('dataAccount', $dataaccountid)->get( array('keyword') );
-		foreach($temp as $key => $keywrd)
-		{
-			$temp = explode(" ", $keywrd->keyword);
-			if(sizeof($temp) > 1)
-			{
-				if( isset($tagArray[ $temp[0] . " " . $temp[1] ]) )
-				{
-					$tagArray[ $temp[0] . " " . $temp[1] ]++;
-				}
-				else
-				{
-					$tagArray[ $temp[0] . " " . $temp[1] ] = 1;
-				}
-			}
-			/*
-			foreach(explode(" ", $keywrd->keyword) as $k => $v)
-			{
-				if( isset($tagArray[$v]) )
-				{
-					$tagArray[$v]++;
-				}
-				else {
-					$tagArray[$v] = 1;				
-				}
-			}
-			*/
-		}
-		arsort($tagArray, SORT_NUMERIC );		//Sort alphabetically
-		return Response::json( $tagArray );
-	}
-	
-	public function saveSegmentMap() 
-	{
-		//return Response::json( count(Input::get('toBeDeleted')) );
-		if( count(Input::get('toBeDeleted')) > 0 ) Keyword::destroy(Input::get('toBeDeleted'));
-		
-		$tempId = [];
-		$tempSeg = [];
-		
-		//return Response::json( count(Input::get('segmentMap')) );
-		
-		if( count(Input::has('segmentMap')) > 0)
-		{ 
-			foreach(Input::get('segmentMap') as $key => $val)
-			{
-				$tempId[] = $val['id'];
-				$tempSeg[] = $val['segment'];
-				Keyword::find($val['id'])->update( array('usersegment' => $val['segment']) );
-			}
-		}
-		//Keyword::find($tempId)->update( array('usersegment' => $tempSeg) )->save();
-		return Response::json( Keyword::find($tempId) );
-		//return Response::json( array('success' => true) );
-		//return Response::json( Input::get('segmentMap') );
-	}
 }

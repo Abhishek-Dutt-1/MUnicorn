@@ -34,10 +34,14 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
 
     $scope.trackSort = { sortOn: {field: 'id', desc: false}, track: [{field: 'keyword', desc: true}, {field: 'segmentToString', desc: true},{field: 'avMonthlySearches', desc: true}] };
 
-     $scope.wordCloudArray = [];   
+    $scope.wordCloudArray = [];   
+    $scope.wordCloudNumWord = 2;
+    $scope.tagsArray1Word = [];
+    $scope.tagsArray2Word = [];
 
     $scope.segmentsSavingSpinner = false;
-
+    $scope.idsToBeDeleted = [];
+    $scope.formToggle = true;
     //////////////////////////// Keywords Table and Pager /////////////////////////
     // Updates pager(at the bottom of the table) on initial load and on change of numShowKeywords
     $scope.changePage = function(next) {
@@ -305,18 +309,16 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
     };
 */
 
-    // Handle manula stopWordMatch check box toggle 
-/*
-    $scope.negativeKeyowrdCheckBoxToggle = function(keyword) {
+    // Handle manula delete check box toggle 
+    $scope.negativeKeyowrdCheckBoxToggle = function(id) {
         $scope.actualData.forEach( function(element, index){
-            if(element.Keyword === keyword) {
-                element.negativeKeywordMatch = !element.negativeKeywordMatch; 
-                console.log(element);
+            if(element.id === id) {
+                element.userInput.negativeword = !element.userInput.negativeword; 
             }
         });
+        //$scope.updateKeywordTable();
         countMatchedKeywords();
     };
-*/
 
     // Maintain a count of keywords currently matched (local function);
     var countMatchedKeywords = function() {
@@ -593,8 +595,9 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
 //////////////////////////////////////// 
     // save button pressed
     $scope.saveInputSegments = function() {
+
         $scope.phrasesSavingSpinner = true;
-        console.log($scope.phrasesSavingSpinner);
+
         var segmentMap = [];
         $scope.actualDataPhrases.forEach( function(elem, ind) {
             segmentMap.push({
@@ -618,19 +621,49 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
     };
 
 
-    $scope.switchInputTable = function(phraseLength) {
+    $scope.switchWordCloudTable = function(phraseLength) {
         
         if(phraseLength == 1) 
         {
             console.log("Phrase Length :: " + phraseLength);
-            $scope.showPhrases1WordTable = true;
+            //$scope.showPhrases1WordTable = true;
+            //$scope.wordCloudArray = $scope.wordCloudArray1Word;
+            $scope.wordCloudNumWord = 1;
         }
         if(phraseLength == 2) 
         {
             console.log("Phrase Length :: " + phraseLength);
-            $scope.showPhrases1WordTable = false;
+            //$scope.showPhrases1WordTable = false;
+            //$scope.wordCloudArray = $scope.wordCloudArray2Word;
+            $scope.wordCloudNumWord = 2;
         }
-           
+
+        /*
+        var maxCount, minCount;
+        maxCount = 0; minCount = 0;
+        //$scope.wordCloudArray = data;
+        $scope.wordCloudArray.forEach( function(elem) {
+                maxCount = (elem.freq > maxCount) ? elem.freq : maxCount;
+                minCount = (elem.freq < minCount) ? elem.freq : minCount;
+        });
+
+        $scope.wordCloudArray.forEach( function(elem, ind) {
+            elem.level = (0 | (elem.freq - minCount)/(maxCount - minCount) * 5) + 1;
+            //// There should be a better way to do this
+            elem.selected = false;
+            if( elem.segment )
+            {
+                elem.segmentArray = elem.segment.split(',');
+                elem.hasSegment = true;
+            }
+            else
+            {
+                elem.segmentArray = [];
+                elem.hasSegment = false;
+            }
+        });
+        $scope.applyUserInputsToKeywords();
+        */
     };
 
 /*
@@ -721,14 +754,25 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
     };
 */
 
-    // Save button pressed
+    // Step 5 :: Save button pressed
     $scope.saveButtonPressed = function()
     {
         $scope.segmentsSavingSpinner = true;
 
+        $scope.deleteNegativeWordsLocal();
+
+//        DataShareService.saveSegmentMap( $scope.wordCloudArray, $scope.idsToBeDeleted , function(res) {
+        DataShareService.saveSegmentMap( $scope.wordCloudArray, $scope.idsToBeDeleted , function(res) {
+            console.log(res);
+            $scope.segmentsSavingSpinner = false;
+            $scope.getTagCloud();
+        });
+/*
         var deleteIds = [];
         var segmentMap = [];
-        $scope.actualData.forEach( function(keyword) {
+
+        $scope.actualData.forEach( function(keyword)
+        {
             if(keyword.userInput.negativeword == true) {
                 deleteIds.push(keyword.id);
             } else if(keyword.userInput.hasSegment) {
@@ -744,44 +788,63 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
             console.log(res);
             $scope.segmentsSavingSpinner = false;
         });
+*/
     };
 
+
+    //////////// Form minimize/maximize button presesd
+    $scope.formToggleButton = function() {
+        $scope.formToggle = !$scope.formToggle;
+    };
 
     $scope.getTagCloud = function() {
 
         DataShareService.getTagCloud( function(data) {
+
+            /*
+            $scope.wordCloudArray1Word = data.filter( function(elem) {
+                return elem.numword == 1;
+            });
+            $scope.wordCloudArray2Word = data.filter( function(elem) {
+                return elem.numword == 2;
+            });
+            $scope.switchWordCloudTable(2);
+            */
+            
+            console.log($scope.wordCloudNumWord);
+            console.log(data);
             var maxCount, minCount;
             maxCount = 0; minCount = 0;
 
-            var word = Object.keys(data), 
-                len = word.length,
-                i = 0,
-                prop,
-                count;
+            $scope.wordCloudArray = data;
+            $scope.wordCloudArray.forEach( function(elem) {
+                    maxCount = (elem.freq > maxCount) ? elem.freq : maxCount;
+                    minCount = (elem.freq < minCount) ? elem.freq : minCount;
+            });
 
-            while (i < len) {
-                prop = word[i];
-                count = data[prop];
-                i += 1;
-                if( !((prop == "$promise")||(prop == "$resolved")) )
-                {
-                    $scope.wordCloudArray.push({word: prop, count: count});
-                    maxCount = (count > maxCount) ? count : maxCount;
-                    minCount = (count < minCount) ? count : minCount;
-                }
-            }
             $scope.wordCloudArray.forEach( function(elem, ind) {
-                elem.level = (0 | (elem.count - minCount)/(maxCount - minCount) * 5) + 1;
+                elem.level = (0 | (elem.freq - minCount)/(maxCount - minCount) * 5) + 1;
                 //// There should be a better way to do this
                 elem.selected = false;
-                elem.negativeword = false;
-                elem.stopword = false;
-                elem.segment = []; 
-                elem.hasSegment = false;
+                if( elem.segment )
+                {
+                    elem.segmentArray = elem.segment.split(',');
+                    elem.hasSegment = true;
+
+                    $scope.addToTagsArray(elem.segmentArray, elem.numword);
+                }
+                else
+                {
+                    elem.segmentArray = [];
+                    elem.hasSegment = false;
+                }
             });
-            console.log($scope.wordCloudArray);
+            $scope.applyUserInputsToKeywords();
+           
+//            console.log($scope.wordCloudArray);
         });
-    };
+    }; 
+    
     
     // filter word cloud textbox changed
     $scope.filterWordCloudChanged = function() {
@@ -805,7 +868,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
             });
             */
 
-            $filter('filter')($scope.wordCloudArray, $scope.filterWordCloud, false).forEach( function(elem) {
+            $filter('filter')($scope.wordCloudArray, {word: $scope.filterWordCloud, numword: $scope.wordCloudNumWord}, false).forEach( function(elem) {
                 elem.selected = true;
             });
         }
@@ -818,7 +881,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
         $scope.wordCloudArray.forEach( function(elem) {
             if(elem.word === word) elem.selected = !elem.selected; 
             if(elem.selected) {
-                console.log(elem);
+                //console.log(elem);
                 if(elem.stopword)
                 {
                     $scope.userInput.type = 'stopword';
@@ -833,7 +896,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
                     //$scope.userInput.stopword = elem.stopword;
                     //$scope.userInput.negativeword = elem.negativeword;
                     $scope.userInput.type = false;
-                    $scope.userInput.segment = elem.segment.toString();
+                    $scope.userInput.segment = elem.segment;
                 }
             }
         } );
@@ -846,15 +909,14 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
         {
             if(e.word === word)
             {
-                var index = e.segment.indexOf(tag);
+                var index = e.segmentArray.indexOf(tag);
                 if (index > -1) {
-                    e.segment.splice(index, 1);
+                    e.segmentArray.splice(index, 1);
                 }
-                if(e.segment.length <= 0) e.hasSegment = false;
+                if(e.segmentArray.length <= 0) e.hasSegment = false;
                  console.log(e);                   
             }
         });
-
         $scope.applyUserInputsToKeywords();
 //        $scope.updateKeywordTable();
     };
@@ -916,9 +978,10 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
                     }
                 });
             }
-/*
+        /*
         }
         */
+
         if($scope.userInput.segment)           /// <-- user inputted something
         {
             $scope.wordCloudArray.forEach( function(elem) {
@@ -926,15 +989,19 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
                     //elem.stopword = false;
                     //elem.negativeword = false;
                     //if(elem.segment) temp = elem.segment.split(',');
-                    if(elem.segment) temp = elem.segment;
+                    if(elem.segmentArray) temp = elem.segmentArray;
                     temp.push.apply( temp, $scope.userInput.segment.split(',') );       // merge two arrays
                     // Remove duplicates
                     temp = temp.filter(function(elem, pos) {
                         return temp.indexOf(elem) === pos;
                     });
-                    elem.segment = temp;     // so no duplicate segments
+                    elem.segmentArray = temp;     // so no duplicate segments
 //                    elem.segment = temp.toString();     // so no duplicate segments
                     elem.hasSegment = true;
+                    elem.segment = temp.toString();
+
+                    $scope.addToTagsArray(temp);
+
                 }
             });
         }
@@ -983,16 +1050,18 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
                         //e.userInput.stopword = false;
                         e.userInput.hasSegment = true;
                         //e.userInput.segment = elem.segment;
-                        e.userInput.segment.push.apply( e.userInput.segment, elem.segment);       // merge two arrays
+                        e.userInput.segment.push.apply( e.userInput.segment, elem.segmentArray);       // merge two arrays
                         e.userInput.segment = e.userInput.segment.filter(function(e1, pos) {        // remove dupes
                             return e.userInput.segment.indexOf(e1) === pos;
                         });
                         e.segmentToString = e.userInput.segment.toString();
                         //e.userInput.negativeword = false;
+
                     }
                 }
-
             });
+            
+
         });
         console.log( new Date().getTime() - sec );
     };
@@ -1000,17 +1069,26 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
     // Delete negative words form both tag clouds and keyword list
     $scope.deleteNegativeWordsLocal = function() {
 
-        $scope.wordCloudArray = $scope.wordCloudArray.filter( function(elem) {
-            if(elem.selected) {
-                $scope.actualData = $scope.actualData.filter( function(e) {
-                     return !(new RegExp('\\b' + elem.word + '\\b', 'i').test(e.keyword));
-                });
-                return false;   // delete the word also
-            } else return true;
+        $scope.actualData = $scope.actualData.filter( function(elem, ind)
+        {
+            if(elem.userInput.negativeword)
+            {
+                $scope.idsToBeDeleted.push(elem.id);       
+                return false;       // ie delete the keyword from the front end
+            }
+            else return true;
+        });
+
+        $scope.wordCloudArray = $scope.wordCloudArray.filter( function(elem, ind)
+        {
+            if(elem.negativeword)
+            {
+                return false;       // ie delete the tag from the front end
+            }
+            else return true;
         });
         $scope.filterWordCloud = '';
-        console.log('Here');
-
+        $scope.updateKeywordTable();
     };
 
 
@@ -1021,10 +1099,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
 
     // Sort by table header
     $scope.sort_by = function(sortField) {
-
         var sortObj = {};
-
-
         $scope.trackSort.track.forEach( function(elem, ind) {
             if(elem.field === sortField)
             {
@@ -1061,6 +1136,71 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
 
     };
 
+    /////////// Add to tagsArray
+    $scope.addToTagsArray = function(newTags, numWord) {
+
+        var numWord = numWord || $scope.wordCloudNumWord;
+
+        if(numWord == 1) {
+            $scope.tagsArray1Word.push.apply( $scope.tagsArray1Word, newTags );       // merge two arrays
+            $scope.tagsArray1Word = $scope.tagsArray1Word.filter(function(elem, pos) {
+                return $scope.tagsArray1Word.indexOf(elem) === pos;
+            });
+        }
+
+        if(numWord == 2) {
+            $scope.tagsArray2Word.push.apply( $scope.tagsArray2Word, newTags );       // merge two arrays
+            $scope.tagsArray2Word = $scope.tagsArray2Word.filter(function(elem, pos) {
+                return $scope.tagsArray2Word.indexOf(elem) === pos;
+            });
+        }
+    };
+
+    // Delete Master tag
+    $scope.deleteMasterTag = function(tag, numWord) {
+
+        var numWord = numWord || $scope.wordCloudNumWord;
+
+        if(numWord == 1)
+        {
+            $scope.tagsArray1Word.splice( $scope.tagsArray1Word.indexOf(tag), 1 );
+        }
+        if(numWord == 2) {
+            $scope.tagsArray2Word.splice( $scope.tagsArray1Word.indexOf(tag), 1 );
+        }
+
+        $scope.wordCloudArray.forEach( function(e, i)
+        {
+            if(e.numword == numWord)
+            {
+                var index = e.segmentArray.indexOf(tag);
+                if (index > -1) {
+                    e.segmentArray.splice(index, 1);
+                }
+                if(e.segmentArray.length <= 0) e.hasSegment = false;
+            }
+        });
+        $scope.applyUserInputsToKeywords();
+    };
+
+    // Master tag clicked
+    $scope.masterTagClicked = function(tag, numWord) {
+
+        var numWord = numWord || $scope.wordCloudNumWord;
+
+        $scope.wordCloudArray.forEach( function(e, i)
+        {
+            if(e.numword == numWord)
+            {
+                var index = e.segmentArray.indexOf(tag);
+                if (index > -1) {
+                    e.selected = !e.selected;
+                }
+            }
+        });
+
+
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////
     ////// Show relevant popover form for tag cloud

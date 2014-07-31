@@ -104,6 +104,7 @@ class DataAccountController extends \BaseController {
 		Negativekeyword::where('dataAccount', $id)->delete();
 		DB::table('keywords-segment')->where('dataAccount', $id)->delete();
 		DB::table('segmentmap')->where('dataAccount', $id)->delete();
+		DB::table('wordcloud')->where('dataAccount', $id)->delete();
 		//DB::statement( 'drop database data_' . $id );
 		
         return Response::json(array('success' => true));
