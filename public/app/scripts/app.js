@@ -1,6 +1,6 @@
 'use strict';
 
-var keywordSegmentsApp = angular.module('keywordSegmentsApp', ['ngRoute', 'keywordSegmentsControllers']);
+var keywordSegmentsApp = angular.module('keywordSegmentsApp', ['ngRoute', 'keywordSegmentsControllers', 'ngAnimate']);
 
 keywordSegmentsApp.config(['$routeProvider',
 	function($routeProvider) {
@@ -28,6 +28,10 @@ keywordSegmentsApp.config(['$routeProvider',
 		when('/Step5', {
 			templateUrl: 'app/views/Step5.html',
 			controller: 'Step5Ctrl'
+		}).
+		when('/Step6', {
+			templateUrl: 'app/views/Step6.html',
+			controller: 'Step6Ctrl'
 		}).
 		when('/Step4', {
 			templateUrl: 'app/views/Step4.html',

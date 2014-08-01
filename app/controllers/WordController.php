@@ -86,11 +86,11 @@ class WordController extends \BaseController {
 	public function saveSegmentMap($dataaccount) 
 	{
 		/* $deleteIds = Word::where('dataaccount', $dataaccount)->get( array('id') );
-		$notDeleteIds = []; $tmp = [];
+			$notDeleteIds = []; $tmp = [];
 		*/
 		//return Response::json( count(Input::get('idsToBeDeleted')) );
 		
-		if( count(Input::get('idsToBeDeleted')) > 0 ) 
+		if( count(Input::get('idsToBeDeleted')) > 0 )
 		{
 			Keyword::destroy( Input::get('idsToBeDeleted') );
 			// refresh wordcloud only if some keyword is deleted
@@ -101,6 +101,8 @@ class WordController extends \BaseController {
 		foreach( Input::get('segmentMap') as $k => $word )
 		{
 			Word::where('dataaccount', $dataaccount)->where( 'word', $word['word'] )->update( array('segment'=>$word['segment'], 
+											'brand'=>$word['brand'], 
+											'compete'=>$word['compete'], 
 											'negativeword'=>$word['negativeword'], 
 											'stopword'=>$word['stopword']) );
 										//	'numword'=>$word['numword'], 
@@ -117,7 +119,7 @@ class WordController extends \BaseController {
 		return $tmp; 
 		*/
 		return Response::json( array( 'success' => true ) );
-/*	
+	/*
 	//return Response::json( count(Input::get('toBeDeleted')) );
 		if( count(Input::get('toBeDeleted')) > 0 ) Keyword::destroy(Input::get('toBeDeleted'));
 		
@@ -139,7 +141,7 @@ class WordController extends \BaseController {
 		return Response::json( Keyword::find($tempId) );
 		//return Response::json( array('success' => true) );
 		//return Response::json( Input::get('segmentMap') );
-*/
-	}
+	*/
 
+	}
 }

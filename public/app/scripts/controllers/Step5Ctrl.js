@@ -32,7 +32,13 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
     $scope.keywordLastPage = false;
     $scope.keywordFirstPage = true;
 
-    $scope.trackSort = { sortOn: {field: 'id', desc: false}, track: [{field: 'keyword', desc: true}, {field: 'segmentToString', desc: true},{field: 'avMonthlySearches', desc: true}] };
+    $scope.trackSort = {
+            sortOn: {field: 'id', desc: false}, 
+            track: [{field: 'keyword', desc: true}, {field: 'segmentToString', desc: true}, {field: 'avMonthlySearches', desc: true},
+			{field: 'COMPETE', desc: true},
+			{field: 'BRAND', desc: true},
+			{field: 'DELETE', desc: true},] 
+        };
 
     $scope.wordCloudArray = [];   
     $scope.wordCloudNumWord = 2;
@@ -42,6 +48,9 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
     $scope.segmentsSavingSpinner = false;
     $scope.idsToBeDeleted = [];
     $scope.formToggle = true;
+	
+	$scope.brandTerms = ["brand"];
+	$scope.competeTerms = ["compete"];
     //////////////////////////// Keywords Table and Pager /////////////////////////
     // Updates pager(at the bottom of the table) on initial load and on change of numShowKeywords
     $scope.changePage = function(next) {
@@ -766,6 +775,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
             console.log(res);
             $scope.segmentsSavingSpinner = false;
             $scope.getTagCloud();
+            $scope.userSegmentsSaved = true;
         });
 /*
         var deleteIds = [];
@@ -811,20 +821,31 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
             $scope.switchWordCloudTable(2);
             */
             
-            console.log($scope.wordCloudNumWord);
-            console.log(data);
+            //console.log($scope.wordCloudNumWord);
             var maxCount, minCount;
-            maxCount = 0; minCount = 0;
 
             $scope.wordCloudArray = data;
-            $scope.wordCloudArray.forEach( function(elem) {
-                    maxCount = (elem.freq > maxCount) ? elem.freq : maxCount;
-                    minCount = (elem.freq < minCount) ? elem.freq : minCount;
-            });
 
-            $scope.wordCloudArray.forEach( function(elem, ind) {
-                elem.level = (0 | (elem.freq - minCount)/(maxCount - minCount) * 5) + 1;
-                //// There should be a better way to do this
+            // Apply tag level
+            for( var i=1 ; i <= 2 ; i++)
+            {
+                maxCount = 0; minCount = 0;
+                $scope.wordCloudArray.forEach( function(elem) {
+                    if(elem.numword == i) 
+                    {
+                        maxCount = (elem.freq > maxCount) ? elem.freq : maxCount;
+                        minCount = (elem.freq < minCount) ? elem.freq : minCount;
+                    }
+                });
+                $scope.wordCloudArray.forEach( function(elem, ind) {
+                    if(elem.numword == i)
+                        elem.level = (0 | (elem.freq - minCount)/(maxCount - minCount) * 5) + 1;
+                });
+            }
+
+            //// There should be a better way to do this
+            $scope.wordCloudArray.forEach( function(elem, ind)
+            {
                 elem.selected = false;
                 if( elem.segment )
                 {
@@ -867,7 +888,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
                 elem.selected = true;
             });
             */
-
+			/////////////////////////////// IMPORTANT hasSegment: false filter is there to prevent two segments to one tag, so that hidden words do not accidently get a tag, hasSegment: false
             $filter('filter')($scope.wordCloudArray, {word: $scope.filterWordCloud, numword: $scope.wordCloudNumWord}, false).forEach( function(elem) {
                 elem.selected = true;
             });
@@ -904,20 +925,35 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
 
     // user deleted tag from word cloud
     $scope.deleteTag = function(word, tag) {
-//        console.log(word + " :: " + tag);
+        console.log(word + " :: " + tag);
+
         $scope.wordCloudArray.forEach( function(e, i)
         {
-            if(e.word === word)
+            if(e.word === word || e.selected == true)
+            {
+                var index = e.segmentArray.indexOf(tag);
+                if (index > -1) {
+                    e.segmentArray.splice(index, 1);
+                    e.segment = e.segmentArray.toString();
+                }
+                if(e.segmentArray.length <= 0) e.hasSegment = false;
+                e.selected = false;
+            }
+        /*
+            if(e.selected == true)
             {
                 var index = e.segmentArray.indexOf(tag);
                 if (index > -1) {
                     e.segmentArray.splice(index, 1);
                 }
                 if(e.segmentArray.length <= 0) e.hasSegment = false;
-                 console.log(e);                   
+                e.selected = false;
             }
+            */
+
         });
         $scope.applyUserInputsToKeywords();
+        $scope.userSegmentsSaved = false;
 //        $scope.updateKeywordTable();
     };
 
@@ -935,7 +971,9 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
     $scope.applyUserInputsToTags = function() 
     {
         var temp = [];
-
+		var isBrandFlag = false; 
+		var isCompeteFlag = false;
+		
         console.log($scope.userInput);
 
         /*
@@ -964,6 +1002,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
                         elem.negativeword = true;
                         //elem.segment = [];
                         //elem.hasSegment = false;
+                        $scope.userSegmentsSaved = false;
                     }
                 });
             }
@@ -975,6 +1014,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
                         elem.negativeword = false;
                         //elem.segment = [];
                         //elem.hasSegment = false;
+                        $scope.userSegmentsSaved = false;
                     }
                 });
             }
@@ -995,14 +1035,38 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
                     temp = temp.filter(function(elem, pos) {
                         return temp.indexOf(elem) === pos;
                     });
-                    elem.segmentArray = temp;     // so no duplicate segments
-//                    elem.segment = temp.toString();     // so no duplicate segments
+					
+					elem.segmentArray = temp;     // so no duplicate segments
                     elem.hasSegment = true;
-                    elem.segment = temp.toString();
-
+					
+					
+					isBrandFlag = false;
+					$scope.brandTerms.forEach( function(e1){
+						if(elem.segmentArray.indexOf( e1 ) > -1)
+						{
+							elem.brand = true;
+							//elem.segmentArray.splice( elem.segment.indexOf( e1 ), 1);
+							isBrandFlag = true;
+						}
+						else{ elem.brand = isBrandFlag; } 		// in actualData it is userInput.isBrand; in wordCloud data it is brand
+					});
+					isCompeteFlag = false;
+					$scope.competeTerms.forEach( function(e1){
+						if(elem.segmentArray.indexOf( e1 ) > -1)
+						{
+							elem.compete = true;
+							//elem.segmentArray.splice( elem.segment.indexOf( e1 ), 1);
+							isCompeteFlag = true;
+						}
+						else{ elem.compete = isCompeteFlag; } 		// in actualData it is userInput.isCompte; in wordCloud data it is compete
+					});
+					console.log(elem);
+                    
+					elem.segment = elem.segmentArray.toString();
+					
                     $scope.addToTagsArray(temp);
-
-                }
+                    $scope.userSegmentsSaved = false;
+				}
             });
         }
 //        console.log($scope.wordCloudArray);
@@ -1016,13 +1080,17 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
     $scope.applyUserInputsToKeywords = function() 
     {
         var sec = new Date().getTime(); 
+		var isBrandFlag = false; 
+		var isCompeteFlag = false;
 //        $scope.currentPageKeywords.forEach( function(e, i) {
         $scope.actualData.forEach( function(e, i) {
             
             e.userInput.stopword = false;
             e.userInput.negativeword = false;
             e.userInput.hasSegment = false;
-            e.userInput.segment = [];                       
+            e.userInput.segment = [];           
+			e.userInput.isBrand = false;
+			e.userInput.isCompete = false;
             e.segmentToString = '';
 
             $scope.wordCloudArray.forEach( function(elem, ind) {
@@ -1050,13 +1118,36 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
                         //e.userInput.stopword = false;
                         e.userInput.hasSegment = true;
                         //e.userInput.segment = elem.segment;
-                        e.userInput.segment.push.apply( e.userInput.segment, elem.segmentArray);       // merge two arrays
+                        e.userInput.segment.push.apply( e.userInput.segment, elem.segmentArray );       // merge two arrays
                         e.userInput.segment = e.userInput.segment.filter(function(e1, pos) {        // remove dupes
                             return e.userInput.segment.indexOf(e1) === pos;
                         });
-                        e.segmentToString = e.userInput.segment.toString();
-                        //e.userInput.negativeword = false;
-
+						
+						isBrandFlag = false;
+						$scope.brandTerms.forEach( function(e1){
+							if(e.userInput.segment.indexOf( e1 ) > -1)
+							{
+								e.userInput.isBrand = true;
+								//e.userInput.segment.splice( e.userInput.segment.indexOf( e1 ), 1);
+								isBrandFlag = true;
+							}
+							else{ e.userInput.isBrand = isBrandFlag; }
+						});
+						
+						isCompeteFlag = false;
+						$scope.competeTerms.forEach( function(e1){
+							if(e.userInput.segment.indexOf( e1 ) > -1)
+							{
+								e.userInput.isCompete = true;
+								//e.userInput.segment.splice( e.userInput.segment.indexOf( e1 ), 1);
+								isCompeteFlag = true;
+							}
+							else{ e.userInput.isCompete = isCompeteFlag; }
+						});
+						////////// TODO: If tags are comming directly from db not from UI there would be extra condition here
+						
+						e.segmentToString = e.userInput.segment.toString();
+                        e.userInput.negativeword = false;
                     }
                 }
             });
@@ -1089,6 +1180,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
         });
         $scope.filterWordCloud = '';
         $scope.updateKeywordTable();
+        $scope.userSegmentsSaved = false;
     };
 
 
@@ -1099,7 +1191,10 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
 
     // Sort by table header
     $scope.sort_by = function(sortField) {
+
         var sortObj = {};
+        var sortOrder;
+		var fieldName;
         $scope.trackSort.track.forEach( function(elem, ind) {
             if(elem.field === sortField)
             {
@@ -1113,11 +1208,34 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
         console.log(sortField);      
         console.log(sortObj);
 
-        //$scope.actualData.sort( dynamicSort(sortObj.field) );
-        $scope.actualData.sort( dynamicSort( ((sortObj.desc) ? '' : '-' ) + sortObj.field ) );
+        //if(sortObj.field != 'DELETE')
+		if( !(['BRAND', 'COMPETE', 'DELETE'].indexOf(sortObj.field) > -1) )
+        {
+            //$scope.actualData.sort( dynamicSort(sortObj.field) );
+            $scope.actualData.sort( dynamicSort( ((sortObj.desc) ? '' : '-' ) + sortObj.field ) );
+        }
+        else
+        {
+			if(sortObj.field == "COMPETE") fieldName = "isCompete";
+			if(sortObj.field == "BRAND") fieldName = "isBrand";
+			if(sortObj.field == "DELETE") fieldName = "negativeword";
+			
+            $scope.actualData.sort( function(a, b) {
 
-        console.log( ((sortObj.desc) ? '' : '-' ) + sortObj.field );
-        console.log( $scope.actualData );
+                sortOrder = sortObj.desc ? 1 : -1;
+                return (a.userInput[fieldName] - b.userInput[fieldName]) * sortOrder;
+
+                //return (a.userInput.negativeword === b.userInput.negativeword)? 0 : a.userInput.negativeword? -1 : 1; 
+/*
+                if (a.userInput.negativeword > b.userInput.negativeword)
+                    return sortObj ? 1 : -1;
+                if (a.userInput.negativeword < b.userInput.negativeword)
+                    return sortObj ? 1 : -1;
+                return 0;
+                */
+
+            });
+        }
 
         $scope.currentTopRow = 0;
         $scope.updateKeywordTable();
@@ -1134,6 +1252,15 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
             }
         };
 
+    };
+    
+    /////// user clicked on wordcloud word->tag
+    $scope.selectAllTaggedWords = function(tag) {
+        console.log(tag)
+        $scope.wordCloudArray.forEach( function(e) {
+            if(e.segmentArray.indexOf(tag) > -1) e.selected = !e.selected;
+            else e.selected = false;
+        });
     };
 
     /////////// Add to tagsArray
@@ -1166,7 +1293,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
             $scope.tagsArray1Word.splice( $scope.tagsArray1Word.indexOf(tag), 1 );
         }
         if(numWord == 2) {
-            $scope.tagsArray2Word.splice( $scope.tagsArray1Word.indexOf(tag), 1 );
+            $scope.tagsArray2Word.splice( $scope.tagsArray2Word.indexOf(tag), 1 );
         }
 
         $scope.wordCloudArray.forEach( function(e, i)
@@ -1176,6 +1303,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
                 var index = e.segmentArray.indexOf(tag);
                 if (index > -1) {
                     e.segmentArray.splice(index, 1);
+					e.segment = e.segmentArray.toString();
                 }
                 if(e.segmentArray.length <= 0) e.hasSegment = false;
             }
@@ -1198,8 +1326,6 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
                 }
             }
         });
-
-
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -1273,7 +1399,10 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
         });
         
         $scope.getTagCloud();
-
+		
+		$('#myModal').on('shown.bs.modal', function() {
+			$(document).off('focusin.modal');
+		});
         /*
         $scope.phrasesLoadingSpinner = true;
         DataShareService.refreshPhrases( function(res) {
@@ -1296,6 +1425,8 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
         });
         */
     }
+	
+
 
 
 }]);

@@ -18,6 +18,7 @@
     <!-- build:css({.tmp,app}) styles/main.css -->
     <link rel="stylesheet" href="app/styles/main.css">
 	<link rel="stylesheet" href="app/styles/less.css">
+	<link rel="stylesheet" href="app/styles/animate.css">
     <!-- endbuild -->
   </head>
   <body ng-app="keywordSegmentsApp">
@@ -40,7 +41,7 @@
 				</div>
 			</div>
 			<div class="col-md-10">
-				<div ng-view></div>
+				<div class="page {{ pageClass }}" ng-view></div>
 			</div>
 		</div>
 	</div>
@@ -73,8 +74,6 @@
     <script src="app/bower_components/angular-route/angular-route.js"></script>
     <script src="app/bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="app/bower_components/ng-file-upload/angular-file-upload.min.js"></script>
-    <script src="app/bower_components/angular-strap/dist/angular-strap.min.js"></script>
-	<script src="app/bower_components/angular-strap/dist/angular-strap.tpl.min.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -92,6 +91,7 @@
 		<script src="app/scripts/controllers/Step3Ctrl.js"></script>
 		<script src="app/scripts/controllers/Step4Ctrl.js"></script>
 		<script src="app/scripts/controllers/Step5Ctrl.js"></script>
+		<script src="app/scripts/controllers/Step6Ctrl.js"></script>
         <!-- endbuild -->
 </body>
 </html>

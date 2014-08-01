@@ -31,7 +31,8 @@ class Word extends Eloquent {
 				$tagArray[$v] = 1;				
 			}
 		}
-		//arsort($tagArray, SORT_NUMERIC );		//Sort alphabetically
+		
+		arsort($tagArray, SORT_NUMERIC );		//Sort alphabetically
 		$insertData = [];
 		foreach($tagArray as $word => $count)
 		{
@@ -80,7 +81,8 @@ class Word extends Eloquent {
 				}
 			}
 		}
-
+		
+		arsort($tagArray, SORT_NUMERIC );		//Sort alphabetically
 		$insertData = [];
 		foreach($tagArray as $word => $count)
 		{

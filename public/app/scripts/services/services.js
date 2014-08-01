@@ -70,6 +70,8 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
                     elem.userInput.segment = [];
                     elem.segmentToString = '';
                     elem.userInput.hasSegment = false;
+					elem.userInput.isBrand = false;
+					elem.userInput.isCompete = false;
                 });
                 callback(data);
                 //console.log(data);

@@ -68,11 +68,11 @@ body {
 }
 //////////////// Tag cloud
 #tagCloud {
-    .panel-body { padding: 0px; }
+    .panel-body { padding: 0px 15px; }
     ul{
 		margin: 0;
-		padding:.5em 10px;
-		text-align:center;
+		padding: 0 10px 20px;
+		text-align: justify;
 //		background:#71b5e9 url(../images/bg_tags.gif) repeat-x;		
 //        background: lightseagreen;
 		}
@@ -88,7 +88,9 @@ body {
         color: black;
 		padding:0 2px;	
 		}
-	 li a:hover{color:#cff400;}		
+	 li a:hover{
+	     background-color:#cff400;
+	 }		
 	.tag1{font-size:100%;}
 	.tag2{font-size:120%;}
 	.tag3{font-size:140%;}
@@ -98,15 +100,19 @@ body {
 }
 ////////////////// Modal Tag cloud
 #modalTagCloud {
+    .modal-content{
+        //width: 600px;
+    }
     .modal-body { 
         font-size: 1.5em;
         padding: 0px; 
         }
     ul{
 		margin: 0;
-		padding:.5em 10px;
-		text-align:center;
-		//background:#71b5e9 url(../images/bg_tags.gif) repeat-x;		
+		padding: 0 10px 20px;
+		text-align: justify;
+//		background:#71b5e9 url(../images/bg_tags.gif) repeat-x;		
+//        background: lightseagreen;
 		}
     li{
 		margin:0;
@@ -117,32 +123,48 @@ body {
     li a{
 		text-decoration:none;
 //		color:#fff;
-		color:black;
-		padding:0 2px;
-		span {
-		        color: grey;
-		    }
+        color: black;
+		padding:0 2px;	
 		}
-	 li a:hover{color:#cff400;}		
-	.tag1{font-size:100%;}
-	.tag2{font-size:120%;}
-	.tag3{font-size:240%;}
-	.tag4{font-size:260%;}
-	.tag5{font-size:300%;}
-	.tag6{font-size:400%;}
+	 li a:hover{
+	     background-color:#cff400;
+	 }		
+	.tag1{font-size:150%;}
+	.tag2{font-size:170%;}
+	.tag3{font-size:190%;}
+	.tag4{font-size:210%;}
+	.tag5{font-size:230%;}
+	.tag6{font-size:250%;}
 }
 ////////// Form for word cloud
 #wordCloudForm {
   position: fixed;
   bottom: 0;
   right: 0;
+  z-index: 1051;
   margin-bottom: 0px;
+  border-radius: 3px 3px 0 0;
+  border-bottom: 0px;
   .panel-body {
-      padding: 15px;
+      padding: 15px 15px 0 15px;
+  }
+  .panel-heading {
+      border-radius: 0px;
   }
   //background: whitesmoke;
   //padding: 10px 10px 0 10px;
   //border: 1px solid grey;
+}
+.wordCloudTag {
+    margin-right: 2px;
+}
+
+.wordCloudTopRow {
+    //padding: 10px;
+    margin: 10px 10px 50px 10px;
+}
+.masterTags{
+    
 }
 /////////////// tag Popover
 .tagPopover {
