@@ -1319,6 +1319,8 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
                 if (index > -1) {
                     e.segmentArray.splice(index, 1);
 					e.segment = e.segmentArray.toString();
+					if($scope.brandTerms.indexOf(tag) > -1)	e.brand = false;
+					if($scope.competeTerms.indexOf(tag) > -1)	e.compete = false;
                 }
                 if(e.segmentArray.length <= 0) e.hasSegment = false;
             }
