@@ -1,6 +1,6 @@
 'use strict';
 
-keywordSegmentsControllers.controller('Step6Ctrl', ['$scope', '$http', 'DataShareService', function ($scope, $http, DataShareService) {
+keywordSegmentsControllers.controller('Step6Ctrl', ['$scope', '$http', 'ngProgress', 'DataShareService', function ($scope, $http, ngProgress, DataShareService) {
     $scope.numShowKeywords = 20;
     $scope.currentPageNum = 0;
     $scope.currentKeywordsMatched = 0;
@@ -358,8 +358,10 @@ keywordSegmentsControllers.controller('Step6Ctrl', ['$scope', '$http', 'DataShar
     console.log($scope.selectedDataAccount);
     if($scope.selectedDataAccount.id >= 0)      // since id must be >= 0
     {
+		ngProgress.start();
 		DataShareService.refreshPhrases( function(res) {
 			$scope.updateKeywordTable();
+			ngProgress.complete();
 		});
         
     }

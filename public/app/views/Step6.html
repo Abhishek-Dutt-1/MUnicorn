@@ -75,7 +75,10 @@
             </thead>
             <tfoot>
                 <td colspan="7">
-                    <div>
+					<div class="pagerInfo pull-left">
+						Showing {{currentTopRow}} to {{currentTopRow*1 + dummyData.length*1 - 1}} of {{totalDataRowsCount}} rows
+					</div>
+                    <div class="pull-right">
                         <ul class="pager">
                             <li ng-class="{disabled: keywordFirstPage}">
                             <a href ng-click="changePage(-1)" >« Prev</a>

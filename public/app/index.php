@@ -13,6 +13,7 @@
     <!-- bower:css -->
     <link rel="stylesheet" href="app/bower_components/bootstrap/dist/css/bootstrap.css" />
 	<link rel="stylesheet" href="app/bower_components/angular-motion/dist/angular-motion.min.css">
+	<link rel="stylesheet" href="app/bower_components/ngprogress/ngProgress.css">
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
@@ -74,6 +75,7 @@
     <script src="app/bower_components/angular-route/angular-route.js"></script>
     <script src="app/bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="app/bower_components/ng-file-upload/angular-file-upload.min.js"></script>
+	<script src="app/bower_components/ngprogress/build/ngProgress.min.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 

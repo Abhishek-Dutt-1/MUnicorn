@@ -1,6 +1,6 @@
 'use strict';
 
-keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter', 'DataShareService', function ($scope, $http, $filter, DataShareService) {
+keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter', 'ngProgress', 'DataShareService', function ($scope, $http, $filter, ngProgress, DataShareService) {
     $scope.numShowKeywords = 10;
     $scope.currentPageNum = 0;
     $scope.currentKeywordsMatched = 0;
@@ -744,7 +744,33 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
         $scope.segmentsSavingSpinner = true;
 
         $scope.deleteNegativeWordsLocal();
+		
+		// Remove braded and compete words from segment string
+		$scope.wordCloudArray.forEach( function(elem)
+		{
+			if(elem.brand == true) 
+			{
+				$scope.brandTerms.forEach( function(e1){
+					if(elem.segmentArray.indexOf( e1 ) > -1)
+					{
+						elem.segmentArray.splice( elem.segment.indexOf( e1 ), 1);
+					}
+				});
+				elem.segment = elem.segmentArray.toString();		// removed the brand words now reset the segment string
+			}
+			if(elem.compete == true) 
+			{
+				$scope.competeTerms.forEach( function(e1){
+					if(elem.segmentArray.indexOf( e1 ) > -1)
+					{
+						elem.segmentArray.splice( elem.segment.indexOf( e1 ), 1);
+					}
+				});
+				elem.segment = elem.segmentArray.toString();		// removed the brand words now reset the segment string
+			}
 
+		});
+		
 //        DataShareService.saveSegmentMap( $scope.wordCloudArray, $scope.idsToBeDeleted , function(res) {
         DataShareService.saveSegmentMap( $scope.wordCloudArray, $scope.idsToBeDeleted , function(res) {
             console.log(res);
@@ -834,6 +860,20 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
                     elem.segmentArray = [];
                     elem.hasSegment = false;
                 }
+				/////////// push brand and compete into segmentArray
+				if(elem.brand == 1)
+				{
+					elem.segmentArray.push('brand');		// Just for ui add a brand segment, this will be removed before saving
+					elem.hasSegment = true;					// this process is reversed before saving
+                    $scope.addToTagsArray( ['brand'], elem.numword);
+				}
+				if(elem.compete == 1)
+				{
+					elem.segmentArray.push('compete');		// Just for ui add a compete segment, this will be removed before saving
+					elem.hasSegment = true;					// this process is reversed before saving
+                    $scope.addToTagsArray( ['compete'], elem.numword);
+				}
+				
             });
             $scope.applyUserInputsToKeywords();
            
@@ -1013,7 +1053,6 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
 					
 					elem.segmentArray = temp;     // so no duplicate segments
                     elem.hasSegment = true;
-					
 					
 					isBrandFlag = false;
 					$scope.brandTerms.forEach( function(e1){
@@ -1359,7 +1398,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
     console.log($scope.selectedDataAccount);
     if($scope.selectedDataAccount.id >= 0)      // since id must be >= 0
     {
-
+		ngProgress.start();
         /*
 		DataShareService.getKeywordCount( function(data) {
 			data.count = (data.count > 5000) ? 5000 : data.count;
@@ -1375,6 +1414,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
         });
         
         $scope.getTagCloud();
+		ngProgress.complete();
 		
 		$('#myModal').on('shown.bs.modal', function() {
 			$(document).off('focusin.modal');
