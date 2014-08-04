@@ -255,10 +255,9 @@ class OperationsController extends \BaseController {
 					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->inPlan ) . ","
 					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->extractedFrom ) . "," 
 					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', str_replace(',', ';', $row->NAME) ) . "," 
-					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->Brand ) . "," 
-					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->Compete ) . PHP_EOL;
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->brand ) . "," 
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->compete ) . PHP_EOL;
 
-					
 			//return Response::json($output);
 			//$output.=  $row; //implode(",",$row->to_array());
 		}

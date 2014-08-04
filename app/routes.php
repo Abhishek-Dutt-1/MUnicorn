@@ -82,13 +82,13 @@ Route::group(array('prefix' => 'api/ops'), function()
 	Route::get( '/getallphrases/{dataaccountid}/{phraselength}', 'OperationsController@getAllPhrases');    //step3
 	// save user inputted segments mapping to phrases in the segmentmap table
 	Route::post( '/saveinputsegments', 'OperationsController@saveInputSegments');    //step3
-
+	
 	// STEP-4 :: fetch data from keywords-segment table
 	Route::get( '/fetchkeywordsandsegmentsdata/{dataaccountid}/{start}/{count}/{orderby}/{desc}', 'OperationsController@fetchKeywordsAndSegmentsData');
-
+	
 	// SELECT DATA :: Fetach all account names
 	Route::get( '/fetchallaccountnames', 'OperationsController@fetchAllAccountNames');
-
+	
     // Upload file route
     Route::post( '/uploadcsv', 'OperationsController@uploadCSV');
 	

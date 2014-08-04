@@ -602,7 +602,8 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
 
 
 //////////////////////////////////////// 
-    // save button pressed
+/*
+	// save button pressed
     $scope.saveInputSegments = function() {
 
         $scope.phrasesSavingSpinner = true;
@@ -628,7 +629,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
             console.log($scope.phrasesSavingSpinner);
         });
     };
-
+*/
 
     $scope.switchWordCloudTable = function(phraseLength) {
         
@@ -647,32 +648,6 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
             $scope.wordCloudNumWord = 2;
         }
 
-        /*
-        var maxCount, minCount;
-        maxCount = 0; minCount = 0;
-        //$scope.wordCloudArray = data;
-        $scope.wordCloudArray.forEach( function(elem) {
-                maxCount = (elem.freq > maxCount) ? elem.freq : maxCount;
-                minCount = (elem.freq < minCount) ? elem.freq : minCount;
-        });
-
-        $scope.wordCloudArray.forEach( function(elem, ind) {
-            elem.level = (0 | (elem.freq - minCount)/(maxCount - minCount) * 5) + 1;
-            //// There should be a better way to do this
-            elem.selected = false;
-            if( elem.segment )
-            {
-                elem.segmentArray = elem.segment.split(',');
-                elem.hasSegment = true;
-            }
-            else
-            {
-                elem.segmentArray = [];
-                elem.hasSegment = false;
-            }
-        });
-        $scope.applyUserInputsToKeywords();
-        */
     };
 
 /*
@@ -994,7 +969,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
             }
             else        // <--- can only be negativeword of stopword
             */
-            if($scope.userInput.type == true)       /// ie negative word checkbox checked
+            if($scope.userInput.type == true)       // ie negative word checkbox checked
             {
                 $scope.wordCloudArray.forEach( function(elem) {
                     if(elem.selected) {
@@ -1006,7 +981,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
                     }
                 });
             }
-            if($scope.userInput.type == false)       /// ie negative word checkbox checked
+            if($scope.userInput.type == false)       // ie negative word checkbox checked
             {
                 $scope.wordCloudArray.forEach( function(elem) {
                     if(elem.selected) {
@@ -1128,7 +1103,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
 							if(e.userInput.segment.indexOf( e1 ) > -1)
 							{
 								e.userInput.isBrand = true;
-								//e.userInput.segment.splice( e.userInput.segment.indexOf( e1 ), 1);
+								e.userInput.segment.splice( e.userInput.segment.indexOf( e1 ), 1);
 								isBrandFlag = true;
 							}
 							else{ e.userInput.isBrand = isBrandFlag; }
@@ -1139,7 +1114,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
 							if(e.userInput.segment.indexOf( e1 ) > -1)
 							{
 								e.userInput.isCompete = true;
-								//e.userInput.segment.splice( e.userInput.segment.indexOf( e1 ), 1);
+								e.userInput.segment.splice( e.userInput.segment.indexOf( e1 ), 1);
 								isCompeteFlag = true;
 							}
 							else{ e.userInput.isCompete = isCompeteFlag; }
@@ -1263,7 +1238,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
         });
     };
 
-    /////////// Add to tagsArray
+    /////////// Add to MASTER tagsArray
     $scope.addToTagsArray = function(newTags, numWord) {
 
         var numWord = numWord || $scope.wordCloudNumWord;
@@ -1292,8 +1267,9 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
         {
             $scope.tagsArray1Word.splice( $scope.tagsArray1Word.indexOf(tag), 1 );
         }
-        if(numWord == 2) {
-            $scope.tagsArray2Word.splice( $scope.tagsArray2Word.indexOf(tag), 1 );
+        if(numWord == 2)
+		{
+			$scope.tagsArray2Word.splice( $scope.tagsArray2Word.indexOf(tag), 1 );
         }
 
         $scope.wordCloudArray.forEach( function(e, i)

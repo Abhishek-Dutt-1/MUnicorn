@@ -272,7 +272,7 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
             });
         },
 
-        /// Refresh segmentmap table with 1 and 2 words phrases by recalulating
+        // Refresh segmentmap table with 1 and 2 words phrases by recalulating
         //counts
         refreshPhrases: function(callback) {
 

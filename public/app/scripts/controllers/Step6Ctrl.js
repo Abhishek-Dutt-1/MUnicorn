@@ -358,7 +358,10 @@ keywordSegmentsControllers.controller('Step6Ctrl', ['$scope', '$http', 'DataShar
     console.log($scope.selectedDataAccount);
     if($scope.selectedDataAccount.id >= 0)      // since id must be >= 0
     {
-        $scope.updateKeywordTable();
+		DataShareService.refreshPhrases( function(res) {
+			$scope.updateKeywordTable();
+		});
+        
     }
 
 
