@@ -82,7 +82,7 @@
                         </td>
                     </tfoot>
                     <tbody>
-                    <tr ng-repeat="item in dummyData | orderBy:predicate:reverse" ng-class="{'bg-danger': item.userInput.negativeword, 'bg-warning': item.userInput.stopword}">
+                    <tr ng-repeat="item in dummyData | orderBy:predicate:reverse" ng-class="{'bg-danger': item.userInput.negativeword, 'bg-warning': item.userInput.stopword}" class="repeated-item">
 <!--                    <tr ng-repeat="item in currentPageKeywords = (actualData | startFrom: currentTopRow | limitTo: numShowKeywords | orderBy:predicate:reverse)"
                         ng-class="{'bg-danger': item.userInput.negativeword, 'bg-warning': item.userInput.stopword}" >      -->
                         <td>{{item.keyword}}</td>
@@ -98,11 +98,11 @@
             </div>      <!-- end panel -->
         </div>          <!-- end mid column -->
 
-        <div class="col-md-5">
+        <div class="col-md-6">
 
 
 
-            <div ng-show="selectedDataAccount.id" class="panel panel-default" id="tagCloud">
+            <div ng-show="selectedDataAccount.id" class="panel panel-default" id="nonModaltagCloud">
 
                 <div class="panel-heading">
                     <h3 class="panel-title">Word Cloud
@@ -137,7 +137,7 @@
 								</label>
 							</div>
 							<!--  Show tags with segments in word cloud  -->
-							<div class="pull-right1 text-muted hidden"><input type="checkbox" value=false ng-model="showAllTags"> Toggle Tags</div>
+							<div class="pull-right1 text-muted"><input type="checkbox" value=false ng-model="showAllTags"> Show tags</div>
 						</div>      <!-- end btn -->
                     </div>
 
@@ -145,8 +145,11 @@
                     <div class="panel panel-primary" id="wordCloudForm">
                         <div class="panel-heading">
                             <h3 class="panel-title">
-                                <a href="" class="pull-right" ng-click="formToggleButton()" >
-                                    <span class="glyphicon glyphicon-resize-vertical"></span>
+                                <a ng-show="formToggle" href="" class="pull-right" ng-click="formToggleButton()" >
+                                    <span class="glyphicon glyphicon-minus"></span>
+                                </a>
+	                            <a ng-show="!formToggle" href="" class="pull-right" ng-click="formToggleButton()" >
+                                    <span class="glyphicon glyphicon-chevron-up"></span>
                                 </a>
                             </h3>
                         </div>
@@ -194,16 +197,14 @@
                         </div>  <!-- end panel body -->
                     </div>  <!-- end form panel -->
 
-                    <div id="tagCloud">
+                    <div id="tagCloud1">
                         <ul>
                             <!-- <li ng-repeat="word in filteredWords = (wordCloudArray | filter: {word.word: filterWordCloud, word.numword: wordCloudNumWord})" class="tag{{word.level}}"> -->
-                            <li ng-repeat="word in wordCloudArray | filter: {word: filterWordCloud, numword: wordCloudNumWord}">
+                            <li ng-repeat="word in wordCloudArray | filter: {word: filterWordCloud, numword: wordCloudNumWord}" class="repeated-item">
                                 <a href="" ng-click="wordCloudWordClicked(word.word)" 
 								ng-show="!word.hasSegment||showAllTags" 
 								class="tag{{word.level}}" 
-								ng-class="{'bg-primary': word.selected, 'text-success': word.hasSegment, 'bg-danger': word.negativeword, 'text-warning': word.stopword}" >
-								{{word.word}} ({{word.freq}})
-								</a>
+								ng-class="{'bg-primary': word.selected, 'text-success': word.hasSegment, 'bg-danger': word.negativeword, 'text-warning': word.stopword}" >{{word.word}}<span class="hidden"> ({{word.freq}})</span></a>
 								<span class="label label-info wordCloudTag" 
 								ng-show="!word.hasSegment||showAllTags" 
 								ng-repeat="tag in word.segmentArray" >
@@ -260,19 +261,19 @@
 								</label>
 							</div>
 							<!--  Show tags with segments in word cloud  -->
-							<div class="pull-right1 text-muted hidden"><input type="checkbox" value=false ng-model="showAllTags"> Toggle Tags</div>
+							<div class="pull-right1 text-muted"><input type="checkbox" value=false ng-model="showAllTags"> Show tags</div>
 						</div>      <!-- end btn -->
                     </div>
 					
-					<div id="tagCloud">
+					<div id="tagCloud1">
                         <ul>
                             <!-- <li ng-repeat="word in filteredWords = (wordCloudArray | filter: {word.word: filterWordCloud, word.numword: wordCloudNumWord})" class="tag{{word.level}}"> -->
-                            <li ng-repeat="word in wordCloudArray | filter: {word: filterWordCloud, numword: wordCloudNumWord}">
+                            <li ng-repeat="word in wordCloudArray | filter: {word: filterWordCloud, numword: wordCloudNumWord}" class="repeated-item">
                                 <a href="" ng-click="wordCloudWordClicked(word.word)" 
 								ng-show="!word.hasSegment||showAllTags" 
 								class="tag{{word.level}}" 
 								ng-class="{'bg-primary': word.selected, 'text-success': word.hasSegment, 'bg-danger': word.negativeword, 'text-warning': word.stopword}" >
-								{{word.word}} ({{word.freq}})
+								{{word.word}} <span class="hidden">({{word.freq}})</span>
 								</a>
 								<span class="label label-info wordCloudTag" 
 								ng-show="!word.hasSegment||showAllTags" 

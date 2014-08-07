@@ -1326,6 +1326,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
             }
         });
         $scope.applyUserInputsToKeywords();
+		$scope.userSegmentsSaved = false;
     };
 
     // Master tag clicked

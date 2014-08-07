@@ -42,7 +42,7 @@
 				</div>
 			</div>
 			<div class="col-md-10">
-				<div class="page {{ pageClass }}" ng-view></div>
+				<div class="" ng-view></div>
 			</div>
 		</div>
 	</div>
@@ -88,10 +88,10 @@
         <script src="app/scripts/controllers/SecondaryNavCtrl.js"></script>
 		<script src="app/scripts/controllers/AboutCtrl.js"></script>
 		<script src="app/scripts/controllers/SelectDataCtrl.js"></script>
-		<script src="app/scripts/controllers/Step1Ctrl.js"></script>
+<!--		<script src="app/scripts/controllers/Step1Ctrl.js"></script>
 		<script src="app/scripts/controllers/Step2Ctrl.js"></script>
 		<script src="app/scripts/controllers/Step3Ctrl.js"></script>
-		<script src="app/scripts/controllers/Step4Ctrl.js"></script>
+		<script src="app/scripts/controllers/Step4Ctrl.js"></script>	-->
 		<script src="app/scripts/controllers/Step5Ctrl.js"></script>
 		<script src="app/scripts/controllers/Step6Ctrl.js"></script>
         <!-- endbuild -->

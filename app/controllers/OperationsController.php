@@ -211,6 +211,8 @@ class OperationsController extends \BaseController {
 			'Expires' => 0,
 		);
 		
+		$maxSeg = 0;		// even if no segments are inputted, still blank Segment1 column will be there
+		
 		//return Response::json( DB::table('keywords-segment')->where('dataAccount', $dataaccountid)->skip($start)->take($count)->get() );
 	
 		//return DB::statement(' SELECT * INTO OUTFILE "../../../tmp/resultTMP1111.csv" FIELDS TERMINATED BY "," OPTIONALLY ENCLOSED BY "" ESCAPED BY "\\" LINES TERMINATED BY "||"  FROM keywords-segment ');
@@ -221,8 +223,7 @@ class OperationsController extends \BaseController {
 		*/
 
 		$table = DB::table('keywords-segment')->where('dataAccount', $dataaccountid)->get();
-		//$output='';
-		$output = "Ad group,Keyword,Currency,Avg. Monthly Searches (exact match only),Competition,Suggested bid,Impr. share,In account?,In plan?,Extracted From,Segment,Brand,Compete".PHP_EOL;
+		$output = '';
 		
 		foreach ($table as $row) {
 			//return var_dump($row);
@@ -254,22 +255,33 @@ class OperationsController extends \BaseController {
 					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->inAccount ) . ","
 					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->inPlan ) . ","
 					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->extractedFrom ) . "," 
-					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', str_replace(',', ';', $row->NAME) ) . "," 
-					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->brand ) . "," 
-					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->compete ) . PHP_EOL;
+					. (($row->brand == 1)? 'Y' : '-' ). "," 
+					. (($row->compete == 1)? 'Y' : '-' ). "," 					
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->NAME ) . PHP_EOL;
+					
+					$maxSeg = substr_count($row->NAME, ',') > $maxSeg ? substr_count($row->NAME, ',') : $maxSeg;
+					
+//					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', str_replace(',', ';', $row->NAME) ) . PHP_EOL;
+//					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->brand ) . "," 
+//					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->compete ) . PHP_EOL;
 
 			//return Response::json($output);
 			//$output.=  $row; //implode(",",$row->to_array());
 		}
 
-		
-		return Response::json( array( 'file' => $output ));
-		
-		//return Response::json($output);
-		
-		//return Response::make($output, 200, $headers);
-		
-	}
+		$maxSeg += 1;		// even if no segments are inputted, still blank Segment1 column will be there
+		$titleRow = "Ad group,Keyword,Currency,Avg. Monthly Searches (exact match only),Competition,Suggested bid,Impr. share,In account?,In plan?,Extracted From,Brand,Compete";
+		for($i =1; $i <= $maxSeg; $i++)
+		{
+			$titleRow .= ",Segment " . $i;
+		}
+		$titleRow .= PHP_EOL;
 	
+		$output = $titleRow . $output;
+		return Response::json( array( 'file' => $output ));
+
+		//return Response::json($output);
+		//return Response::make($output, 200, $headers);
+	}
 
 }

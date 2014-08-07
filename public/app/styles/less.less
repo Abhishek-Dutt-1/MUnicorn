@@ -67,8 +67,12 @@ body {
     height: 19px;
 }
 //////////////// Tag cloud
-#tagCloud {
+#nonModaltagCloud {
     .panel-body { padding: 0px 15px; }
+    .wordCloudTopRow {
+        //padding: 10px;
+        margin: 10px 10px 55px 10px;
+    }
     ul{
 		margin: 0;
 		padding: 0 10px 20px;
@@ -78,30 +82,43 @@ body {
 		}
     li{
 		margin:0;
-		padding:0;
 		list-style:none;
 		display:inline;
+		line-height: 30px;
 		}
     li a{
 		text-decoration:none;
 //		color:#fff;
         color: black;
-		padding:0 2px;	
+		padding: 2px 5px;        
+//		padding:0 2px;	
 		}
 	 li a:hover{
-	     background-color:#cff400;
+//	     background-color:#cff400;
+	     background-color: #77c63d;
+	     color: white;
+	     border-radius: 5px;
 	 }		
 	.tag1{font-size:100%;}
 	.tag2{font-size:120%;}
-	.tag3{font-size:140%;}
-	.tag4{font-size:160%;}
-	.tag5{font-size:180%;}
-	.tag6{font-size:200%;}
+	.tag3{font-size:180%;}
+	.tag4{font-size:200%;}
+	.tag5{font-size:240%;}
+	.tag6{font-size:280%;}
+	.bg-primary{
+	    color: white;
+        border-radius: 5px;
+	}
 }
 ////////////////// Modal Tag cloud
 #modalTagCloud {
     .modal-content{
         //width: 600px;
+    }
+    .wordCloudTopRow {
+        //padding: 10px;
+        margin: 10px 10px 25px 10px;
+        padding: 0px 10px 25px 0px;
     }
     .modal-body { 
         font-size: 1.5em;
@@ -114,20 +131,24 @@ body {
 //		background:#71b5e9 url(../images/bg_tags.gif) repeat-x;		
 //        background: lightseagreen;
 		}
-    li{
+     li{
 		margin:0;
-		padding:0;
 		list-style:none;
 		display:inline;
+//		line-height: 22px;
 		}
     li a{
 		text-decoration:none;
 //		color:#fff;
         color: black;
-		padding:0 2px;	
+		padding: 2px 5px; 
+//		padding:0 2px;	
 		}
 	 li a:hover{
-	     background-color:#cff400;
+//	     background-color:#cff400;
+	     background-color: #77c63d;
+	     color: white;
+	     border-radius: 5px;
 	 }		
 	.tag1{font-size:150%;}
 	.tag2{font-size:170%;}
@@ -135,6 +156,10 @@ body {
 	.tag4{font-size:210%;}
 	.tag5{font-size:230%;}
 	.tag6{font-size:250%;}
+	.bg-primary{
+	    color: white;
+        border-radius: 5px;
+	}
 }
 ////////// Form for word cloud
 #wordCloudForm {
@@ -159,10 +184,6 @@ body {
     margin-right: 2px;
 }
 
-.wordCloudTopRow {
-    //padding: 10px;
-    margin: 10px 10px 50px 10px;
-}
 .masterTags{
     
 }

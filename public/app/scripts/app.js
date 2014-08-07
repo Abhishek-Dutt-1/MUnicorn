@@ -13,7 +13,7 @@ keywordSegmentsApp.config(['$routeProvider',
 			templateUrl: 'app/views/SelectData.html',
 			controller: 'SelectDataCtrl'
 		}).
-		when('/Step1', {
+/*		when('/Step1', {
 			templateUrl: 'app/views/Step1.html',
 			controller: 'Step1Ctrl'
 		}).
@@ -25,6 +25,7 @@ keywordSegmentsApp.config(['$routeProvider',
 			templateUrl: 'app/views/Step3.html',
 			controller: 'Step3Ctrl'
 		}).
+*/
 		when('/Step5', {
 			templateUrl: 'app/views/Step5.html',
 			controller: 'Step5Ctrl'
@@ -33,10 +34,10 @@ keywordSegmentsApp.config(['$routeProvider',
 			templateUrl: 'app/views/Step6.html',
 			controller: 'Step6Ctrl'
 		}).
-		when('/Step4', {
+/*		when('/Step4', {
 			templateUrl: 'app/views/Step4.html',
 			controller: 'Step4Ctrl'
-		}).
+		}).	*/
 		when('/About', {
 			templateUrl: 'app/views/About.html',
 			controller: 'AboutCtrl'
