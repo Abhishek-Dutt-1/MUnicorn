@@ -33,7 +33,7 @@
 			<div ng-include="'app/views/navbar.html'"></div>
 		</div>
 		<div class="row">
-			<div ng-controller="NavCtrl" class="col-md-2" >
+			<div ng-controller="NavCtrl" class="col-md-12" >
 				<!--
 				<div ng-include="'views/navbar.html'" ng-controller="MainNavCtrl"></div>
 				<div ng-show="" ng-include="'views/SecondaryNav.html'" ng-controller="SecondaryNavCtrl"></div>
@@ -41,7 +41,9 @@
 				<div id="secondaryNav" ng-class="{hidden:isActive('/') || isActive('/About')}" ng-include="'app/views/SecondaryNav.html'">
 				</div>
 			</div>
-			<div class="col-md-10">
+		</div>
+		<div class="row">
+			<div class="col-md-12">
 				<div class="" ng-view></div>
 			</div>
 		</div>
