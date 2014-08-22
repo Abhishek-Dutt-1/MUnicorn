@@ -111,7 +111,7 @@ class WordController extends \BaseController {
 			//$notDeleteIds[] = $word['id'];
 			//Word::find( $word['id'] )->update($word);
 		}
-		/*	
+		/*
 		foreach($deleteIds as $k=>$v)
 		{
 			if(in_array($v['id'], $notDeleteIds)) $tmp[] = $v['id'];

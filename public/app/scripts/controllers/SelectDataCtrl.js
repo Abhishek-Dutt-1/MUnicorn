@@ -4,7 +4,12 @@ keywordSegmentsControllers.controller('SelectDataCtrl', ['$scope', '$upload', 'D
 {
     $scope.selectedDataAccount = {};
     $scope.uploadProgress = 0;
-
+    $scope.landingPageWordCloud = [];
+    $scope.currentWordCloud = {};       // tracks which landing page Id word cloud to show in modal
+    $scope.landingPageSort = 'freq';    // default for landing page word cloud sort
+    $scope.reverse = true;
+	$scope.dataSetAccordion = [];
+	
     $scope.addNewDataAccount = function(newDataAccountName, userName) 
     {
         if(typeof newDataAccountName !== 'undefined') {
@@ -15,11 +20,10 @@ keywordSegmentsControllers.controller('SelectDataCtrl', ['$scope', '$upload', 'D
                 DataShareService.saveNewDataAccount(newDataAccountName, userName, function(res) {
                     $scope.newDataAccountName = "";
                     $scope.updateDataAccountsTable();
-                    console.log(res);
+                    //console.log(res);
                 });
             }
         }
-
     };
 
     $scope.deleteDataAccount = function(dataAccountId) 
@@ -31,32 +35,39 @@ keywordSegmentsControllers.controller('SelectDataCtrl', ['$scope', '$upload', 'D
     {
         DataShareService.fetchAllDataAccountNames( function(data) {
             $scope.accountNameList = data;
+			
+			// if something was pre selected of still exists after data refresh (i.e. was not deleted)
+			var preSelected = data.filter( function(e) {
+				return e.id == $scope.selectedDataAccount.id;	// <- previously selected data set
+			});
+			
+			if(preSelected.length > 0)		// new data sets have the previously selected data set
+			{
+				// duplicate of the one in $scope.setSelectDataAccount 
+				DataShareService.setSelectedDataAccount( preSelected[0].id, preSelected[0].dataaccount, preSelected[0].landingPageUrls, function(res) {
+					$scope.selectedDataAccount.id = res.id; 
+					$scope.selectedDataAccount.name = res.name;
+					$scope.selectedDataAccount.landingPageUrls = res.landingPageUrls;
+				} );
+			}
         });
-    };
-
-    $scope.uploadCSVData = function(dataAccountId)
-    {
-
     };
     
     // data account name clicked in the View
-    $scope.setSelectDataAccount = function(dataAccountId, dataAccountName) {
+    $scope.setSelectDataAccount = function(dataAccountId, dataAccountName, landingPageUrls) {
 
 		// toggle if already selected
 		if( DataShareService.getSelectedDataAccount().id == dataAccountId )
 		{
 			$scope.selectedDataAccount = DataShareService.unsetSelectedDataAccount();
 			return;
-		}	
-		
-		//
-		DataShareService.setSelectedDataAccount( dataAccountId, dataAccountName, function(res) {
+		}
+		DataShareService.setSelectedDataAccount( dataAccountId, dataAccountName, landingPageUrls, function(res) {
 			$scope.selectedDataAccount.id = res.id; 
-			$scope.selectedDataAccount.name = res.name; 
-			console.log( $scope.selectedDataAccount );
+			$scope.selectedDataAccount.name = res.name;
+			$scope.selectedDataAccount.landingPageUrls = res.landingPageUrls;
 		} );
 		
-
     };
 
 
@@ -143,13 +154,92 @@ keywordSegmentsControllers.controller('SelectDataCtrl', ['$scope', '$upload', 'D
         Could be used to upload files to CouchDB, imgur, etc... html5 FileReader is needed. 
         It could also be used to monitor the progress of a normal http post/put request with large data*/
         // $scope.upload = $upload.http({...})  see 88#issuecomment-31366487 for sample code.
+    };
 
-    }
+    $scope.addLandingPageUrl = function(userInputUrl)
+    {
+
+        DataShareService.LandingPageUrl.save( {dataaccount: $scope.selectedDataAccount.id, landingpageurl: userInputUrl}, function(res) { 
+            //console.log(res); 
+            $scope.updateDataAccountsTable();
+        } );
+
+        /* 
+		DataShareService.saveLandingPageUrl( userInputUrl, function(res) {
+            console.log("--- Saved Url ---");
+            console.log(res);
+            $scope.updateDataAccountsTable();
+        });
+        */
+    };
+    // Delete landing page url entry
+    $scope.deleteLandingPageUrl = function(id) 
+    {
+        DataShareService.LandingPageUrl.delete( {id: id}, function(res) { 
+            //console.log("DElete " + id);
+            //console.log(res); 
+            $scope.updateDataAccountsTable();
+        } );
+    };
+
+    // change current word cloud to display in modal
+    $scope.setCurrentWordCloudLandingPage = function(landingPageId, landingPageUrl) {
+        $scope.currentWordCloud.id = landingPageId;
+        $scope.currentWordCloud.url = landingPageUrl;
+        $scope.landingPageWordCloud = [{word: '', freq: 'Loading...'}];
+        $scope.getLandingPageWordCloud();
+    };
+
+    // Get Pre Scraped Landing page word cloud and create a Word Cloud
+    $scope.getLandingPageWordCloud = function() {
+        DataShareService.ops.getLandingPageWordCloud({id: $scope.currentWordCloud.id}, function (res) {
+
+            // calculate tag level
+            var maxCount = 0; 
+            var minCount = 1;
+            res.forEach( function(elem) {
+                maxCount = (elem.freq > maxCount) ? elem.freq : maxCount;
+                minCount = (elem.freq < minCount) ? elem.freq : minCount;
+            });
+            res.forEach( function(elem, ind) {
+                elem.level = (0 | (elem.freq - minCount)/(maxCount - minCount) * 5) + 1;
+                //console.log(elem.freq + " :: " + minCount + " :: " + maxCount);
+            });
+
+            $scope.landingPageWordCloud = res;
+
+        });
+    };
+
+    // delete a single word in landing page word cloud
+    $scope.deleteLandingPageWordCloudElement = function(landingPageWordId) {
+        $scope.landingPageWordCloud = [{word: '', freq: 'Loading...'}];
+        DataShareService.ops.deleteLandingPageWordCloudElement({id: landingPageWordId}, function (res) {
+            $scope.getLandingPageWordCloud();   // refresh after delete
+        });
+    };
+
+    // Rescrape landing page
+    $scope.rescrapeLandingPage = function() {
+        $scope.landingPageWordCloud = [{word: '', freq: 'Loading...'}];
+        DataShareService.ops.rescrapeLandingPage({id: $scope.currentWordCloud.id}, function (res) {
+            $scope.getLandingPageWordCloud();
+            //console.log(res);
+        });
+    };
+	
+	/* currently not used
+	// Track accordion state
+	$scope.toggleAccordion = function(id) {
+		$scope.dataSetAccordion[id] = !$scope.dataSetAccordion[id];
+	};
+	$scope.isAccordionOpen = function(id) {
+		return $scope.dataSetAccordion[id];
+	};
+	*/
 
     // INIT
-
     $scope.selectedDataAccount = DataShareService.getSelectedDataAccount();
     $scope.updateDataAccountsTable();
-
 
 }]);

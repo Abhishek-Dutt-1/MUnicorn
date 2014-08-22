@@ -11,9 +11,10 @@ html, body { height: 100%; }
     background: black;
 }
 */
+@panel-border-radius: 3px;
 body {
 	padding-top: 70px;
-	font-size: 13px;
+	font-size: 12px;
 	font-family: "Open Sans",Arial,Helvetica,Sans-Serif;
 	background: url(../images/mybg.png) #fff
 }
@@ -40,7 +41,8 @@ body {
     //margin-left: -250px;
     overflow-y: auto;
     background: #222;
-	top: 50px;
+	top: 0px;
+	padding-top: 65px;
     //background: #000;
     //-webkit-transition: all 0.5s ease;
     //-moz-transition: all 0.5s ease;
@@ -105,9 +107,10 @@ body {
 	.tag4{font-size:200%;}
 	.tag5{font-size:240%;}
 	.tag6{font-size:280%;}
-	.bg-primary{
+	.bg-primary, li a:active{
 	    color: white;
         border-radius: 5px;
+        background-color: #428bca;
 	}
 }
 ////////////////// Modal Tag cloud
@@ -156,9 +159,10 @@ body {
 	.tag4{font-size:210%;}
 	.tag5{font-size:230%;}
 	.tag6{font-size:250%;}
-	.bg-primary{
+	.bg-primary, li a:active{
 	    color: white;
         border-radius: 5px;
+        background-color: #428bca;
 	}
 }
 ////////// Form for word cloud
@@ -187,6 +191,63 @@ body {
 .masterTags{
     
 }
+////////////////// Landing Page Tag Cloud at Data Select Page
+#landinPageTagCloud {
+    #topRow {
+        margin-bottom: 40px;
+        margin-left: 10px;
+    }
+    ul{
+		margin: 0;
+		padding: 0 10px 20px;
+//		text-align: justify;
+//		background:#71b5e9 url(../images/bg_tags.gif) repeat-x;		
+//      background: lightseagreen;
+		}
+    li{
+		list-style:none;
+		display:inline;
+		line-height: 31px;
+		margin-right: 10px;
+		}
+    li a{
+		text-decoration:none;
+//		color:#fff;
+        color: black;
+		padding: 2px 5px;        
+//		padding:0 2px;	
+        background-color: #f7f7f9;
+	    border-radius: 5px;
+		}
+	li a:hover{
+        background-color: #77c63d;
+	}
+	.freq {
+	    color: lightgrey;
+	}
+	.deleteTag {
+	    color: lightgrey;
+	    cursor: pointer;
+	}
+//	 li a:hover{
+	 .deleteTag:hover{
+//	     background-color:#cff400;
+//	     background-color: #77c63d;
+	     color: red;
+	     border-radius: 5px;
+	 }		
+	.tag1{font-size:100%;}
+	.tag2{font-size:120%;}
+	.tag3{font-size:140%;}
+	.tag4{font-size:160%;}
+	.tag5{font-size:180%;}
+	.tag6{font-size:200%;}
+	.bg-primary, li a:active{
+	    color: red;
+        border-radius: 5px;
+        background-color: #77c63d;
+	}
+}
 /////////////// tag Popover
 .tagPopover {
     font-size: 1em;
@@ -202,9 +263,9 @@ body {
 }
 ////////// Panel
 .panel {
-    border-radius: 3px;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
+    border-radius: @panel-border-radius;
+    -webkit-border-radius: @panel-border-radius;
+    -moz-border-radius: @panel-border-radius;
 }
 .panel-heading {
 //    border-bottom: 0px;
@@ -257,10 +318,93 @@ body {
     }
 }
 // Data account info on the data select page
+#dataAccountAccordion {
+    .panel-title {
+        line-height: 31px;
+        font-weight: bold;
+    }
+    .panel-heading {
+        background-color: #fcfcfc;
+        cursor: pointer;
+        border-radius: @panel-border-radius;
+        .glyphicon {
+            line-height: inherit;
+            color: lightgrey;
+        }
+    }
+    .panel-heading:hover {
+        background-color: #428bca;
+        color:white;
+    }
+/*    .close {
+        line-height: 34px;
+        margin-right: 10px;
+    }
+    */
+    .panel {
+        border-radius: @panel-border-radius;
+        margin: 5px;
+        border: 0px;
+        border-bottom: 1px #ddd solid;
+        border-right: 1px #ddd solid;
+    }
+    .panel-body {
+        //border-bottom: 1px solid #ddd;
+    }
+}
+#dataAccountAccordion.panel-group {
+    margin: 0px;
+}
+#dataAccountAccordion {
+    .dataAccountSelected.panel-heading {
+        //background-color: #428bca;
+        //background-color: #dff0d8;
+        //border-radius: 0px;
+        color: white;
+        border-bottom-right-radius: 0px;
+        border-bottom-left-radius: 0px;
+    }
+    .dataAccountSelected .panel-title {
+        font-weight: bold;
+    }
+    .dataAccountSelected {
+        background-color: #428bca; //cornflowerblue;
+    }
+}
+
 .dataAccountInfo {
     //font-style: italic;
     font-size: 0.8em;
     color: lightgray;
     padding-right: 10px;
     padding-top: 3px;
+}
+/////////////////// Keyword Table Top Row
+#keywordsTableTopRow {
+    >div {
+        padding: 0px;
+    }
+}
+.scoreBadge {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    background-color: lighten(#777, 30%);
+    border-radius: 10px;
+}
+.scoreBadgeGreen {
+    background-color: lighten(#5cb85c, 30%);
+}
+.scoreBadgeGrey {
+    background-color: lighten(#777, 30%);
+}
+.scoreBadgeRed {
+    background-color: lighten(#d9534f, 30%);
 }

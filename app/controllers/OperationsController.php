@@ -1,5 +1,6 @@
 <?php
 
+use xj\snoopy\Snoopy;
 
 class OperationsController extends \BaseController {
 
@@ -55,17 +56,101 @@ class OperationsController extends \BaseController {
 		return Response::json( DB::table('segmentmap')->where('Current_Keyword_Flag', 1)->where('phraselength', 2)->orderBy('count', 'desc')->skip($start)->take($count)->get() );
 	}
 	
+	// PHP implimentation of JavaScript function in the frontend
+	function calcLPScore($keyword, $lpWCArray)
+	{
+		$score = [];
+		foreach($lpWCArray as $url => $lpWC)
+		{
+			$keywordArray = explode(" ", $keyword);
+			$matched = array_filter($keywordArray, function($n) use($lpWC) {
+				return array_filter($lpWC, function($e) use($n) {
+					return $e->word == $n;
+				});
+			});
+			//return $matched;
+			$score[] = array('landingPageUrl' => $url, 'score' => count($matched)/count($keywordArray) );
+			//$score[] = (object) array('landingPageUrl' => $url, 'score' => count($matched)/count($keywordArray) );
+		}
+		//return $score;
+		return json_encode($score);
+	}
 	// update segmentmap table
 	public function refreshPhrases($dataaccountid)
 	{
 		//$result = DB::statement(" call keyword_count( 1 ) " );
-		//return $dataaccountid;
-		$result = DB::statement(" call keyword_count( '". $dataaccountid ."', 2 ) " );
-		
+/*		$result = DB::statement(" call keyword_count( '". $dataaccountid ."', 2 ) " );
 		return " call keyword_count( '". $dataaccountid ."', 2 ) ";
 		return ( array('success' => true) );
-	}
+*/
+		$startTime = microtime(true);
 		
+		$keywords = Keyword::where('dataAccount', $dataaccountid)->get();
+		$wordCloud = Word::where('dataAccount', $dataaccountid)->get();
+		$landingPageIds = DataAccount::find($dataaccountid)->landingPageUrls()->get();			// Laravel's magic
+		$landingPageWordCloud = [];
+		foreach($landingPageIds as $lp)
+		{
+			$landingPageWordCloud[$lp->landingpageurl] = DB::table('landingpagewordcloud')->where('landing_page_urls_id', $lp->id)->orderBy('freq', 'DESC')->get(array('word', 'freq'));
+		}
+		//return $landingPageWordCloud;
+		$insertData = [];
+		DB::table('keywords_segment')->truncate();
+		foreach($keywords as $keyword)
+		{
+			$seg = '';
+			$brand = 0;
+			$compete = 0;
+			foreach($wordCloud as $word)
+			{
+				//if(strpos($keyword['keyword'], $word['word']) !== false)	// found word (cloud) found in keyword
+				if(preg_match("/\b".$word['word']."\b/", $keyword['keyword']) === 1)	// found word (cloud) found in keyword
+				{
+					//$seg .= $word['segment'] . ',';
+					if( ($word['segment'] != '') && ($word['segment'] != null) && ($word['segment'] != ' ') )
+					{
+						$seg .= $word['segment'] . ',';
+					}
+					$brand = $brand || $word['brand'];
+					$compete = $compete  || $word['compete'];
+				}
+			}
+			if($seg != '')
+			{
+				$seg = substr($seg, 0, -1);
+			}
+			$seg = array_unique(explode(',', $seg));		// remove duplicates and sort
+			sort($seg);
+			$seg = implode(",", $seg);
+			
+			//return calcLPScore($keyword['keyword'], $landingPageWordCloud);
+			
+			$insertData[] = array('adGroup' => $keyword['adGroup'], 
+				'keyword' => $keyword['keyword'], 
+				'lpscore' => $this->calcLPScore($keyword['keyword'], $landingPageWordCloud),
+				'currency' => $keyword['currency'], 
+				'avMonthlySearches' => $keyword['avMonthlySearches'],
+				'competition' => $keyword['competition'],
+				'suggestedBid' => $keyword['suggestedBid'],
+				'impressionShare' => $keyword['impressionShare'],
+				'inAccount' => $keyword['inAccount'],
+				'inPlan' => $keyword['inPlan'],
+				'extractedFrom' => $keyword['extractedFrom'],
+				'segment' => $seg,
+				'brand' => $brand,
+				'compete' => $compete,
+				'dataAccount' => $keyword['dataAccount']
+			);
+			//return $ind . " | " . $keyword['keyword'] . " | " . $word['word'] . " | " . $seg;			
+			//return $insertData;
+		}
+		DB::table('keywords_segment')->insert( $insertData );
+		//return Response::json( array('success' => true) );
+		return "Elapsed time is: ". (microtime(true) - $startTime) ." seconds";
+		return Response::json( $insertData );
+	}
+
+	
 	// get all phrases data for a given dataAccount
 	public function getAllPhrases($dataaccountid, $phraselength)
 	{
@@ -109,9 +194,9 @@ class OperationsController extends \BaseController {
 	public function fetchKeywordsAndSegmentsData($dataaccountid, $start, $count, $orderby, $desc)
 	{
 		if($desc == 'true') $desc = 'desc'; else $desc = 'asc';
-		$totalRows = DB::table('keywords-segment')->where('dataAccount', $dataaccountid)->count();
+		$totalRows = DB::table('keywords_segment')->where('dataAccount', $dataaccountid)->count();
 		
-		return Response::json( array( 'count' => $totalRows, 'data' => DB::table('keywords-segment')->where('dataAccount', $dataaccountid)->skip($start)->take($count)->orderBy($orderby, $desc)->get() ) ); 
+		return Response::json( array( 'count' => $totalRows, 'data' => DB::table('keywords_segment')->where('dataAccount', $dataaccountid)->skip($start)->take($count)->orderBy($orderby, $desc)->get() ) ); 
 		
 		//return Response::json( DB::table('keywords-segment')->where('dataAccount', $dataaccountid)->skip($start)->take($count)->get() );
 	}
@@ -132,7 +217,6 @@ class OperationsController extends \BaseController {
 		$dataaccount = $dataAccount->id;
 		
 		//return Input::get('newdataaccount');
-	    
 		if (Input::hasFile('file'))
 		{
 			$file = Input::file('file');
@@ -150,7 +234,6 @@ class OperationsController extends \BaseController {
 			return Response::json( Word::createWordCloud($dataaccount) );
 			
 			return ( 'OK' ); //? 'OK' : 'No rows affected' );
-			
 		}
 		//return Response::json( Input::file('file')->getClientOriginalName() );
 	}
@@ -222,7 +305,7 @@ class OperationsController extends \BaseController {
 		return Response::json( array( 'file' => 'xxx.csv' ));
 		*/
 
-		$table = DB::table('keywords-segment')->where('dataAccount', $dataaccountid)->get();
+		$table = DB::table('keywords_segment')->where('dataAccount', $dataaccountid)->get();
 		$output = '';
 		
 		foreach ($table as $row) {
@@ -244,7 +327,21 @@ class OperationsController extends \BaseController {
 					. $row->Brand . "," 
 					. $row->Compete . PHP_EOL;
 					*/
-
+					$scoreStr = '';
+					$maxLP = 0;
+					$LPNames = [];
+					foreach(json_decode($row->lpscore) as $lp)
+					{
+						$scoreStr .= $lp->score . ",";
+						$LPNames[] = $lp->landingPageUrl;
+						$maxLP++;
+					}
+					if($scoreStr != '')
+					{
+						$scoreStr = substr($scoreStr, 0, -1);
+					}
+					//return Response::json($scoreStr);
+					
 			$output.= preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->adGroup ) . "," 
 					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->keyword ) . "," 
 					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->currency ) . "," 
@@ -254,12 +351,13 @@ class OperationsController extends \BaseController {
 					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->impressionShare ) . ","
 					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->inAccount ) . ","
 					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->inPlan ) . ","
-					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->extractedFrom ) . "," 
-					. (($row->brand == 1)? 'Y' : '-' ). "," 
-					. (($row->compete == 1)? 'Y' : '-' ). "," 					
-					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->NAME ) . PHP_EOL;
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->extractedFrom ) . ","
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $scoreStr ) . ","
+					. (($row->brand == 1)? 'Y' : '-' ). ","
+					. (($row->compete == 1)? 'Y' : '-' ). ","
+					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->segment ) . PHP_EOL;
 					
-					$maxSeg = substr_count($row->NAME, ',') > $maxSeg ? substr_count($row->NAME, ',') : $maxSeg;
+					$maxSeg = substr_count($row->segment, ',') > $maxSeg ? substr_count($row->segment, ',') : $maxSeg;
 					
 //					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', str_replace(',', ';', $row->NAME) ) . PHP_EOL;
 //					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->brand ) . "," 
@@ -270,7 +368,12 @@ class OperationsController extends \BaseController {
 		}
 
 		$maxSeg += 1;		// even if no segments are inputted, still blank Segment1 column will be there
-		$titleRow = "Ad group,Keyword,Currency,Avg. Monthly Searches (exact match only),Competition,Suggested bid,Impr. share,In account?,In plan?,Extracted From,Brand,Compete";
+		$titleRow = "Ad group,Keyword,Currency,Avg. Monthly Searches (exact match only),Competition,Suggested bid,Impr. share,In account?,In plan?,Extracted From";
+		for($i =1; $i <= $maxLP; $i++)
+		{
+			$titleRow .= ",Score(" . $LPNames[$i-1] . ")";
+		}
+		$titleRow .= ",Brand,Compete";
 		for($i =1; $i <= $maxSeg; $i++)
 		{
 			$titleRow .= ",Segment " . $i;
@@ -283,5 +386,58 @@ class OperationsController extends \BaseController {
 		//return Response::json($output);
 		//return Response::make($output, 200, $headers);
 	}
+	
+	// Scrape a given landing page and create a word cloud
+	public function scrapeLandingPage($landingpageid)
+	{
+		DB::table('landingpagewordcloud')->where('landing_page_urls_id', $landingpageid)->delete();
+		
+		$snoopy = new Snoopy;
+		$snoopy->fetchtext( LandingPageUrl::find($landingpageid)->landingpageurl );
+		$body = $snoopy->results;
+		$body = strtolower($body);
+		//$body = strip_tags($body);
+		$body = html_entity_decode( $body );
+		$body = preg_replace('!\s+!', ' ', $body);					// replace continuous space by one spaces
+		$body = preg_replace('/[^A-Za-z0-9 _\-\+\&]/','',$body);	// delete non alpha numeric and _ - + & chars
+		////$body = preg_replace( '/[^[:print:]]/', '', $body );
+		$body = utf8_encode($body);
 
+		$tagArray = [];
+		$allWordsArray = explode( " ", $body);
+		foreach($allWordsArray as $k => $v)
+		{
+			$v = trim($v);
+			if(!(($v == '')||($v == ' ')))
+			{
+				if( isset($tagArray[$v]) )
+				{
+					$tagArray[$v]++;
+				}
+				else {
+					$tagArray[$v] = 1;				
+				}
+			}
+		}
+		$insertData = [];
+		foreach($tagArray as $word => $count)
+		{
+			$insertData[] = array('word' => $word, 'freq' => $count, 'landing_page_urls_id' => $landingpageid );
+		}
+		DB::table('landingpagewordcloud')->insert( $insertData );
+		return Response::json($tagArray);
+		
+	}
+	
+	// Get landing page word cloud data
+	public function getLandingPageWordCloud($landingpageid)
+	{
+		//return Response::json( $landingpageid );
+		return Response::json( DB::table('landingpagewordcloud')->where('landing_page_urls_id', $landingpageid)->get() );
+	}
+	// Delete a particular landing page word cloud element (single word) by id
+	public function deleteLandingPageWordCloudElement($landingpagewordcloudid)
+	{
+		return Response::json( DB::table('landingpagewordcloud')->where('id', $landingpagewordcloudid)->delete() );
+	}
 }

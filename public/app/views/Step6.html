@@ -62,13 +62,13 @@
                 <tr>
                 <!--<th class="id">Id&nbsp;<a ng-click="sort_by('id')"><i class="icon-sort"></i></a></th>
                     -->
-                    <th><a href='' ng-click="sort_by('keyword')">Keyword&nbsp;</a></th>
-                    <th><a href='' ng-click="sort_by('Brand')">Brand&nbsp;</a></th>
-                    <th><a href='' ng-click="sort_by('Compete')">Compete&nbsp;</a></th>
-                    <th><a href='' ng-click="sort_by('NAME')">Segment&nbsp;</a></th>
-                    <th><a href='' ng-click="sort_by('avMonthlySearches')">Volume&nbsp;</a></th>
-                    <th><a href='' ng-click="sort_by('competition')">Competition&nbsp;</a></th>
-                    <th><a href='' ng-click="sort_by('suggestedBid')">Suggested bid&nbsp;</a></th>
+                <th><a href='' ng-click="sort_by('keyword')">Keyword </a><span href="" class="scoreBadge" ng-repeat="lp in selectedDataAccount.landingPageUrls" >{{lp.landingpageurlTrimmed}}</span></th>
+                    <th><a href='' ng-click="sort_by('brand')">Brand</a></th>
+                    <th><a href='' ng-click="sort_by('compete')">Compete</a></th>
+                    <th><a href='' ng-click="sort_by('segment')">Segment</a></th>
+                    <th><a href='' ng-click="sort_by('avMonthlySearches')">Volume</a></th>
+                    <th><a href='' ng-click="sort_by('competition')">Competition</a></th>
+                    <th><a href='' ng-click="sort_by('suggestedBid')">Suggested bid</a></th>
 <!--                                <th class="description">Delete&nbsp;<a ng-click="sort_by('description')"><i class="icon-sort"></i></a></th>
                     -->
                 </tr>
@@ -93,10 +93,13 @@
             <tbody>
             <tr ng-repeat="item in dummyData" ng-class="{danger: item.negativeKeywordMatch123}" >
                 <!-- <td>{{item.Sno}}</td> -->
-                <td>{{item.keyword}}</td>
+                <td>{{item.keyword}}
+                    <span class="scoreBadge" 
+                        ng-class=" (scoreArray.score > 0.3) ? ( (scoreArray.score > 0.6) ? 'scoreBadgeGreen':'scoreBadgeGrey') : 'scoreBadgeRed' "  
+                        ng-repeat="scoreArray in item.lpscore track by $index" >{{scoreArray.score*10|number:0}}</span>&nbsp;</td>
                 <td>{{item.brand | checkmark}}</td>
                 <td>{{item.compete | checkmark}}</td>
-                <td>{{item.NAME}}</td>
+                <td>{{item.segment}}</td>
                 <td>{{item.avMonthlySearches}}</td>
                 <td>{{item.competition | number: 2}}</td>
                 <td>{{item.suggestedBid | number: 2}}</td>

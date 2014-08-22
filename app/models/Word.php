@@ -1,7 +1,7 @@
 <?php
 
 // app/models/Keyword.php
-
+// Creates word cloud from Keywords
 class Word extends Eloquent {
 
     protected $table = 'wordcloud';

@@ -25,8 +25,6 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
       query: { method:'GET', params:{}, isArray:true }
     });
 
-	
-
 	return {
 		// Actual Data
         ////////////////////////////////////// get keywords for the keywords table
@@ -366,11 +364,22 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
             });
 
             resKeywords.query( function(data) { 
+                // add a Trimmed url field
+                data.forEach( function(elem) {
+                    if(elem.landingPageUrls.length > 0)
+                    {
+                        elem.landingPageUrls.forEach( function(e) {
+                            if(e.landingpageurl.length > 50)
+                                e.landingpageurlTrimmed = e.landingpageurl.substring(0,47) + "...";
+                            else
+                                e.landingpageurlTrimmed = e.landingpageurl;
+                        });
+                    }
+                });
                 callback(data);
             });
 
         },
-
         // SELECT DATA :: Save new Account Name
 		saveNewDataAccount: function(dataaccount, user, callback) {
 
@@ -379,7 +388,6 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
             }).query( function(res) { callback(res); } );
 
         },
-        
         // SELECT DATA :: Delete a Data Account Name
 		deleteDataAccount: function(dataAccountId, callback) {
 
@@ -393,18 +401,19 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
 
         },
 
-        // store current selected data account in local variable
-        setSelectedDataAccount: function(dataAccountId, dataAccountName, callback) {
+        // store current selected data account in local variable for
+        // persistance across Views
+        setSelectedDataAccount: function(dataAccountId, dataAccountName, landingPageUrls, callback) {
             selectedDataAccount.id = dataAccountId;            
             selectedDataAccount.name = dataAccountName;            
+            selectedDataAccount.landingPageUrls = landingPageUrls;            
+
             callback(selectedDataAccount);
         },
-        
 		unsetSelectedDataAccount: function() {
 			selectedDataAccount = {};
             return selectedDataAccount;
         },
-		
         getSelectedDataAccount: function() {
             return selectedDataAccount;
         },
@@ -444,7 +453,6 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
 
             }).query( function(res) { callback(res); } );
             */
-
             $http({
                 method: 'POST',
                 url: 'api/wordcloud/savesegmentmap/' + selectedDataAccount.id,
@@ -454,11 +462,31 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
             }).success( function(res) {
                 callback(res);
             });
+        },
 
+        // trying advanced resorces
+        LandingPageUrl: $resource('api/landingpageurls', {},
+            {
+                // overload delete
+                delete: {method: 'DELETE', url: 'api/landingpageurls/:id', params: {id: '@id'} , isArray: false }
+            }),
+        /*
+        saveLandingPageUrl: function(userInputUrl, callback) {
+             LandingPageUrl.save( {dataaccount: selectedDataAccount.id, landingpageurl: userInputUrl}, function(res) { callback(res); } );
         }
-
-
-
+        */
+        // trying advanced Ops resouces 
+        ops: $resource('api/ops', {},
+            {
+                getLandingPageWordCloud: {method: 'GET', url: 'api/ops/getlandingpagewordcloud/:id', params: {id: '@id'} , isArray: true },
+                deleteLandingPageWordCloudElement: {method: 'DELETE', url: 'api/ops/deletelandingpagewordcloudelement/:id', params: {id: '@landingPageWordId'} , isArray: false },
+                rescrapeLandingPage: {method: 'GET', url: 'api/ops/scrapelandingpage/:id', params: {id: '@landingPageId'} , isArray: false }
+            })
+       
+        /*
+        getLandingPageWordCloud: function(landingPageId, callback) {
+        }
+        */
 
     };  // end return
 		

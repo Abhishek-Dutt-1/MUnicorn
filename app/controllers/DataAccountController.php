@@ -15,6 +15,7 @@ class DataAccountController extends \BaseController {
 		foreach($dataac as $k => $v)
 		{
 			$v->keywordCount = Keyword::where('dataAccount', $v->id)->count();
+			$v->landingPageUrls = $v->landingPageUrls()->get();			// Laravel's magic
 			$temp[] = $v;
 		}
 		return Response::json($temp);
@@ -102,7 +103,7 @@ class DataAccountController extends \BaseController {
 		Keyword::where('dataAccount', $id)->delete();
 		Stopword::where('dataAccount', $id)->delete();
 		Negativekeyword::where('dataAccount', $id)->delete();
-		DB::table('keywords-segment')->where('dataAccount', $id)->delete();
+		DB::table('keywords_segment')->where('dataAccount', $id)->delete();
 		DB::table('segmentmap')->where('dataAccount', $id)->delete();
 		DB::table('wordcloud')->where('dataAccount', $id)->delete();
 		//DB::statement( 'drop database data_' . $id );

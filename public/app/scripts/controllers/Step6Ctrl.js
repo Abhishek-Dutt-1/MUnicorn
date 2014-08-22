@@ -15,9 +15,9 @@ keywordSegmentsControllers.controller('Step6Ctrl', ['$scope', '$http', 'ngProgre
         sortOn: {field: 'id', desc: false},
         track: [
                 {field: 'keyword', desc: true},
-                {field: 'Brand', desc: true},
-                {field: 'Compete', desc: true},
-                {field: 'NAME', desc: true},
+                {field: 'brand', desc: true},
+                {field: 'compete', desc: true},
+                {field: 'segment', desc: true},
                 {field: 'avMonthlySearches', desc: true},
                 {field: 'competition', desc: true},
                 {field: 'suggestedBid', desc: true},
@@ -49,8 +49,7 @@ keywordSegmentsControllers.controller('Step6Ctrl', ['$scope', '$http', 'ngProgre
 
         DataShareService.downloadCSV( function(data) {
 
-            console.log(data);
-
+            //console.log(data);
             var element = angular.element('<a/>');
             element.attr({
                 href: 'data:attachment/csv;charset=utf-8,' + encodeURI(data.file),
@@ -138,6 +137,11 @@ keywordSegmentsControllers.controller('Step6Ctrl', ['$scope', '$http', 'ngProgre
         // ($scope.currentTopRow - 1) since that corresponds to number of rows to skip
         DataShareService.fetchKeywordsAndSegmentsData( $scope.currentTopRow - 1, $scope.numShowKeywords, $scope.trackSort.sortOn, function(data) { 
                     
+            // Parse landing Page score field from stirng to array
+            data.data.forEach( function(e) {
+                e.lpscore = JSON.parse(e.lpscore);
+            });
+            //console.log(data.data);
             //console.log( $scope.currentTopRow + " :: " + $scope.numShowKeywords );
             $scope.dummyData = data.data; 
             $scope.totalDataRowsCount = data.count;
@@ -355,11 +359,12 @@ keywordSegmentsControllers.controller('Step6Ctrl', ['$scope', '$http', 'ngProgre
 
     //////////////////////////////// INIT
     $scope.selectedDataAccount = DataShareService.getSelectedDataAccount();
-    console.log($scope.selectedDataAccount);
+    //console.log($scope.selectedDataAccount);
     if($scope.selectedDataAccount.id >= 0)      // since id must be >= 0
     {
 		ngProgress.start();
 		DataShareService.refreshPhrases( function(res) {
+            console.log(res);
 			$scope.updateKeywordTable();
 			ngProgress.complete();
 		});

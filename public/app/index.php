@@ -17,7 +17,7 @@
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
-    <link rel="stylesheet" href="app/styles/main.css">
+    <link rel="stylesheet" href="app/styles/main11.css">
 	<link rel="stylesheet" href="app/styles/less.css">
 	<link rel="stylesheet" href="app/styles/animate.css">
     <!-- endbuild -->

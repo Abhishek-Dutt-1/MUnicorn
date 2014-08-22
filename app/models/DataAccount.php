@@ -8,4 +8,9 @@ class DataAccount extends Eloquent {
 
     protected $fillable = array('dataaccount', 'user');     //make keyword field mass-assignable
 
+	// one to many relation
+	public function landingPageUrls()
+	{
+		return $this->hasMany('LandingPageUrl');
+	}
 }

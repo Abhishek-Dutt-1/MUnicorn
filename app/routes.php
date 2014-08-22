@@ -66,7 +66,7 @@ Route::group(array('prefix' => 'api/negativekeywords'), function()
 });
 
 // API routes for database operations
-Route::group(array('prefix' => 'api/ops'), function()
+Route::group( array('prefix' => 'api/ops'), function()
 {
     // delete stopwords from keywords
     Route::post( '/deletestopwordsfromkeywords', 'OperationsController@deleteStopWords');
@@ -95,6 +95,12 @@ Route::group(array('prefix' => 'api/ops'), function()
 	// Download final CSV file
 	Route::get( '/downloadcsv/{dataaccountid}', 'OperationsController@downloadCSV');
 	
+	// Scrape alnding page with Snoopy and create a word cloud
+	Route::get( '/scrapelandingpage/{landingpageid}', 'OperationsController@scrapeLandingPage' );
+	// Return landing page word cloud
+	Route::get( '/getlandingpagewordcloud/{landingpageid}', 'OperationsController@getLandingPageWordCloud' );
+	// Delete a particular landing page word cloud element (single word) by id
+	Route::delete( '/deletelandingpagewordcloudelement/{landingpagewordcloudid}', 'OperationsController@deleteLandingPageWordCloudElement' );
 });
 
 // API routes for Data Account operations
@@ -113,31 +119,30 @@ Route::group(array('prefix' => 'api/'), function()
 */
 });
 
-// API routes for WordCloud
+// API routes for Landing Page Urls operations
+Route::group(array('prefix' => 'api/'), function()
+{
+	Route::resource('landingpageurls', 'LandingPageUrlsController');
+/*
+	Verb		Path							Action		Route Name
+	GET			/resource						index		resource.index
+	GET			/resource/create				create		resource.create
+	POST		/resource						store		resource.store
+	GET			/resource/{resource}			show		resource.show
+	GET			/resource/{resource}/edit		edit		resource.edit
+	PUT/PATCH	/resource/{resource}			update		resource.update
+	DELETE		/resource/{resource}			destroy		resource.destroy
+*/
+});
+
+// API routes for WordCloud	// NOT the landing Page word cloud
 Route::group(array('prefix' => 'api/wordcloud'), function()
 {
-    /*
-    // fetch all keywords
-    Route::get( '/', 'KeywordController@index' );
-    // Get All keywords for a given data account id
-	Route::get( '/fetchallkeywords/{dataaccountid}', 'KeywordController@fetchAllKeywords' );
-	//fetch a subset of keywords
-    Route::get( '/{dataaccountid}/{start}/{count}/{orderby}/{desc}', 'KeywordController@listKeywords' );
-    // create a new keyword
-    Route::post( '/', 'KeywordController@create' );
-    // save delete flag checkbox
-    //Route::post( '/toggledeleteflag', 'KeywordController@toggleDeleteFlag' );   
-    // delete a new keyword
-    Route::delete( '/{id}', 'KeywordController@destroy' );
-	// Get total keywords count
-	Route::get( '/getkeywordcount/{dataaccountid}', 'KeywordController@getKeywordCount' );
-     */
 	// Step 5 : Download word cloud string
 	Route::get( '/gettagcloud/{dataaccountid}', 'WordController@index');
 	
 	// Step 5 : delete delete Ids and save segmets
 	Route::post('/savesegmentmap/{dataaccount}', 'WordController@saveSegmentMap');
-
 });
 
 

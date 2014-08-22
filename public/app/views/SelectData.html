@@ -7,13 +7,62 @@
             <div ng-show="accountNameList.length<1" class="panel-body">
                     No datasets available.
             </div>
-            <div class="list-group">
-                <a class="list-group-item" ng-class="{active: selectedDataAccount.id == account.id}" ng-repeat="account in accountNameList | orderBy:'account':false" ng-click="setSelectDataAccount(account.id, account.dataaccount)" >
-                    {{account.dataaccount}}
-                    <span ng-click="deleteDataAccount(account.id)" class="close" type="button" aria-hidden="true">&times;</span>
-					<span class="dataAccountInfo pull-right"> Keywords: {{account.keywordCount}} Created: {{account.created_at}}</span>
-                </a>
-            </div>
+
+            <div class="panel-group" id="dataAccountAccordion">
+                <div class="panel panel-default" ng-repeat="account in accountNameList | orderBy:'account':false">
+
+                    <div class="panel-heading" 
+                        ng-class="{dataAccountSelected: selectedDataAccount.id == account.id}" 
+                        ng-click="setSelectDataAccount(account.id, account.dataaccount, account.landingPageUrls)" >
+                        <!--    data-toggle="collapse" data-parent="#dataAccountAccordion" data-target="#collapse{{account.id}}"    -->
+                        <h4 class="panel-title">
+                            <span>{{account.dataaccount}}</span>
+                            <!--
+                            <a class="list-group-item" ng-class="{active: selectedDataAccount.id == account.id}" 
+                                ng-repeat="account in accountNameList | orderBy:'account':false" 
+                                ng-click="setSelectDataAccount(account.id, account.dataaccount)" >
+                                {{account.dataaccount}}
+                            -->
+                            <span ng-show="selectedDataAccount.id == account.id" class="dataAccountInfo">[selected]</span>
+							
+                            <span ng-show="selectedDataAccount.id !== account.id" class="glyphicon glyphicon-chevron-down pull-right"></span>
+                            <span ng-show="selectedDataAccount.id === account.id" class="glyphicon glyphicon-chevron-up pull-right"></span>
+							<!--
+                            <span ng-show="!isAccordionOpen(account.id)" ng-click="toggleAccordion(account.id)" class="glyphicon glyphicon-chevron-down pull-right"></span>
+                            <span ng-show="isAccordionOpen(account.id)" ng-click="toggleAccordion(account.id)" class="glyphicon glyphicon-chevron-up pull-right"></span>
+							-->
+							<span class="dataAccountInfo pull-right"> Keywords: {{account.keywordCount}} Created: {{account.created_at}}</span>
+                        </h4>
+                    </div>
+                    <!--                    <div id="1collapse{{account.id}}" class="panel-collapse collapse" ng-show="selectedDataAccount.id == account.id">   -->
+                    <div class="animate-show" ng-show="selectedDataAccount.id == account.id" >
+					<!-- <div class="animate-show" ng-show="isAccordionOpen(account.id)" >		-->
+                        <div class="panel-body">
+                            <div class="col-sm-9">
+								<strong>Landing Page:</strong>
+                                <ul class="list-group">
+                                    <li class="list-group-item" ng-repeat="urlData in account.landingPageUrls">{{urlData.landingpageurlTrimmed}} 
+                                        <span ng-click="deleteLandingPageUrl(urlData.id)" class="close pull-right" type="button" aria-hidden="true">&times;</span>
+                                        <span ng-click="setCurrentWordCloudLandingPage(urlData.id, urlData.landingpageurl)" class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#myModal" type="button" style="margin-right: 5px;">Tags</span>
+										<a href="{{urlData.landingpageurl}}" class="btn btn-default btn-xs pull-right" target="_blank" style="margin-right: 5px;">View</a>
+                                    </li>
+                                </ul>
+								<div class="input-group input-group-sm">
+                                    <input type="text" class="form-control" placeholder="Landing page URL" ng-model="userInputUrl" >
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" ng-click="addLandingPageUrl(userInputUrl)">Add URL</button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <button ng-click="deleteDataAccount(account.id)" type="button" class="btn btn-danger btn-xs pull-right">Delete Dataset</button>
+                                <span ng-click="deleteDataAccount(account.id)" class="close pull-right hidden" type="button" aria-hidden="true">&times;</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>      <!-- end accordion -->
+
         </div>
     </div> <!-- end col-md-8 -->
     <div class="col-md-4">
@@ -55,4 +104,46 @@
             </div>
         </div>
     </div> <!-- end col-md-4 -->
+
+    <!-- Modal for Landing Page Word Cloud-->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-dialog modal-lg" id="landinPageTagCloud">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">{{currentWordCloud.url }}</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="topRow">
+                        <div class="pull-left">
+                            <button ng-click="rescrapeLandingPage()" type="button" class="btn btn-default btn-sm" >Scrape Landin Page</button>
+                        </div>
+                        <div class="pull-right">
+                            <div class="btn-group btn-group-xs" data-toggle="buttons">
+                                <label class="btn btn-primary" ng-click="landingPageSort = 'word'; reverse=false;">
+                                    <input type="radio" name="options" id="option1" checked>Alpha
+                                </label>
+                                <label class="btn btn-primary active" ng-click="landingPageSort = 'freq'; reverse=true;">
+                                    <input type="radio" name="options" id="option2">Count
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <ul>
+                        <li ng-repeat="word in landingPageWordCloud | orderBy: landingPageSort:reverse" class="repeated-item">
+                            <a class="tag{{word.level}}" >{{word.word}} 
+                                <span class="freq">({{word.freq}})</span>
+                                <span ng-click="deleteLandingPageWordCloudElement(word.id)" class="deleteTag" type="button" aria-hidden="true">&times;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer" style="text-align: left;">
+                    <button ng-click="rescrapeLandingPage()" type="button" class="btn btn-default btn-sm" >Scrape Landin Page</button>
+                    <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div> <!-- end row -->
