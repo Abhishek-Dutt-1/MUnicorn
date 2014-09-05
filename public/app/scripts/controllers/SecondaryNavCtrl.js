@@ -1,6 +1,6 @@
 'use strict';
 
-keywordSegmentsControllers.controller('NavCtrl', ['$scope', '$location', 'DataShareService', function ($scope, $location, DataShareService) {
+keywordSegmentsControllers.controller('secondaryNavCtrl', ['$scope', '$location', 'DataShareService', function ($scope, $location, DataShareService) {
 	$scope.selectedDataAccount = {};
 	
 	$scope.isActive = function(route) {

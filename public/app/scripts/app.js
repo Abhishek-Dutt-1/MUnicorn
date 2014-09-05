@@ -1,6 +1,6 @@
 'use strict';
 
-var keywordSegmentsApp = angular.module('keywordSegmentsApp', ['ngRoute', 'keywordSegmentsControllers', 'ngAnimate']);
+var keywordSegmentsApp = angular.module('keywordSegmentsApp', ['ngRoute', 'keywordSegmentsControllers']);
 
 keywordSegmentsApp.config(['$routeProvider',
 	function($routeProvider) {
@@ -41,6 +41,14 @@ keywordSegmentsApp.config(['$routeProvider',
 		when('/About', {
 			templateUrl: 'app/views/About.html',
 			controller: 'AboutCtrl'
+		}).
+		when('/login', {
+			templateUrl: 'app/views/login.html',
+			controller: 'LoginCtrl'
+		}).
+		when('/user/:userId', {
+			templateUrl: 'app/views/UserProfile.html',
+			controller: 'UserProfileCtrl'
 		}).
 		otherwise({
 			redirectTo: '/'

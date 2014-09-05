@@ -88,6 +88,9 @@ Route::group( array('prefix' => 'api/ops'), function()
 	
 	// SELECT DATA :: Fetach all account names
 	Route::get( '/fetchallaccountnames', 'OperationsController@fetchAllAccountNames');
+	// SELECT DATA :: Fetch datasets by id
+	Route::get( '/fetchdatasetsbyuserid/{userId}', 'OperationsController@fetchDataSetsByUserId');
+	
 	
     // Upload file route
     Route::post( '/uploadcsv', 'OperationsController@uploadCSV');
@@ -95,12 +98,16 @@ Route::group( array('prefix' => 'api/ops'), function()
 	// Download final CSV file
 	Route::get( '/downloadcsv/{dataaccountid}', 'OperationsController@downloadCSV');
 	
-	// Scrape alnding page with Snoopy and create a word cloud
+	// Scrape landing page with Snoopy and create a word cloud
 	Route::get( '/scrapelandingpage/{landingpageid}', 'OperationsController@scrapeLandingPage' );
 	// Return landing page word cloud
 	Route::get( '/getlandingpagewordcloud/{landingpageid}', 'OperationsController@getLandingPageWordCloud' );
 	// Delete a particular landing page word cloud element (single word) by id
 	Route::delete( '/deletelandingpagewordcloudelement/{landingpagewordcloudid}', 'OperationsController@deleteLandingPageWordCloudElement' );
+	
+	///////////// Login User
+	Route::post( '/loginuser', 'OperationsController@loginUser');
+	
 });
 
 // API routes for Data Account operations
@@ -118,21 +125,15 @@ Route::group(array('prefix' => 'api/'), function()
 	DELETE		/resource/{resource}			destroy		resource.destroy
 */
 });
-
 // API routes for Landing Page Urls operations
 Route::group(array('prefix' => 'api/'), function()
 {
 	Route::resource('landingpageurls', 'LandingPageUrlsController');
-/*
-	Verb		Path							Action		Route Name
-	GET			/resource						index		resource.index
-	GET			/resource/create				create		resource.create
-	POST		/resource						store		resource.store
-	GET			/resource/{resource}			show		resource.show
-	GET			/resource/{resource}/edit		edit		resource.edit
-	PUT/PATCH	/resource/{resource}			update		resource.update
-	DELETE		/resource/{resource}			destroy		resource.destroy
-*/
+});
+// Resource Routes for User management
+Route::group(array('prefix' => 'api/'), function()
+{
+	Route::resource('users', 'UserController');
 });
 
 // API routes for WordCloud	// NOT the landing Page word cloud
@@ -140,12 +141,13 @@ Route::group(array('prefix' => 'api/wordcloud'), function()
 {
 	// Step 5 : Download word cloud string
 	Route::get( '/gettagcloud/{dataaccountid}', 'WordController@index');
-	
 	// Step 5 : delete delete Ids and save segmets
 	Route::post('/savesegmentmap/{dataaccount}', 'WordController@saveSegmentMap');
 });
 
+////////////////////////// USER AUTHENTICATION
 
+	
 // Catch all route
 App::missing(function($exception)
 {

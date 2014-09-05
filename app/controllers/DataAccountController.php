@@ -41,7 +41,7 @@ class DataAccountController extends \BaseController {
 	 */
 	public function store()
 	{
-		
+		/*
 		$dataAccount = DataAccount::create(array(
 			'dataaccount' => Input::get('dataaccount'),
 			'user' => Input::get('user')
@@ -50,7 +50,7 @@ class DataAccountController extends \BaseController {
 		//DB::statement( 'create database data_' . $dataAccount->id );
 
 		return $dataAccount->id;
-	
+		*/
 	}
 
 
@@ -99,6 +99,12 @@ class DataAccountController extends \BaseController {
 	public function destroy($id)
 	{
 		// Delete the data account and all data associated with it
+		$lp = DataAccount::find($id)->landingPageUrls()->get();		// Laravel's magic
+		foreach($lp as $v)
+		{
+			DB::table('landingpagewordcloud')->where('landing_page_urls_id', $v->id)->delete();
+		}
+		DataAccount::find($id)->landingPageUrls()->delete();
 		DataAccount::destroy($id);
 		Keyword::where('dataAccount', $id)->delete();
 		Stopword::where('dataAccount', $id)->delete();

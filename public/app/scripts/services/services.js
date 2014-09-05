@@ -2,10 +2,11 @@
 
 var keywordSegmentsServices = angular.module('keywordSegmentsServices', ['ngResource']);
 
-keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource', function ($http, $q, $resource) {
+keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource', '$rootScope', function ($http, $q, $resource, $rootScope) {
     
 	var actualData, stopWordList, negativeKeywordList, selectedDataAccount;
     selectedDataAccount = {};
+	var themeObject = {};
 
     /*
 	var resActualData = $resource('scripts/Dish Tv Sample.json', {}, {
@@ -26,6 +27,12 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
     });
 
 	return {
+		// Get and Set a theme
+		//themeName: themeName,
+		setTheme: function(themeName) {
+			themeObject.name = themeName;
+			$rootScope.$emit('themeChange', themeName);
+		},
 		// Actual Data
         ////////////////////////////////////// get keywords for the keywords table
         fetchKeywords: function(pageNum, keywordsPerPage, sortOn, callback) {
@@ -49,7 +56,7 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
         },
 
         // Get ALL keywords with given data account id
-        fetchAllKeywords: function(callback) {
+        fetchAllKeywords: function(callback, errorCallback) {
 
             var resKeywords = $resource('api/keywords/fetchallkeywords/' + selectedDataAccount.id, {} , {
                 query: { method:'GET', params:{}, isArray:true }
@@ -73,7 +80,10 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
                 });
                 callback(data);
                 //console.log(data);
-            });
+            },
+			function(err) {				// handle server error
+				errorCallback({status: err.status, message: "Error fetching keywords"});
+			});
 
         },
 	
@@ -272,7 +282,7 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
 
         // Refresh segmentmap table with 1 and 2 words phrases by recalulating
         //counts
-        refreshPhrases: function(callback) {
+        refreshPhrases: function(callback, errorCallback) {
 
             var resPhrases = $resource('api/ops/refreshphrases/' + selectedDataAccount.id, {} , {
                 query: { method:'GET', params:{}, isArray:false }
@@ -280,7 +290,9 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
             // post processing
             resPhrases.query( function(res) { 
                 callback(res);
-            });
+            }, function(err) {
+				errorCallback({status: err.status, message: "Error fetching keyword data"});
+			});
 
         },
 
@@ -380,6 +392,31 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
             });
 
         },
+        
+        // SELECT DATA :: Fetch Data set for a given user
+        fetchDataSetsByUserId: function(userId, callback) {
+
+            var resKeywords = $resource('api/ops/fetchdatasetsbyuserid/' + userId, {} , {
+                query: { method:'GET', params:{}, isArray:true }
+            });
+
+            resKeywords.query( function(data) { 
+                // add a Trimmed url field
+                data.forEach( function(elem) {
+                    if(elem.landingPageUrls.length > 0)
+                    {
+                        elem.landingPageUrls.forEach( function(e) {
+                            if(e.landingpageurl.length > 50)
+                                e.landingpageurlTrimmed = e.landingpageurl.substring(0,47) + "...";
+                            else
+                                e.landingpageurlTrimmed = e.landingpageurl;
+                        });
+                    }
+                });
+                callback(data);
+            });
+
+        },
         // SELECT DATA :: Save new Account Name
 		saveNewDataAccount: function(dataaccount, user, callback) {
 
@@ -431,7 +468,7 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
                
         },
 
-        getTagCloud: function( callback ) {
+        getTagCloud: function( callback, errorCallback ) {
 
              var resKeywords = $resource('api/wordcloud/gettagcloud/' + selectedDataAccount.id, {} , {
                 query: { method:'GET', params:{}, isArray: true }
@@ -439,7 +476,10 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
 
             resKeywords.query( function(data) { 
                 callback(data);
-            });
+            },
+				function(err) {				// handle server error
+					errorCallback({status: err.status, message: "Error fetching tag cloud"});
+			});
            
         },
 
@@ -480,13 +520,14 @@ keywordSegmentsServices.service('DataShareService', ['$http', '$q', '$resource',
             {
                 getLandingPageWordCloud: {method: 'GET', url: 'api/ops/getlandingpagewordcloud/:id', params: {id: '@id'} , isArray: true },
                 deleteLandingPageWordCloudElement: {method: 'DELETE', url: 'api/ops/deletelandingpagewordcloudelement/:id', params: {id: '@landingPageWordId'} , isArray: false },
-                rescrapeLandingPage: {method: 'GET', url: 'api/ops/scrapelandingpage/:id', params: {id: '@landingPageId'} , isArray: false }
-            })
-       
-        /*
-        getLandingPageWordCloud: function(landingPageId, callback) {
-        }
-        */
+                rescrapeLandingPage: {method: 'GET', url: 'api/ops/scrapelandingpage/:id', params: {id: '@landingPageId'} , isArray: false },
+                ///////////// USER AUTHENTICATION <--- should be put in a seprate sevice
+                //loginUser: {method: 'POST', url: 'api/ops/loginuser', params: {email: '@email', password: '@password'}, isArray: false}
+            }),
+
+        User: $resource('api/users/:id', {id: '@id'}),      // One resource to rule them all
+
+
 
     };  // end return
 		

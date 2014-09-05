@@ -1,6 +1,6 @@
 'use strict';
 
-keywordSegmentsControllers.controller('SelectDataCtrl', ['$scope', '$upload', 'DataShareService', function ($scope, $upload, DataShareService)
+keywordSegmentsControllers.controller('SelectDataCtrl', ['$scope', '$upload', '$location', 'AuthService', 'DataShareService', function ($scope, $upload, $location, AuthService, DataShareService)
 {
     $scope.selectedDataAccount = {};
     $scope.uploadProgress = 0;
@@ -9,6 +9,7 @@ keywordSegmentsControllers.controller('SelectDataCtrl', ['$scope', '$upload', 'D
     $scope.landingPageSort = 'freq';    // default for landing page word cloud sort
     $scope.reverse = true;
 	$scope.dataSetAccordion = [];
+    $scope.loggedInUser = {};
 	
     $scope.addNewDataAccount = function(newDataAccountName, userName) 
     {
@@ -33,7 +34,8 @@ keywordSegmentsControllers.controller('SelectDataCtrl', ['$scope', '$upload', 'D
 
     $scope.updateDataAccountsTable = function()
     {
-        DataShareService.fetchAllDataAccountNames( function(data) {
+//        DataShareService.fetchAllDataAccountNames( function(data) {
+        DataShareService.fetchDataSetsByUserId( $scope.loggedInUser.id, function(data) {
             $scope.accountNameList = data;
 			
 			// if something was pre selected of still exists after data refresh (i.e. was not deleted)
@@ -127,7 +129,7 @@ keywordSegmentsControllers.controller('SelectDataCtrl', ['$scope', '$upload', 'D
                 method: 'POST', 
                 // headers: {'header-key': 'header-value'},
                 // withCredentials: true,
-                data: {newdataaccount: $scope.newDataAccountName},
+                data: {newdataaccount: $scope.newDataAccountName, user_id: $scope.loggedInUser.id},
                 file: file, // or list of files: $files for html5 only
                 // fileName: 'doc.jpg' or ['1.jpg', '2.jpg', ...] // to modify the name of the file
                 /* customize file formData name ('Content-Desposition'), server side file variable name. 
@@ -239,7 +241,15 @@ keywordSegmentsControllers.controller('SelectDataCtrl', ['$scope', '$upload', 'D
 	*/
 
     // INIT
-    $scope.selectedDataAccount = DataShareService.getSelectedDataAccount();
-    $scope.updateDataAccountsTable();
+    $scope.loggedInUser = AuthService.getLoggedInUser();
+    if($scope.loggedInUser.id) {
+
+        $scope.selectedDataAccount = DataShareService.getSelectedDataAccount();
+        $scope.updateDataAccountsTable( );
+        console.log( $scope.selectedDataAccount );
+
+    }
+
+    console.log($scope.loggedInUser);
 
 }]);

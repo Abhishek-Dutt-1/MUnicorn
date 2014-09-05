@@ -1,5 +1,11 @@
-<div class="row" >
-    <div class="col-md-8">
+<div ng-show="loggedInUser.id">
+    <div class="col-md-2">
+        <div ng-controller="secondaryNavCtrl" style="margin-left: -15px;" >
+            <div id="secondaryNav" ng-class="{hidden:isActive('/') || isActive('/About') || isActive('/login')}" ng-include="'app/views/SecondaryNav.html'">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Select Dataset</h3>
@@ -118,7 +124,7 @@
                         <div class="pull-left">
                             <button ng-click="rescrapeLandingPage()" type="button" class="btn btn-default btn-sm" >Scrape Landin Page</button>
                         </div>
-                        <div class="pull-right">
+                        <div class="pull-right">Sort
                             <div class="btn-group btn-group-xs" data-toggle="buttons">
                                 <label class="btn btn-primary" ng-click="landingPageSort = 'word'; reverse=false;">
                                     <input type="radio" name="options" id="option1" checked>Alpha
@@ -145,5 +151,18 @@
             </div>
         </div>
     </div>
+</div>  <!-- end loggedInUser -->
+<div ng-show="!loggedInUser.id">
 
-</div> <!-- end row -->
+    <div class="col-md-offset-3 col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Message</h3>
+            </div>
+            <div class="panel-body">
+                <h5>Please <a ng-href="#/login">Sign in</a> or <a ng-href="#/login">Register</a> to continue.</h5>
+            </div>
+        </div>
+    </div>
+
+</div>

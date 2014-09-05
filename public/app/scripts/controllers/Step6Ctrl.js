@@ -24,6 +24,7 @@ keywordSegmentsControllers.controller('Step6Ctrl', ['$scope', '$http', 'ngProgre
                 ]
             };
 
+	$scope.errorArray = [];
     /*
 	$scope.exportCSV = function() {
 		//var test_array = [["name1", 2, 3], ["name2", 4, 5], ["name3", 6, 7], ["name4", 8, 9], ["name5", 10, 11]];
@@ -367,6 +368,9 @@ keywordSegmentsControllers.controller('Step6Ctrl', ['$scope', '$http', 'ngProgre
             console.log(res);
 			$scope.updateKeywordTable();
 			ngProgress.complete();
+		},
+		function(err) {
+			$scope.errorArray.push(err);
 		});
         
     }

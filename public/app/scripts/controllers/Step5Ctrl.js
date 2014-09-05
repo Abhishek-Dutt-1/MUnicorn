@@ -57,6 +57,8 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
 	
 	$scope.brandTerms = ["brand"];
 	$scope.competeTerms = ["compete"];
+	
+	$scope.errorArray = [];
     //////////////////////////// Keywords Table and Pager /////////////////////////
     // Updates pager(at the bottom of the table) on initial load and on change of numShowKeywords
     $scope.changePage = function(next) {
@@ -884,7 +886,10 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
             $scope.applyUserInputsToKeywords();
            
 //            console.log($scope.wordCloudArray);
-        });
+        },
+			function(err) {
+				$scope.errorArray.push(err);
+		});
     }; 
     
     
@@ -1473,7 +1478,10 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
             // we are fetching whole data set now
             $scope.actualData = data;
 			$scope.updateKeywordTable();
-        });
+        },
+			function(err) {
+				$scope.errorArray.push(err);
+		});
         
         $scope.getTagCloud();
 		ngProgress.complete();

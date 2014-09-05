@@ -212,7 +212,7 @@ class OperationsController extends \BaseController {
 		//return public_path();
 		$dataAccount = DataAccount::create(array(
 			'dataaccount' => Input::get('newdataaccount'),
-			'user' => 'USER'
+			'user_id' => Input::get('user_id')
 		));
 		$dataaccount = $dataAccount->id;
 		
@@ -440,4 +440,35 @@ class OperationsController extends \BaseController {
 	{
 		return Response::json( DB::table('landingpagewordcloud')->where('id', $landingpagewordcloudid)->delete() );
 	}
+	
+	// Login User
+	public function loginUser()
+	{
+		if (Auth::attempt( array('email' => Input::get('email'), 'password' => Input::get('password')) ))
+		{
+			return Response::json( Auth::user() );
+			return "Success"; //Redirect::intended('dashboard');
+		}
+		else return Response::json( 'Incorrect email or password.', 401);
+		return Response::json( Input::all() );
+	}
+	
+	public function fetchDataSetsByUserId($userId)
+	{
+		// Return all data accounts
+		$temp = [];
+		$dataac = DataAccount::where('user_id', $userId)->get();
+		//return Response::json ( $dataac );
+		foreach($dataac as $k => $v)
+		{
+			$v->keywordCount = Keyword::where('dataAccount', $v->id)->count();
+			$v->landingPageUrls = $v->landingPageUrls()->get();			// Laravel's magic
+			$temp[] = $v;
+		}
+		return Response::json($temp);
+		//return Response::make(DataAccount::get());
+		
+		return $userId;
+	}
+	
 }

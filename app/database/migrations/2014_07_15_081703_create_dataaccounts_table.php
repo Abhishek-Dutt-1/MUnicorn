@@ -16,7 +16,7 @@ class CreateDataaccountsTable extends Migration {
 		{
 			$table->increments('id');
 			$table->string('dataaccount');
-			$table->string('user')->default('global');
+			$table->integer('user_id');
 			$table->timestamps();
 		});
 	}

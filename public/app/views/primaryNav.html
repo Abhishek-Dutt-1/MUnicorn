@@ -1,0 +1,61 @@
+<!--
+<div class="header">
+	<ul class="nav nav-pills pull-right">
+		<li ng-class="{active:isActive('/')}"><a ng-href="#/">Home</a></li>
+		<li ng-class="{active:isActive('/data')||isActive('/Step1')||isActive('/Step2')||isActive('/Step3')||isActive('/Step4')}"><a ng-href="#/Step1">AdWords</a></li>
+		<li ng-class="{active:isActive('/About')}"><a ng-href="#/About">About</a></li>
+	</ul>
+	<h3 class="text-muted">Segments</h3>
+</div>  
+-->
+<nav class="navbar navbar-fixed-top" ng-class="[navbarClass]" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+			<a id="mainNavTitle" class="navbar-brand hidden" href="#" style="padding: 0px 0 0 20px;"><img src="app/images/logo/Logo_Pink.png" alt="Madison Unicorn" height="50" ></a>
+            <a id="mainNavTitle" class="navbar-brand" href="#"><span class="glyphicon glyphicon-send"></span> Madison Unicorn</a>
+        </div>
+
+        <!-- USER INFO -->
+		<!--
+        <div ng-show="loggedInUser">Welcome, {{loggedInUser.email}}</div>
+        <div ng-if="isAuthorized(userRoles.admin)">You're Admin.</div>
+        <div ng-switch on="currentUser.role">
+            <div ng-switch-when="userRoles.admin">Your ADMIN.</div>
+            <div ng-switch-when="userRoles.admin">Your Editor.</div>
+            <div ng-switch-default="userRoles.admin">Your something else.</div>
+        </div>
+		-->
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li ng-class="{active:isActive('/')}"><a ng-href="#/">Home</a></li>
+                <li ng-class="{active:isActive('/data')||isActive('/Step5')||isActive('/Step6')}"><a ng-href="#/data">AdWords</a></li>
+                <li ng-hide="loggedInUser" ng-class="{active:isActive('/login')}"><a ng-href="#/login">Sign in</a></li>
+				<li class="dropdown" ng-show="loggedInUser">
+					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> <span class="caret"></span></a>
+					<ul class="dropdown-menu" role="menu">
+						<li><a ng-href="#/user/{{loggedInUser.id}}">Profile</a></li>
+						<li ng-click="switchTheme('light_theme')"><a href="">Light</a></li>
+						<li ng-click="switchTheme('dark_theme')"><a href="">Dark</a></li>
+						<li ng-click="switchTheme('light_theme')"><a href="">Logout</a></li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<a href="" class="dropdown-toggle" data-toggle="dropdown">Theme <span class="caret"></span></a>
+					<ul class="dropdown-menu" role="menu">
+						<li ng-click="switchTheme('light_theme')"><a href="">Light</a></li>
+						<li ng-click="switchTheme('dark_theme')"><a href="">Dark</a></li>
+					</ul>
+				</li>
+                <li ng-class="{active:isActive('/About')}"><a ng-href="#/About">About</a></li>				
+            </ul>
+        </div>
+    </div>
+</nav>  
+

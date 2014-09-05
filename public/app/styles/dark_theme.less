@@ -1,0 +1,411 @@
+/*
+// make height 100% for secondaryNav
+html, body { height: 100%; }
+.container {
+    min-height: 100%;
+    overflow: hidden;
+}
+#secondaryNav {
+    margin-bottom: -9999px;
+    padding-bottom: 9999px;
+    background: black;
+}
+*/
+@panel-border-radius: 3px;
+body {
+    overflow-y: scroll;
+	padding-top: 70px;
+	font-size: 12px;
+	font-family: "Open Sans",Arial,Helvetica,Sans-Serif;
+	background: url(../images/mybg.png) #fff
+}
+.progress {
+    margin-bottom: 0px;
+}
+#mainNavTitle {
+    color: white;
+}
+
+///////////////////////
+/*!
+ * Start Bootstrap - Simple Sidebar HTML Template (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+#sidebar-wrapper {
+    z-index: 1000;
+    position: fixed;
+    //left: 250px;
+    //width: 0;
+    height: 100%;
+    //margin-left: -250px;
+    overflow-y: auto;
+    background: #222;
+	top: 0px;
+	padding-top: 65px;
+    //background: #000;
+    //-webkit-transition: all 0.5s ease;
+    //-moz-transition: all 0.5s ease;
+    //-o-transition: all 0.5s ease;
+    //transition: all 0.5s ease;
+}
+#sidebar-wrapper li a{
+    color: lightgrey;
+}
+#sidebar-wrapper li.active a{
+    //font-weight: bold;
+    color: white;
+    background-color: none;
+}
+#sidebar-wrapper li.active a:hover{
+    background-color: #428bca;
+}
+#sidebar-wrapper li a:hover{
+    background-color: #222;
+    //font-weight: bold;
+    color: white;
+}
+.segmentInputField {
+    height: 19px;
+}
+//////////////// Tag cloud
+#nonModaltagCloud {
+    .panel-body { padding: 0px 15px; }
+    .wordCloudTopRow {
+        //padding: 10px;
+        margin: 10px 10px 55px 10px;
+    }
+    ul{
+		margin: 0;
+		padding: 0 10px 20px;
+		text-align: justify;
+//		background:#71b5e9 url(../images/bg_tags.gif) repeat-x;		
+//        background: lightseagreen;
+		}
+    li{
+		margin:0;
+		list-style:none;
+		display:inline;
+		line-height: 30px;
+		}
+    li a{
+		text-decoration:none;
+//		color:#fff;
+        color: black;
+		padding: 2px 5px;        
+//		padding:0 2px;	
+		}
+	 li a:hover{
+//	     background-color:#cff400;
+	     background-color: #77c63d;
+	     color: white;
+	     border-radius: 5px;
+	 }		
+	.tag1{font-size:100%;}
+	.tag2{font-size:120%;}
+	.tag3{font-size:180%;}
+	.tag4{font-size:200%;}
+	.tag5{font-size:240%;}
+	.tag6{font-size:280%;}
+	.bg-primary, li a:active{
+	    color: white;
+        border-radius: 5px;
+        background-color: #428bca;
+	}
+}
+////////////////// Modal Tag cloud
+#modalTagCloud {
+    .modal-content{
+        //width: 600px;
+    }
+    .wordCloudTopRow {
+        //padding: 10px;
+        margin: 10px 10px 25px 10px;
+        padding: 0px 10px 25px 0px;
+    }
+    .modal-body { 
+        font-size: 1.5em;
+        padding: 0px; 
+        }
+    ul{
+		margin: 0;
+		padding: 0 10px 20px;
+		text-align: justify;
+//		background:#71b5e9 url(../images/bg_tags.gif) repeat-x;		
+//        background: lightseagreen;
+		}
+     li{
+		margin:0;
+		list-style:none;
+		display:inline;
+//		line-height: 22px;
+		}
+    li a{
+		text-decoration:none;
+//		color:#fff;
+        color: black;
+		padding: 2px 5px; 
+//		padding:0 2px;	
+		}
+	 li a:hover{
+//	     background-color:#cff400;
+	     background-color: #77c63d;
+	     color: white;
+	     border-radius: 5px;
+	 }		
+	.tag1{font-size:150%;}
+	.tag2{font-size:170%;}
+	.tag3{font-size:190%;}
+	.tag4{font-size:210%;}
+	.tag5{font-size:230%;}
+	.tag6{font-size:250%;}
+	.bg-primary, li a:active{
+	    color: white;
+        border-radius: 5px;
+        background-color: #428bca;
+	}
+}
+////////// Form for word cloud
+#wordCloudForm {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 1051;
+  margin-bottom: 0px;
+  border-radius: 3px 3px 0 0;
+  border-bottom: 0px;
+  .panel-body {
+      padding: 15px 15px 0 15px;
+  }
+  .panel-heading {
+      border-radius: 0px;
+  }
+  //background: whitesmoke;
+  //padding: 10px 10px 0 10px;
+  //border: 1px solid grey;
+}
+.wordCloudTag {
+    margin-right: 2px;
+}
+
+.masterTags{
+    
+}
+////////////////// Landing Page Tag Cloud at Data Select Page
+#landinPageTagCloud {
+    #topRow {
+        margin-bottom: 40px;
+        margin-left: 10px;
+    }
+    ul{
+		margin: 0;
+		padding: 0 10px 20px;
+//		text-align: justify;
+//		background:#71b5e9 url(../images/bg_tags.gif) repeat-x;		
+//      background: lightseagreen;
+		}
+    li{
+		list-style:none;
+		display:inline;
+		line-height: 31px;
+		margin-right: 10px;
+		}
+    li a{
+		text-decoration:none;
+//		color:#fff;
+        color: black;
+		padding: 2px 5px;        
+//		padding:0 2px;	
+        background-color: #f7f7f9;
+	    border-radius: 5px;
+		}
+	li a:hover{
+        background-color: #77c63d;
+	}
+	.freq {
+	    color: lightgrey;
+	}
+	.deleteTag {
+	    color: lightgrey;
+	    cursor: pointer;
+	}
+//	 li a:hover{
+	 .deleteTag:hover{
+//	     background-color:#cff400;
+//	     background-color: #77c63d;
+	     color: red;
+	     border-radius: 5px;
+	 }		
+	.tag1{font-size:100%;}
+	.tag2{font-size:120%;}
+	.tag3{font-size:140%;}
+	.tag4{font-size:160%;}
+	.tag5{font-size:180%;}
+	.tag6{font-size:200%;}
+	.bg-primary, li a:active{
+	    color: red;
+        border-radius: 5px;
+        background-color: #77c63d;
+	}
+}
+/////////////// tag Popover
+.tagPopover {
+    font-size: 1em;
+}
+///////////////// Buttons
+.btn {
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+    -moz-box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+    -webkit-box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+}
+////////// Panel
+.panel {
+    border-radius: @panel-border-radius;
+    -webkit-border-radius: @panel-border-radius;
+    -moz-border-radius: @panel-border-radius;
+}
+.panel-heading {
+//    border-bottom: 0px;
+//    border: 1px solid #C2C2C2;
+//    background-color: #4C4F53!important;
+//    color: #FFF;
+//    border-color: #4C4F53!important;
+    height: 34px;
+    padding: 0px;
+    padding-right: 10px;
+    line-height: 40px;
+}
+.panel-title {
+    font-size: 14px;
+    margin: 0;
+    line-height: 34px;
+    font-weight: bold;
+    letter-spacing: 0;
+    margin-left: 10px;
+//    color: white;
+}
+//// form-control
+.form-control {
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;  
+}
+///// Pager
+.pagerInfo {
+    margin: 5px;
+    font-weight: bold;
+    color: lightgrey;
+    font-style: italic;
+    font-size: 0.9em;
+}
+.pager{
+    margin: 5px;
+    li {
+       > a {
+            border-radius: 2px;
+            -webkit-border-radius: 2px;
+            -moz-border-radius: 2px;
+            border-color: #ddd;
+            box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+            -moz-box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+            -webkit-box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+    }
+}
+// Data account info on the data select page
+#dataAccountAccordion {
+    .panel-title {
+        line-height: 31px;
+        font-weight: bold;
+    }
+    .panel-heading {
+        background-color: #fcfcfc;
+        cursor: pointer;
+        border-radius: @panel-border-radius;
+        .glyphicon {
+            line-height: inherit;
+            color: lightgrey;
+        }
+    }
+    .panel-heading:hover {
+        background-color: #428bca;
+        color:white;
+    }
+/*    .close {
+        line-height: 34px;
+        margin-right: 10px;
+    }
+    */
+    .panel {
+        border-radius: @panel-border-radius;
+        margin: 5px;
+        border: 0px;
+        border-bottom: 1px #ddd solid;
+        border-right: 1px #ddd solid;
+    }
+    .panel-body {
+        //border-bottom: 1px solid #ddd;
+    }
+}
+#dataAccountAccordion.panel-group {
+    margin: 0px;
+}
+#dataAccountAccordion {
+    .dataAccountSelected.panel-heading {
+        //background-color: #428bca;
+        //background-color: #dff0d8;
+        //border-radius: 0px;
+        color: white;
+        border-bottom-right-radius: 0px;
+        border-bottom-left-radius: 0px;
+    }
+    .dataAccountSelected .panel-title {
+        font-weight: bold;
+    }
+    .dataAccountSelected {
+        background-color: #428bca; //cornflowerblue;
+    }
+}
+
+.dataAccountInfo {
+    //font-style: italic;
+    font-size: 0.8em;
+    color: lightgray;
+    padding-right: 10px;
+    padding-top: 3px;
+}
+/////////////////// Keyword Table Top Row
+#keywordsTableTopRow {
+    >div {
+        padding: 0px;
+    }
+}
+.scoreBadge {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    background-color: lighten(#777, 30%);
+    border-radius: 10px;
+}
+.scoreBadgeGreen {
+    background-color: lighten(#5cb85c, 30%);
+}
+.scoreBadgeGrey {
+    background-color: lighten(#777, 30%);
+}
+.scoreBadgeRed {
+    background-color: lighten(#d9534f, 30%);
+}

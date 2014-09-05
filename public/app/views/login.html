@@ -1,0 +1,113 @@
+<div class="1row">
+    <div class="col-md-12">
+        <div class="alert alert-danger alert-dismissible" role="alert" ng-repeat="error in errorArray">
+            <button type="button" class="close" data-dismiss="alert">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+            </button>
+            <strong>{{error.status}}:</strong> {{error.message}}
+        </div>
+    </div>
+</div>
+
+<div class="col-md-6">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Login</h3>
+        </div>
+        <div class="panel-body">
+
+            <form class="form-horizontal" name="loginForm" ng-submit="submitLoginForm(loginForm.$valid)" novalidate>
+                <div class="form-group" ng-class="{ 'has-error' : loginForm.email.$invalid && loginSubmitted }" >
+                    <label for="loginEmail" class="col-md-2 control-label">Email</label>
+                    <div class="col-md-10">
+                        <input name="email" ng-model="email" type="email" class="form-control" placeholder="Email" id="loginEmail" required>
+                        <p ng-show="loginForm.email.$invalid && loginSubmitted" class="help-block">Invalid email.</p>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : loginForm.password.$invalid && loginSubmitted }">
+                    <label for="loginPassword" class="col-md-2 control-label">Password</label>
+                    <div class="col-md-10">
+                        <input name="password" ng-model="password" type="password" class="form-control" placeholder="Password" id="loginPassword" required>
+                        <p ng-show="loginForm.password.$invalid && loginSubmitted" class="help-block">Invalid password.</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox"> Remember me
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" class="btn btn-primary" >Login</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>  <!-- end panel -->
+
+</div>
+
+<div class="col-md-6">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">New Account</h3>
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal" name="registerForm" ng-submit="submitRegisterForm(registerForm.$valid)" novalidate>
+                <div class="form-group" ng-class="{ 'has-error' : registerForm.email.$invalid && registerSubmitted }">
+                    <label for="registerEmail" class="col-md-2 control-label">Email</label>
+                    <div class="col-md-10">
+                        <input name="email" ng-model="registerEmail" type="email" class="form-control" placeholder="Email" id="registerEmail" required>
+                        <p ng-show="registerForm.email.$invalid && registerSubmitted" class="help-block">Invalid email.</p>
+                        <p ng-repeat="err in registerError.data.email">
+                            {{err}}
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : registerForm.password.$invalid && registerSubmitted }">
+                    <label for="registerPassword" class="col-md-2 control-label">Password</label>
+                    <div class="col-md-10">
+                        <input name="password" ng-model="registerPassword" type="password" class="form-control" placeholder="Password" id="registerPassword" required>
+                        <p ng-show="registerForm.password.$invalid && registerSubmitted" class="help-block">Invalid password.</p>
+                        <p ng-repeat="err in registerError.data.password">
+                            {{err}}
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : registerForm.password_confirmation.$invalid && registerSubmitted }">
+                    <label for="registerPassword2" class="col-md-2 control-label">Confirm Password</label>
+                    <div class="col-md-10">
+                        <input name="password_confirmation" ng-model="registerPassword2" type="password" class="form-control" placeholder="Retype password" id="registerPassword2" required>
+                        <p ng-show="registerForm.password_confirmation.$invalid && registerSubmitted" class="help-block">Invalid password.</p>
+                        <p ng-repeat="err in registerError.data.password_confirmation">
+                            {{err}}
+                        </p>
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                </div>
+                <div ng-repeat="err in registerError.data.email">
+                    {{err}}
+                </div>
+                <div ng-repeat="err in registerError.data.password">
+                    {{err}}
+                </div>
+                <div ng-repeat="err in registerError.data.password_confirmation">
+                    {{err}}
+                </div>
+            </form>
+        </div>
+    </div>  
+
+</div>

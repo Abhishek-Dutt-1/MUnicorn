@@ -6,7 +6,7 @@ class DataAccount extends Eloquent {
 
     protected $table = 'dataaccounts';      // not really needed due to defaults
 
-    protected $fillable = array('dataaccount', 'user');     //make keyword field mass-assignable
+    protected $fillable = array('dataaccount', 'user_id');     //make keyword field mass-assignable
 
 	// one to many relation
 	public function landingPageUrls()
