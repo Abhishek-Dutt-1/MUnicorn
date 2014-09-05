@@ -457,8 +457,9 @@ class OperationsController extends \BaseController {
 	{
 		// Return all data accounts
 		$temp = [];
-		$dataac = DataAccount::where('user_id', $userId)->get();
-		//return Response::json ( $dataac );
+		// AUTHENTICATION NOT IMPLIMENTED
+		//$dataac = DataAccount::where('user_id', $userId)->get();
+		$dataac = DataAccount::get();
 		foreach($dataac as $k => $v)
 		{
 			$v->keywordCount = Keyword::where('dataAccount', $v->id)->count();

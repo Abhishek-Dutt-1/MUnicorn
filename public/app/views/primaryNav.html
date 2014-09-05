@@ -21,21 +21,11 @@
             <a id="mainNavTitle" class="navbar-brand" href="#"><span class="glyphicon glyphicon-send"></span> Madison Unicorn</a>
         </div>
 
-        <!-- USER INFO -->
-		<!--
-        <div ng-show="loggedInUser">Welcome, {{loggedInUser.email}}</div>
-        <div ng-if="isAuthorized(userRoles.admin)">You're Admin.</div>
-        <div ng-switch on="currentUser.role">
-            <div ng-switch-when="userRoles.admin">Your ADMIN.</div>
-            <div ng-switch-when="userRoles.admin">Your Editor.</div>
-            <div ng-switch-default="userRoles.admin">Your something else.</div>
-        </div>
-		-->
-
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                 <li ng-class="{active:isActive('/')}"><a ng-href="#/">Home</a></li>
                 <li ng-class="{active:isActive('/data')||isActive('/Step5')||isActive('/Step6')}"><a ng-href="#/data">AdWords</a></li>
+				<!--	AUTHENTICATION NOT YET IMPLIMENTED
                 <li ng-hide="loggedInUser" ng-class="{active:isActive('/login')}"><a ng-href="#/login">Sign in</a></li>
 				<li class="dropdown" ng-show="loggedInUser">
 					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> <span class="caret"></span></a>
@@ -46,6 +36,7 @@
 						<li ng-click="switchTheme('light_theme')"><a href="">Logout</a></li>
 					</ul>
 				</li>
+				-->
 				<li class="dropdown">
 					<a href="" class="dropdown-toggle" data-toggle="dropdown">Theme <span class="caret"></span></a>
 					<ul class="dropdown-menu" role="menu">

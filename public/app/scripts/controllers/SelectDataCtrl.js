@@ -242,6 +242,8 @@ keywordSegmentsControllers.controller('SelectDataCtrl', ['$scope', '$upload', '$
 
     // INIT
     $scope.loggedInUser = AuthService.getLoggedInUser();
+	// AUTHENTICATION NOT YET IMPLIMENTED
+	$scope.loggedInUser.id = true	// Shortcut
     if($scope.loggedInUser.id) {
 
         $scope.selectedDataAccount = DataShareService.getSelectedDataAccount();
