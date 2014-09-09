@@ -54,7 +54,7 @@
                                     </li>
                                 </ul>
 								<div class="input-group input-group-sm">
-                                    <input type="text" class="form-control" placeholder="Landing page URL" ng-model="userInputUrl" >
+                                    <input type="text" class="form-control" placeholder="Landing page URL (http://www.example.com)" ng-model="userInputUrl" >
                                     <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" ng-click="addLandingPageUrl(userInputUrl)">Add URL</button>
                                     </span>
@@ -85,15 +85,15 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="datasetFile" class="col-sm-2 control-label">Data</label>
+                        <label for="datasetFile" class="col-sm-2 control-label">CSV</label>
                         <div class="col-sm-9">
                             <input type="file" class="form-control1" id="datasetFile" ng-file-select="onFileSelect($files)" ng-model="newDataFileField" >
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
-                            <button ng-click="uploadCSV()" type="submit" class="btn btn-default">
-								Upload
+                            <button ng-click="uploadCSV()" type="submit" class="btn btn-default btn-sm">
+								 <span class="glyphicon glyphicon-cloud-upload"></span> Upload
 							</button>
                         </div>
                     </div>

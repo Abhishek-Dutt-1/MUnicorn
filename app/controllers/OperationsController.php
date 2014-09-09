@@ -243,14 +243,26 @@ class OperationsController extends \BaseController {
 	//private function _import_csv($filename)
 	{
 		$csv = $path.$filename;
-		/*
-		//ofcourse you have to modify that with proper table and field names
-		//$query = sprintf("LOAD DATA local INFILE '%s' INTO TABLE your_table FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' ESCAPED BY '\"' LINES TERMINATED BY '\\n' IGNORE 0 LINES (`filed_one`, `field_two`, `field_three`)", addslashes($csv));
-		*/
+
+		// Convert Tab separated to CSV, and also remove null bytes that come with google
+		// CSV downloaded from google keywords tool has null byte within strings which needs to be removed
+		// read the file
+		$file = file_get_contents( $csv );
+		// replace the data
+		$file = str_replace("\t", ",", $file);
+		$file = str_replace("\0", "", $file);
+		// write the file
+		file_put_contents( $csv , $file);
+	
+		
 		// Ignore 1st header row
+		// Comma seprated
 		$query = sprintf("LOAD DATA local INFILE '%s' INTO TABLE keywords FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' ESCAPED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 LINES (`adGroup`, `keyword`, `currency`, `avMonthlySearches`, `competition`, `suggestedBid`, `impressionShare`, `inAccount`, `inPlan`, `extractedFrom`)", addslashes($csv));
+		// Tab seprated
+		//$query = sprintf("LOAD DATA local INFILE '%s' INTO TABLE keywords CHARACTER SET latin1 IGNORE 1 LINES (`adGroup`, `keyword`, `currency`, `avMonthlySearches`, `competition`, `suggestedBid`, `impressionShare`, `inAccount`, `inPlan`, `extractedFrom`)", addslashes($csv));
 		DB::connection()->getpdo()->exec($query);
-		// these new rows will have default dataAccount value of 0 change all of them to $dataaccount
+
+		// these new rows will have default dataAccount value of 0 change all of them to $dataaccount		
 		return Keyword::where('dataAccount', 0)->update( array('dataAccount' => $dataaccount) );
 		
 		
@@ -296,8 +308,6 @@ class OperationsController extends \BaseController {
 		
 		$maxSeg = 0;		// even if no segments are inputted, still blank Segment1 column will be there
 		
-		//return Response::json( DB::table('keywords-segment')->where('dataAccount', $dataaccountid)->skip($start)->take($count)->get() );
-	
 		//return DB::statement(' SELECT * INTO OUTFILE "../../../tmp/resultTMP1111.csv" FIELDS TERMINATED BY "," OPTIONALLY ENCLOSED BY "" ESCAPED BY "\\" LINES TERMINATED BY "||"  FROM keywords-segment ');
 		
 		/*
@@ -309,38 +319,21 @@ class OperationsController extends \BaseController {
 		$output = '';
 		
 		foreach ($table as $row) {
-			//return var_dump($row);
-			//return $row->adGroup . "," . $row->keyword . "," . $row->currency . "," . $row->avMonthlySearches . "," . $row->competition . "," . $row->suggestedBid . "," . $row->impressionShare . "," . $row->inAccount . "," . $row->inPlan . "," . $row->NAME . "," . $row->Brand . "," . $row->Compete;
-			/*
-			$output.= $row->adGroup . "," 
-					. $row->keyword . "," 
-					. $row->currency . "," 
-					. $row->avMonthlySearches . ","
-					. $row->competition . ","
-					. $row->suggestedBid . ","
-					. $row->impressionShare . ","
-					. $row->inAccount . ","
-					. $row->inPlan . ","
-					//. $row->extractedFrom . "," 
-					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->extractedFrom) . "," 
-					. str_replace(',', ';', $row->NAME) . "," 
-					. $row->Brand . "," 
-					. $row->Compete . PHP_EOL;
-					*/
-					$scoreStr = '';
-					$maxLP = 0;
-					$LPNames = [];
-					foreach(json_decode($row->lpscore) as $lp)
-					{
-						$scoreStr .= $lp->score . ",";
-						$LPNames[] = $lp->landingPageUrl;
-						$maxLP++;
-					}
-					if($scoreStr != '')
-					{
-						$scoreStr = substr($scoreStr, 0, -1);
-					}
-					//return Response::json($scoreStr);
+
+			$scoreStr = '';
+			$maxLP = 0;
+			$LPNames = [];
+			foreach(json_decode($row->lpscore) as $lp)
+			{
+				$scoreStr .= $lp->score . ",";
+				$LPNames[] = $lp->landingPageUrl;
+				$maxLP++;
+			}
+			if($scoreStr != '')
+			{
+				$scoreStr = substr($scoreStr, 0, -1);
+			}
+			//return Response::json($scoreStr);
 					
 			$output.= preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->adGroup ) . "," 
 					. preg_replace( '/[\x00-\x1F\x80-\x9F]/u', '', $row->keyword ) . "," 
@@ -373,6 +366,8 @@ class OperationsController extends \BaseController {
 		{
 			$titleRow .= ",Score(" . $LPNames[$i-1] . ")";
 		}
+		// If no Landing page then still add a blank column
+		if($maxLP == 0) $titleRow .= ",Score()";
 		$titleRow .= ",Brand,Compete";
 		for($i =1; $i <= $maxSeg; $i++)
 		{
