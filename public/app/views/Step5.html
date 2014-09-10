@@ -163,8 +163,8 @@
                 </div>
                 <div class="panel-body">
 
-					<div class="wordCloudTopRow">
-						<div class="hidden1 masterTags pull-left">
+					<div class="wordCloudTopRow row">
+						<div class="hidden1 masterTags col-sm-8">
 							<span ng-repeat="tag in tagsArray1Word" ng-show="wordCloudNumWord == 1" class="label label-success wordCloudTag" >
 								<span ng-click="masterTagClicked1(tag)">{{tag}} </span>
 								<span style="cursor: pointer;" aria-hidden="true" ng-click="deleteMasterTag(tag)">&times;</span>&nbsp;
@@ -175,7 +175,7 @@
 								<span style="cursor: pointer;" aria-hidden="true" ng-click="deleteMasterTag(tag)">&times;</span>&nbsp;
 							</span>
 						</div>
-						<div class="pull-right">    <!-- start button -->
+						<div class="col-sm-4 text-right">    <!-- start button -->
 							<div class="btn-group btn-group-xs" data-toggle="buttons">
 								<!--    <label class="btn btn-primary" ng-click="switchWordCloudTable(1)">  -->
 								<label class="btn btn-primary active" ng-click="switchWordCloudTable(1)">
@@ -186,11 +186,21 @@
 									<input type="radio" name="options" id="option2" >2 Words</input>
 								</label>
 							</div>
-							<!--  Show tags with segments in word cloud  -->
-							<div class="pull-right1 text-muted"><input type="checkbox" value=false ng-model="showAllTags"> Show tags</div>
-						</div>      <!-- end btn -->
-                    </div>
 
+						</div>      <!-- end btn -->
+
+                    </div>
+					<!--  Show tags with segments in word cloud  -->
+					<div class="row">
+						<div class="col-sm-offset-8 col-sm-4">
+							<div class="pull-right sliderCheckBox">
+								<input type="checkbox" id="showHideTagsCheckbox" value=false ng-model="showAllTags">
+								<label for="showHideTagsCheckbox"></label>
+							</div>
+							<div class="pull-right showTagsText text-muted">Show Tags</div>
+						</div>
+					</div>
+					
                     <!-- form -->
                     <div class="panel panel-primary" id="wordCloudForm">
                         <div class="panel-heading">

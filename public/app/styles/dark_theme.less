@@ -71,14 +71,13 @@ body {
 }
 //////////////// Tag cloud
 #nonModaltagCloud {
-    .panel-body { padding: 0px 15px; }
+    //.panel-body { padding: 0px 15px; }
     .wordCloudTopRow {
-        //padding: 10px;
-        margin: 10px 10px 55px 10px;
+        //margin: 10px 0px 0px 0px;
     }
     ul{
 		margin: 0;
-		padding: 0 10px 20px;
+		padding: 0px;
 		text-align: justify;
 //		background:#71b5e9 url(../images/bg_tags.gif) repeat-x;		
 //        background: lightseagreen;
@@ -409,3 +408,66 @@ body {
 .scoreBadgeRed {
     background-color: lighten(#d9534f, 30%);
 }
+////////// Slider on/off check box 
+.sliderCheckBox {
+    width: 62px;
+	height: 20px;
+	background: #d3d3d3;
+	margin: 3px 0px 0px 0px;
+	border-radius: 50px;
+	position: relative;
+
+    #showHideTagsCheckbox {
+        visibility: hidden;
+    }
+    #showHideTagsCheckbox:checked + label {
+    	left: 33px;
+    	//background: #428bca;
+    }
+}
+.sliderCheckBox:before {
+	content: 'Yes';
+	position: absolute;
+	top: 3px;
+	left: 7px;
+	height: 2px;
+	color: white;
+	font-size: 11px;
+	font-weight: bold;
+	text-shadow: 1px 1px 0px rgba(255,255,255,.15);
+}
+.sliderCheckBox:after {
+	content: 'No';
+	position: absolute;
+	top: 3px;
+	left: 37px;
+	height: 2px;
+	//color: #111;
+	color: grey;
+	font-size: 11px;
+	font-weight: bold;
+	text-shadow: 1px 1px 0px rgba(255,255,255,.15);
+}
+.sliderCheckBox label {
+	display: block;
+	width: 28px;
+	height: 18px;
+	border-radius: 50px;
+
+	-webkit-transition: all .5s ease;
+	-moz-transition: all .5s ease;
+	-o-transition: all .5s ease;
+	-ms-transition: all .5s ease;
+	transition: all .5s ease;
+	cursor: pointer;
+	position: absolute;
+	top: 1px;
+	z-index: 1;
+	left: 1px;
+	background: white;
+}
+.showTagsText {
+    margin: 4px 4px 0 0;
+    font-weight: bold;
+}
+////////////// END Slider on/off check box 
