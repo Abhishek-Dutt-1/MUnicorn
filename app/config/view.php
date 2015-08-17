@@ -14,7 +14,7 @@ return array(
 	*/
 
     'paths' => array(
-        __DIR__.'/../views',
+//        __DIR__.'/../views',
         __DIR__.'/../../public/app'             // added later to seprate angularjs frontend completely and moved index.php here
     ),
 

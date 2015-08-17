@@ -816,7 +816,7 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
         $scope.formToggle = !$scope.formToggle;
     };
 
-    $scope.getTagCloud = function() {
+    $scope.getTagCloud = function(whenDone) {
 
         DataShareService.getTagCloud( function(data) {
 
@@ -884,11 +884,12 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
 				
             });
             $scope.applyUserInputsToKeywords();
-           
+			whenDone();	// call callback		
 //            console.log($scope.wordCloudArray);
         },
 			function(err) {
 				$scope.errorArray.push(err);
+				whenDone();	// call callback		
 		});
     }; 
     
@@ -1478,13 +1479,15 @@ keywordSegmentsControllers.controller('Step5Ctrl', ['$scope', '$http', '$filter'
             // we are fetching whole data set now
             $scope.actualData = data;
 			$scope.updateKeywordTable();
-        },
+			$scope.getTagCloud( function(){ ngProgress.complete(); });
+		},
 			function(err) {
 				$scope.errorArray.push(err);
+				ngProgress.complete();
 		});
         
-        $scope.getTagCloud();
-		ngProgress.complete();
+        //$scope.getTagCloud();
+		//ngProgress.complete();
 		
 		$('#myModal').on('shown.bs.modal', function() {
 			$(document).off('focusin.modal');
